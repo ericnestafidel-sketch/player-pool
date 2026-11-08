@@ -72,6 +72,9 @@ async function ParentHome() {
         When listing opens, each player is shown to approved coaches as a number, plus state and
         county only. You can pause or delete a profile from here.
       </div>
+      <p>
+        <Link href="/parent/inbox">Messages from coaches</Link>
+      </p>
     </main>
   );
 }

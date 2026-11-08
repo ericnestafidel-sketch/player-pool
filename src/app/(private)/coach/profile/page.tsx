@@ -3,8 +3,11 @@ import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { CoachCard } from "@/components/coach-card";
+import { CoachProfileForm } from "@/components/coach-profile-form";
 import { coaches } from "@/db/schema";
 import { getDb } from "@/db";
+import { selectedAges, toPublicCoach } from "@/lib/coach-profile";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -36,49 +39,38 @@ async function Profile() {
   }
   const [row] = await db
     .select({
-      fullName: coaches.fullName,
       teamName: coaches.teamName,
       organization: coaches.organization,
       agesCoached: coaches.agesCoached,
       yearsExperience: coaches.yearsExperience,
-      state: coaches.state,
-      county: coaches.county,
       status: coaches.status,
-      verifyUrl: coaches.verifyUrl,
     })
     .from(coaches)
     .where(eq(coaches.userId, viewer.userId))
     .limit(1);
   if (!row) redirect("/coach/signup");
+  const coach = toPublicCoach(row);
+  const approved = row.status === "approved";
   return (
     <main className="form-wrap">
       <h1>Your team card</h1>
-      <p className="meta">
-        This is what a parent would see on a relay message later: team, ages, and years. Your email
-        and phone are not on this card.
+      <p className="lead">
+        Parents see this card when you contact them. Your email, phone, and address stay off it.
+        Replies go through the Player Pool relay.
       </p>
-      <div className="section-card">
-        <h3>
-          {row.fullName}{" "}
-          <span className={`status-badge ${row.status === "approved" ? "badge-ok" : "badge-pend"}`}>
-            {row.status}
-          </span>
-        </h3>
-        <p>
-          {row.teamName} · {row.organization} · {row.agesCoached}
-        </p>
-        <p className="meta">
-          {row.state} · {row.county} County
-          {row.yearsExperience != null ? ` · ${row.yearsExperience} years` : ""}
-        </p>
-        <p className="meta">
-          Team page:{" "}
-          <a href={row.verifyUrl} target="_blank" rel="noreferrer">
-            {row.verifyUrl}
-          </a>
-        </p>
-      </div>
-      <p className="meta">Editing this card comes in the next session.</p>
+      {approved ? (
+        <CoachProfileForm
+          key={`${row.teamName}|${row.organization}|${row.agesCoached}|${row.yearsExperience ?? ""}`}
+          teamName={row.teamName}
+          organization={row.organization}
+          ages={selectedAges(row.agesCoached)}
+          yearsExperience={row.yearsExperience}
+          savedAges={row.agesCoached}
+        />
+      ) : (
+        <p className="meta">Only approved coaches can edit this card.</p>
+      )}
+      <CoachCard coach={coach} />
     </main>
   );
 }

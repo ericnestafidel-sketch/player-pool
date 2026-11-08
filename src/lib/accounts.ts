@@ -4,6 +4,7 @@ import { coachReferences, coaches, parents, users } from "@/db/schema";
 import { getDb } from "@/db";
 import {
   AGE_GROUPS,
+  BASEBALL_AGES,
   ORGANIZATIONS,
   REFERENCE_ROLES,
 } from "@/lib/coach-options";
@@ -221,6 +222,60 @@ export async function submitCoachApplication(
     });
   } catch (error) {
     console.error("Could not sync coach role to Clerk", error instanceof Error ? error.name : "");
+  }
+  return { ok: true };
+}
+
+export async function updateCoachTeamCard(
+  viewer: Viewer,
+  formData: FormData,
+): Promise<{ ok: true } | { ok: false; error?: string; fieldErrors: FieldErrors }> {
+  if (viewer.role !== "coach" || viewer.coachStatus !== "approved") {
+    return {
+      ok: false,
+      error: "Only approved coaches can edit the team card.",
+      fieldErrors: {},
+    };
+  }
+  const db = getDb();
+  if (!db) return { ok: false, error: "Database is not configured yet.", fieldErrors: {} };
+
+  const teamName = text(formData.get("teamName"));
+  const organization = text(formData.get("organization"));
+  const ages = formData
+    .getAll("ages")
+    .filter((value): value is string => typeof value === "string");
+  const yearsRaw = text(formData.get("yearsExperience"));
+  const fieldErrors: FieldErrors = {};
+  if (teamName.length < 2 || teamName.length > 80) fieldErrors.teamName = "Enter your team name.";
+  if (!(ORGANIZATIONS as readonly string[]).includes(organization)) {
+    fieldErrors.organization = "Choose an organization.";
+  }
+  const uniqueAges = BASEBALL_AGES.filter((age) => ages.includes(age));
+  if (uniqueAges.length === 0) fieldErrors.ages = "Select at least one age group.";
+  let yearsExperience: number | null = null;
+  if (yearsRaw) {
+    const years = Number(yearsRaw);
+    if (!Number.isInteger(years) || years < 0 || years > 60) {
+      fieldErrors.yearsExperience = "Enter years as a whole number, or leave it blank.";
+    } else {
+      yearsExperience = years;
+    }
+  }
+  if (Object.keys(fieldErrors).length) return { ok: false, fieldErrors };
+
+  try {
+    await db
+      .update(coaches)
+      .set({
+        teamName,
+        organization,
+        agesCoached: uniqueAges.join(", "),
+        yearsExperience,
+      })
+      .where(eq(coaches.userId, viewer.userId));
+  } catch {
+    return { ok: false, error: "Could not save the team card.", fieldErrors: {} };
   }
   return { ok: true };
 }

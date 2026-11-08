@@ -214,3 +214,5 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
 .form-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .coach-actions form{display:inline}
 .reason-input,.admin input:not([type="checkbox"]):not([type="hidden"]){max-width:280px;margin:8px 8px 0 0;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font:inherit}
+.age-picks{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
+.age-picks .check{margin:0;background:#eef3f9;border-radius:999px;padding:6px 10px;font-size:13px;color:var(--navy)}
