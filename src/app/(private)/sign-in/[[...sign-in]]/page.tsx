@@ -1,6 +1,7 @@
 import { SignIn } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { clerkConfigured } from "@/lib/viewer";
 
 export const metadata: Metadata = { title: "Sign in", robots: { index: false, follow: false } };
@@ -24,7 +25,9 @@ export default function SignInPage() {
         Parents and guardians sign in here. Coaches who already requested access do too.{" "}
         <Link href="/coach/signup">Coaches: request access</Link> if you have not applied.
       </p>
-      <SignIn routing="path" path="/sign-in" signUpUrl="/sign-up" forceRedirectUrl="/continue" />
+      <Suspense fallback={<p className="lead">Loading…</p>}>
+        <SignIn routing="path" path="/sign-in" signUpUrl="/sign-up" forceRedirectUrl="/continue" />
+      </Suspense>
     </main>
   );
 }
