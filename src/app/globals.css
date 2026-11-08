@@ -210,6 +210,68 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
 .setup-banner{background:var(--gold-soft);border-bottom:1px solid var(--gold);padding:8px 24px;font-size:13px;text-align:center}
 .auth-wrap{max-width:440px;margin:0 auto;padding:40px 24px 60px}
 .auth-wrap h1{color:var(--navy)}
+.coach-signup{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(280px,440px);
+  gap:28px;
+  align-items:start;
+  max-width:1050px;
+  margin:0 auto;
+  padding:40px 24px 60px;
+}
+.coach-signup .auth-wrap{max-width:none;margin:0;padding:0}
+.approval-panel{
+  background:var(--navy);
+  color:var(--white);
+  border-radius:var(--radius-lg);
+  padding:26px 24px 20px;
+  box-shadow:var(--shadow);
+  font-family:var(--font-body);
+}
+.approval-panel h2{
+  font-family:var(--font-display);
+  color:var(--gold);
+  text-align:left;
+  font-size:1.65rem;
+  line-height:1.2;
+  margin:0 0 12px;
+}
+.approval-panel p{color:#e7eef6;font-size:15px;margin:0 0 14px}
+.approval-steps{list-style:none;margin:0;padding:0;counter-reset:approval}
+.approval-steps li{
+  counter-increment:approval;
+  display:grid;
+  grid-template-columns:36px minmax(0,1fr);
+  gap:12px;
+  align-items:start;
+  margin:0 0 14px;
+  color:#e7eef6;
+  font-size:15px;
+}
+.approval-steps li::before{
+  content:counter(approval);
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:var(--gold);
+  color:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:.95rem;
+}
+.approval-panel .approval-foot{
+  margin:6px 0 0;
+  padding-top:14px;
+  border-top:1px solid rgba(232,185,35,.45);
+  color:var(--gold-soft);
+  font-weight:600;
+}
+@media(max-width:800px){
+  .coach-signup{grid-template-columns:1fr;padding:28px 16px 48px;gap:22px}
+}
 .nav-user{display:inline-flex;align-items:center;margin-left:16px}
 .form-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .coach-actions form{display:inline}
