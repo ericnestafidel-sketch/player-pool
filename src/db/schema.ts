@@ -65,6 +65,7 @@ export const coaches = pgTable(
       .primaryKey()
       .references(() => users.id, { onDelete: "cascade" }),
     fullName: text("full_name").notNull(),
+    /** Parent team card. Email and phone stay on users and are never selected for parents. */
     teamName: text("team_name").notNull(),
     organization: text("organization").notNull(),
     agesCoached: text("ages_coached").notNull(),

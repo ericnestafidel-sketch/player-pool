@@ -39,9 +39,17 @@ async function HeaderSession() {
   }
   return (
     <>
-      {viewer.role === "parent" ? <Link href="/parent">Your players</Link> : null}
+      {viewer.role === "parent" ? (
+        <>
+          <Link href="/parent">Your players</Link>
+          <Link href="/parent/inbox">Messages</Link>
+        </>
+      ) : null}
       {viewer.role === "coach" && viewer.coachStatus === "approved" ? (
-        <Link href="/coach/search">Search</Link>
+        <>
+          <Link href="/coach/search">Search</Link>
+          <Link href="/coach/profile">Team card</Link>
+        </>
       ) : null}
       {viewer.role === "coach" && viewer.coachStatus !== "approved" ? (
         <Link href="/coach/pending">Request status</Link>
