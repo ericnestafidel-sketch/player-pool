@@ -1,6 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { clerkConfigured } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -30,13 +31,15 @@ export default function ParentSignUpPage() {
       <p className="meta">
         Coaches do not use this form. <Link href="/coach/signup">Request coach access</Link>.
       </p>
-      <SignUp
-        routing="path"
-        path="/sign-up"
-        signInUrl="/sign-in"
-        forceRedirectUrl="/parent"
-        unsafeMetadata={{ signupIntent: "parent" }}
-      />
+      <Suspense fallback={<p className="lead">Loading…</p>}>
+        <SignUp
+          routing="path"
+          path="/sign-up"
+          signInUrl="/sign-in"
+          forceRedirectUrl="/parent"
+          unsafeMetadata={{ signupIntent: "parent" }}
+        />
+      </Suspense>
     </main>
   );
 }

@@ -1,6 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { clerkConfigured } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -25,13 +26,15 @@ export default function CoachAccountPage() {
         This login is only for coaches. After your account exists you will send team details for
         Eric to review. You will not see players until he approves you.
       </p>
-      <SignUp
-        routing="path"
-        path="/coach/sign-up"
-        signInUrl="/sign-in"
-        forceRedirectUrl="/coach/signup"
-        unsafeMetadata={{ signupIntent: "coach" }}
-      />
+      <Suspense fallback={<p className="lead">Loading…</p>}>
+        <SignUp
+          routing="path"
+          path="/coach/sign-up"
+          signInUrl="/sign-in"
+          forceRedirectUrl="/coach/signup"
+          unsafeMetadata={{ signupIntent: "coach" }}
+        />
+      </Suspense>
     </main>
   );
 }
