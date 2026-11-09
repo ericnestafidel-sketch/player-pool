@@ -102,10 +102,10 @@ footer a:hover{text-decoration:underline}
 .search{display:grid;grid-template-columns:260px 1fr;gap:24px;max-width:1100px;margin:0 auto;padding:28px 24px}
 aside{background:var(--bg-card);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow);height:fit-content}
 aside label,.form-wrap label,.parent-panel label,.modal label{display:block;font-size:12px;font-weight:700;color:var(--navy);margin:12px 0 4px}
-aside select,aside input,.form-wrap input,.form-wrap select,.form-wrap textarea,.parent-panel select,.modal select,.modal textarea{
+aside select,aside input,.form-wrap input,.form-wrap select,.form-wrap textarea,.parent-panel select,.parent-panel input,.parent-panel textarea,.modal select,.modal textarea{
   width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font:inherit;background:var(--white);color:var(--text);transition:border-color .15s,box-shadow .15s}
 aside select:disabled{background:#eef1f5;color:var(--muted-soft)}
-aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap textarea:focus,.parent-panel select:focus,.modal select:focus,.modal textarea:focus{
+aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap textarea:focus,.parent-panel select:focus,.parent-panel input:focus,.parent-panel textarea:focus,.modal select:focus,.modal textarea:focus{
   outline:0;border-color:var(--navy);box-shadow:0 0 0 3px rgba(15,42,74,.15)}
 .field-error{color:var(--danger);font-size:12px;margin-top:4px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
@@ -151,7 +151,7 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
 .parent-panel .field{margin:18px 0}
 .parent-panel .chip{cursor:pointer;user-select:none}
 .parent-panel .chip:hover{outline:2px solid var(--gold)}
-.parent-panel .hint{background:#eef3f9;border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted);margin-top:20px}
+.hint{background:#eef3f9;border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted);margin:12px 0 20px}
 .parent-panel .save{margin-top:18px}
 .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg-card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);margin:14px 0}
 .toggle-row strong{color:var(--navy)}
@@ -303,3 +303,30 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
 .reason-input,.admin input:not([type="checkbox"]):not([type="hidden"]){max-width:280px;margin:8px 8px 0 0;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font:inherit}
 .age-picks{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
 .age-picks .check{margin:0;background:#eef3f9;border-radius:999px;padding:6px 10px;font-size:13px;color:var(--navy)}
+.parent-panel input[type="checkbox"],.parent-panel input[type="radio"],.form-wrap input[type="checkbox"],.form-wrap input[type="radio"],.picks input,.check-grid input{width:auto}
+.parent-panel legend,.filter-heading{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--navy);margin:0 0 8px}
+.stack{display:grid;gap:16px;margin-top:18px}
+.roster-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.danger-zone{border:1px solid #fecaca;background:var(--danger-bg);border-radius:var(--radius);padding:14px 16px;margin-top:18px}
+.danger-zone h3{color:var(--danger)}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;align-items:center}
+.stat-label{font-weight:700;color:var(--navy)}
+.highlight-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin:8px 0;align-items:center}
+.check-grid{display:flex;flex-wrap:wrap;gap:8px}
+.check-grid label{display:flex;gap:6px;align-items:center;margin:0;background:#eef3f9;border-radius:999px;padding:6px 10px;font-weight:600}
+.weekend-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.weekend-row legend{margin:0}
+.picks{display:flex;flex-wrap:wrap;gap:10px}
+.picks label{display:flex;gap:6px;align-items:center;margin:0;font-weight:600}
+.filter-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.filter-actions .btn{text-align:center}
+.player-link{color:var(--navy);text-decoration:none}
+.player-link:hover{color:var(--gold)}
+.card-more{margin:8px 0 0}
+.card-more a{color:var(--navy);font-weight:700}
+.saved-bar label{font-size:12px;font-weight:700;color:var(--navy);margin:0}
+.saved-bar input:not([type="hidden"]){width:auto;min-width:200px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font:inherit}
+.btn-sm{padding:7px 12px;font-size:12px;border-radius:8px}
+@media(max-width:640px){
+  .stat-row,.highlight-row{grid-template-columns:1fr}
+}

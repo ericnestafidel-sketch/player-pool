@@ -1,8 +1,81 @@
-import { and, eq, gt, isNotNull } from "drizzle-orm";
+import { and, eq, exists, gt, isNotNull, isNull, notExists, type SQL } from "drizzle-orm";
 import { blocks, players, subscriptions } from "@/db/schema";
 import { getDb } from "@/db";
 import { toPublicPlayer, type PublicPlayer } from "@/lib/safety";
 import type { Viewer } from "@/lib/viewer";
+
+/**
+ * Stripe is not wired yet. A profile is visible to approved coaches when it is
+ * not paused and not deleted.
+ * When checkout exists, return true here so search and profile reads both require
+ * subscriptions.paid_at and subscriptions.expires_at > now() (see hasActivePaidListing).
+ */
+export function paidListingEnforced(): boolean {
+  return false;
+}
+
+export async function hasActivePaidListing(playerId: string, now = new Date()): Promise<boolean> {
+  const db = getDb();
+  if (!db) return false;
+  const [paid] = await db
+    .select({ id: subscriptions.id })
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.playerId, playerId),
+        isNotNull(subscriptions.paidAt),
+        gt(subscriptions.expiresAt, now),
+      ),
+    )
+    .limit(1);
+  return Boolean(paid);
+}
+
+export async function listingOpenForCoaches(player: {
+  id: string;
+  paused: boolean;
+  deletedAt: Date | null;
+}): Promise<boolean> {
+  if (player.paused || player.deletedAt) return false;
+  if (!paidListingEnforced()) return true;
+  return hasActivePaidListing(player.id);
+}
+
+/**
+ * Coach search WHERE clause. Keep this in step with coachMaySee:
+ * not paused, not deleted, not blocked, and the paid-listing hook above.
+ */
+export function coachVisibilityConditions(coachId: string, now: Date): SQL[] | null {
+  const db = getDb();
+  if (!db) return null;
+  const conditions: SQL[] = [
+    eq(players.paused, false),
+    isNull(players.deletedAt),
+    notExists(
+      db
+        .select({ parentId: blocks.parentId })
+        .from(blocks)
+        .where(and(eq(blocks.parentId, players.parentId), eq(blocks.coachId, coachId))),
+    ),
+  ];
+  if (paidListingEnforced()) {
+    conditions.push(
+      exists(
+        db
+          .select({ id: subscriptions.id })
+          .from(subscriptions)
+          .where(
+            and(
+              eq(subscriptions.playerId, players.id),
+              isNotNull(subscriptions.paidAt),
+              gt(subscriptions.expiresAt, now),
+            ),
+          ),
+      ),
+    );
+  }
+  return conditions;
+}
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -40,28 +113,17 @@ async function loadPlayer(id: string) {
 
 async function coachMaySee(
   coachId: string,
-  player: { id: string; parentId: string; paused: boolean },
+  player: { id: string; parentId: string; paused: boolean; deletedAt: Date | null },
 ): Promise<boolean> {
   const db = getDb();
-  if (!db || player.paused) return false;
+  if (!db) return false;
+  if (!(await listingOpenForCoaches(player))) return false;
   const [blocked] = await db
     .select({ parentId: blocks.parentId })
     .from(blocks)
     .where(and(eq(blocks.parentId, player.parentId), eq(blocks.coachId, coachId)))
     .limit(1);
-  if (blocked) return false;
-  const [paid] = await db
-    .select({ id: subscriptions.id })
-    .from(subscriptions)
-    .where(
-      and(
-        eq(subscriptions.playerId, player.id),
-        isNotNull(subscriptions.paidAt),
-        gt(subscriptions.expiresAt, new Date()),
-      ),
-    )
-    .limit(1);
-  return Boolean(paid);
+  return !blocked;
 }
 
 /** Approved coach (visible listing) or the parent who owns the profile. */

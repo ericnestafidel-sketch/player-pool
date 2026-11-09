@@ -44,6 +44,11 @@ function redirectTo(request: NextRequest, pathname: string) {
   return stamp(NextResponse.redirect(url), request);
 }
 
+function isNewPlayer(request: NextRequest): boolean {
+  const path = request.nextUrl.pathname.replace(/\/+$/, "") || "/";
+  return path === "/parent/player/new";
+}
+
 function playerIdFrom(request: NextRequest): string | null {
   const parts = request.nextUrl.pathname.split("/").filter(Boolean);
   const id = parts.at(-1) ?? "";
@@ -105,6 +110,20 @@ async function authorize(request: NextRequest, userId: string | null) {
     }
     if (viewer.role === "coach") return redirectTo(request, "/coach/pending");
     return redirectTo(request, "/access-denied");
+  }
+
+  if (isNewPlayer(request)) {
+    if (viewer.role === "parent" || viewer.role === null) {
+      if (viewer.role === null && viewer.signupIntent === "coach") {
+        return redirectTo(request, "/coach/signup");
+      }
+      return stamp(NextResponse.next(), request);
+    }
+    if (viewer.role === "admin") return redirectTo(request, "/admin");
+    return redirectTo(
+      request,
+      viewer.coachStatus === "approved" ? "/coach/search" : "/coach/pending",
+    );
   }
 
   if (isPlayerRead(request)) return gatePlayer(request, viewer, "read");
