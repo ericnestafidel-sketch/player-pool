@@ -6,10 +6,7 @@ export default function TermsPage() {
   return (
     <main className="legal">
       <h1>Terms of Use</h1>
-      <div className="draft">
-        <strong>Draft – pending attorney review.</strong> Not legal advice. Effective date and
-        remaining brackets will be finalized with counsel before launch.
-      </div>
+      <p className="draft">Draft, last updated November 2026.</p>
       <p className="meta">
         <strong>Effective date:</strong> [DATE]
       </p>
@@ -38,12 +35,12 @@ export default function TermsPage() {
           <strong>There is no automatic renewal.</strong>
         </li>
         <li>
-          Founding Families (the first 25 Parent sign-ups) pay <strong>$15 per season</strong>, and
-          that price is kept for as long as they renew.
+          <strong>Launch offer:</strong> the first 25 players listed get their first season free.
+          After that, regular pricing applies.
         </li>
         <li>
-          <strong>Yearly special</strong> (all three seasons in one payment): <strong>$60</strong>{" "}
-          regular, <strong>$36</strong> for Founding Families. Still one-time — no auto-renewal.
+          <strong>Yearly special</strong> (all three seasons in one payment): <strong>$60</strong>.
+          Still one-time — no auto-renewal.
         </li>
         <li>
           &quot;Season&quot; means: <strong>Spring</strong> (January–May), <strong>Summer</strong>{" "}
@@ -95,13 +92,11 @@ export default function TermsPage() {
       <p>
         The site is provided &quot;as is.&quot; To the fullest extent allowed by law, On Deck Player
         Pool LLC is not liable for the conduct of any user, or for indirect or consequential damages.
-        Our total liability is limited to the amount you paid in the past 12 months. [ATTORNEY TO
-        REVIEW]
+        Our total liability is limited to the amount you paid in the past 12 months.
       </p>
       <h2>9. Indemnity</h2>
       <p>
         You agree to cover our costs if your misuse of the site leads to a claim against us.
-        [ATTORNEY TO REVIEW]
       </p>
       <h2>10. Governing law</h2>
       <p>

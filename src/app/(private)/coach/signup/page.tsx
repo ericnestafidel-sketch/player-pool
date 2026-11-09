@@ -28,7 +28,9 @@ function Requirements() {
         <li>A public team presence (team website, USSSA/Perfect Game listing, or organization page)</li>
         <li>A possible short verification call with Eric</li>
         <li>At least one reference (another coach, director, or parent from your current or recent team)</li>
-        <li>Agreement to the Coach Code of Conduct and Terms</li>
+        <li>
+          Agreement to the <Link href="/conduct">Coach Code of Conduct</Link> and Terms
+        </li>
         <li>Hand review — usually within 2 days</li>
       </ul>
     </div>

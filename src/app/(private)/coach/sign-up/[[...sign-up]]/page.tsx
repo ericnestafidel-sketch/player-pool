@@ -28,7 +28,11 @@ function ApprovalRequirements() {
           team. We keep it on file and only contact them if something doesn&apos;t add up.
         </li>
         <li>A possible short verification call with the site owner.</li>
-        <li>Agreeing to the Player Pool Coach Code of Conduct.</li>
+        <li>
+          <span>
+            Agreeing to the Player Pool <Link href="/conduct">Coach Code of Conduct</Link>.
+          </span>
+        </li>
       </ol>
       <p className="approval-foot">
         Coaches use Player Pool free. Approval usually takes 1 to 2 days.

@@ -9,11 +9,21 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+function Agreement() {
+  return (
+    <p className="lead">
+      By continuing you agree to the <Link href="/terms">Terms of Use</Link> and{" "}
+      <Link href="/privacy">Privacy Policy</Link>.
+    </p>
+  );
+}
+
 export default function ParentSignUpPage() {
   if (!clerkConfigured()) {
     return (
       <main className="form-wrap">
         <h1>Parent sign up</h1>
+        <Agreement />
         <p className="lead">
           Accounts need Clerk keys before anyone can sign up. Player profiles stay hidden until then.
         </p>
@@ -25,9 +35,8 @@ export default function ParentSignUpPage() {
       <h1>Parent sign up</h1>
       <p className="lead">
         This form is for parents and legal guardians, 18 or older. Children cannot create accounts.
-        By continuing you agree to the <Link href="/terms">Terms of Use</Link> and{" "}
-        <Link href="/privacy">Privacy Policy</Link>.
       </p>
+      <Agreement />
       <p className="meta">
         Coaches do not use this form. <Link href="/coach/signup">Request coach access</Link>.
       </p>
