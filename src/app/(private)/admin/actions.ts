@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { saveCoachChecklist, saveInfoRequest, setCoachStatus } from "@/lib/accounts";
+import { resolveReport } from "@/lib/threads";
 import { clerkSaysAdmin, getRequestViewer } from "@/lib/viewer";
 
 async function requireAdminId(): Promise<string> {
@@ -39,6 +40,17 @@ export async function updateChecklist(formData: FormData) {
     org: formData.get("org") === "on",
   });
   revalidatePath("/admin");
+}
+
+export async function reviewReport(formData: FormData) {
+  const adminId = await requireAdminId();
+  const decision = formData.get("decision");
+  const reportId = formData.get("reportId");
+  if ((decision !== "reinstate" && decision !== "keep") || typeof reportId !== "string") return;
+  await resolveReport({ reportId: reportId.trim(), decision, adminId });
+  revalidatePath("/admin");
+  revalidatePath("/coach/search");
+  revalidatePath("/coach/messages");
 }
 
 export async function askForInfo(formData: FormData) {

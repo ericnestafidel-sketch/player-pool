@@ -3,16 +3,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { CoachCard } from "@/components/coach-card";
 import { DeletePlayerButton } from "@/components/delete-player-button";
 import { PlayerForm } from "@/components/player-form";
+import { ViewerList } from "@/components/viewer-list";
 import { pausePlayer } from "@/app/(private)/parent/player/actions";
-import {
-  formatViewedDate,
-  upcomingWeekends,
-  weekendInRange,
-  WEEKENDS_SHOWN,
-} from "@/lib/player-rules";
+import { upcomingWeekends, weekendInRange, WEEKENDS_SHOWN } from "@/lib/player-rules";
 import { loadPlayerEditor } from "@/lib/player-store";
 import { listSports } from "@/lib/sport";
 import { getRequestViewer } from "@/lib/viewer";
@@ -96,21 +91,7 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
 
       <section className="section-card">
         <h3>Coaches who viewed this profile</h3>
-        <p className="meta">Team card only. Coach email and phone are not shown.</p>
-        {editor.viewers.length === 0 ? (
-          <p className="meta">No coach has opened this profile yet.</p>
-        ) : (
-          <div className="contact-list">
-            {editor.viewers.map((view) => (
-              <div
-                key={`${view.coach.teamName}-${view.coach.organization}-${view.coach.agesCoached}-${view.viewedAt.toISOString()}`}
-              >
-                <p className="meta">Viewed {formatViewedDate(view.viewedAt)}</p>
-                <CoachCard coach={view.coach} />
-              </div>
-            ))}
-          </div>
-        )}
+        <ViewerList viewers={editor.viewers} returnTo={`/parent/player/${editor.id}`} />
       </section>
 
       <section className="danger-zone">

@@ -3,13 +3,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { CoachCard } from "@/components/coach-card";
 import { CoachNoteForm } from "@/components/coach-note-form";
+import { ContactCoachForm } from "@/components/contact-coach-form";
 import { PlayerCard } from "@/components/player-card";
 import { RecordProfileView } from "@/components/record-profile-view";
+import { ViewerList } from "@/components/viewer-list";
 import { canReadPlayer } from "@/lib/player-access";
-import { formatViewedDate } from "@/lib/player-rules";
+import { formatViewedDate, formatWeekend, upcomingWeekends, WEEKENDS_SHOWN } from "@/lib/player-rules";
 import { listPlayerViewers, loadCoachNote, loadReadableDetail } from "@/lib/player-store";
+import { listCoachPlayerThreads } from "@/lib/threads";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -35,8 +37,15 @@ async function PlayerView({ params }: { params: Promise<{ id: string }> }) {
   const detail = await loadReadableDetail(id, now);
   if (!detail) notFound();
   const coach = viewer.role === "coach" && viewer.coachStatus === "approved";
-  const note = coach ? await loadCoachNote(viewer.userId, id) : null;
-  const viewers = viewer.role === "parent" ? await listPlayerViewers(id) : [];
+  const [note, viewers, threads] = await Promise.all([
+    coach ? loadCoachNote(viewer.userId, id) : Promise.resolve(null),
+    viewer.role === "parent" ? listPlayerViewers(id) : Promise.resolve([]),
+    coach ? listCoachPlayerThreads(viewer.userId, id) : Promise.resolve([]),
+  ]);
+  const weekends = upcomingWeekends(WEEKENDS_SHOWN, now).map((value) => ({
+    value,
+    label: formatWeekend(value),
+  }));
   return (
     <main className="form-wrap">
       {coach ? <RecordProfileView playerId={id} /> : null}
@@ -74,27 +83,28 @@ async function PlayerView({ params }: { params: Promise<{ id: string }> }) {
           </ul>
         </section>
       ) : null}
-      {coach ? <CoachNoteForm playerId={id} note={note ?? ""} /> : null}
+      {coach ? (
+        <>
+          {threads.length > 0 ? (
+            <p className="meta">
+              {threads.map((thread) => (
+                <Link key={thread.id} href={`/coach/messages/${thread.id}`}>
+                  Message from {formatViewedDate(thread.createdAt)}
+                </Link>
+              ))}
+            </p>
+          ) : null}
+          <ContactCoachForm playerId={id} weekends={weekends} />
+          <CoachNoteForm playerId={id} note={note ?? ""} />
+        </>
+      ) : null}
       {viewer.role === "parent" ? (
         <section>
           <p>
             <Link href={`/parent/player/${id}`}>Edit this profile</Link>
           </p>
           <h3>Coaches who viewed</h3>
-          {viewers.length === 0 ? (
-            <p className="meta">No coach has opened this profile yet.</p>
-          ) : (
-            <div className="contact-list">
-              {viewers.map((view) => (
-                <div
-                  key={`${view.coach.teamName}-${view.coach.organization}-${view.coach.agesCoached}-${view.viewedAt.toISOString()}`}
-                >
-                  <p className="meta">Viewed {formatViewedDate(view.viewedAt)}</p>
-                  <CoachCard coach={view.coach} />
-                </div>
-              ))}
-            </div>
-          )}
+          <ViewerList viewers={viewers} returnTo={`/players/${id}`} />
         </section>
       ) : null}
     </main>

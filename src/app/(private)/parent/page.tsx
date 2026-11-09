@@ -2,11 +2,10 @@ import { connection } from "next/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { CoachCard } from "@/components/coach-card";
 import { DeletePlayerButton } from "@/components/delete-player-button";
 import { PlayerCard } from "@/components/player-card";
+import { ViewerList } from "@/components/viewer-list";
 import { claimParent } from "@/lib/accounts";
-import { formatViewedDate } from "@/lib/player-rules";
 import { listParentPlayers, type ParentPlayer } from "@/lib/player-store";
 import { getDb } from "@/db";
 import { getRequestViewer } from "@/lib/viewer";
@@ -122,20 +121,7 @@ function RosterCard({ entry }: { entry: ParentPlayer }) {
         <DeletePlayerButton playerId={entry.player.id} />
       </div>
       <h3>Coaches who viewed</h3>
-      {entry.viewers.length === 0 ? (
-        <p className="meta">No coach has opened this profile yet. Email and phone are never shown.</p>
-      ) : (
-        <div className="contact-list">
-          {entry.viewers.map((view) => (
-            <div
-              key={`${view.coach.teamName}-${view.coach.organization}-${view.coach.agesCoached}-${view.viewedAt.toISOString()}`}
-            >
-              <p className="meta">Viewed {formatViewedDate(view.viewedAt)}</p>
-              <CoachCard coach={view.coach} />
-            </div>
-          ))}
-        </div>
-      )}
+      <ViewerList viewers={entry.viewers} returnTo="/parent" />
     </section>
   );
 }
