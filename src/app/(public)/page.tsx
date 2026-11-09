@@ -7,9 +7,9 @@ import { withRedirect } from "@/lib/redirects";
 import { publicMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
-  title: "Indiana travel baseball player pool",
+  title: "Find travel baseball players",
   description:
-    "Find travel baseball players in Indiana. Parents list a player by number, USSSA level, and county only. Hand-approved coaches search for tryouts and pickup weekends. Free for coaches.",
+    "Find players for a travel team and travel baseball tryouts anywhere in the U.S. Parents list a player by number, USSSA level, county, and state. Hand-approved coaches search. Free for coaches.",
   path: "/",
 });
 
@@ -44,9 +44,9 @@ export default function HomePage() {
           <div className="box">
             <h3>For parents</h3>
             <p>
-              List your travel baseball player for Indiana and out-of-state tryouts. The profile uses a
-              player number, age group, positions, one or two USSSA levels, and the county you play in.
-              No name, town, address, email, or phone goes on the card coaches see.
+              List your travel baseball player for tryouts anywhere in the U.S. The profile uses a
+              player number, age group, positions, one or two USSSA levels, and the county and state you
+              play in. No name, town, address, email, or phone goes on the card coaches see.
             </p>
           </div>
           <div className="box">
@@ -118,8 +118,8 @@ export default function HomePage() {
         </p>
         <h3>What location do coaches see?</h3>
         <p>
-          State and county only. A town, street, school, and home address are not collected on the
-          player card.
+          Any U.S. state and county only. A town, street, school, and home address are not collected
+          on the player card.
         </p>
         <h3>Who can see a player?</h3>
         <p>

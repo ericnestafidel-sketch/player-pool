@@ -14,8 +14,8 @@ import { withRedirect } from "@/lib/redirects";
 import { publicMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
-  title: "Indiana travel baseball listing prices",
-  description: `One-time prices for an Indiana travel baseball listing. A season is ${formatUsd(seasonPlan.amountCents)} and three seasons are ${formatUsd(yearlyPlan.amountCents)}, with no auto-renew. Coaches search USSSA profiles free.`,
+  title: "Travel baseball listing prices",
+  description: `One-time prices to list a player for travel baseball tryouts. A season is ${formatUsd(seasonPlan.amountCents)} and three seasons are ${formatUsd(yearlyPlan.amountCents)}, with no auto-renew. Coaches search USSSA profiles free.`,
   path: "/pricing",
 });
 

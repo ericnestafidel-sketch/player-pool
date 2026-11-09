@@ -18,7 +18,7 @@ export function SaveSearchForm({ filters }: { filters: SearchFilters }) {
       <input type="hidden" name="weekend" value={filters.weekend} />
       <input type="hidden" name="status" value={filters.status} />
       <label htmlFor="search-name">Save this search</label>
-      <input id="search-name" name="name" maxLength={40} placeholder="12U pitchers in Indiana" />
+      <input id="search-name" name="name" maxLength={40} placeholder="12U USSSA pitchers" />
       <button className="btn navy btn-sm" type="submit" disabled={pending}>
         {pending ? "Saving…" : "Save search"}
       </button>

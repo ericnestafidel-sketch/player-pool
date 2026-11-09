@@ -50,7 +50,7 @@ export function siteJsonLd(origin = siteOrigin()) {
         alternateName: "Player Pool",
         url: origin,
         description:
-          "Coach Eric LLC doing business as Player Pool, a private Indiana travel baseball player pool.",
+          "Coach Eric LLC doing business as Player Pool, a private nationwide travel baseball player pool.",
       },
       {
         "@type": "WebSite",
@@ -59,7 +59,7 @@ export function siteJsonLd(origin = siteOrigin()) {
         url: origin,
         publisher: { "@id": `${origin}/#organization` },
         description:
-          "Parents list a travel baseball player by number, USSSA level, and county. Hand-approved coaches search.",
+          "Parents list a travel baseball player by number, USSSA level, county, and state. Hand-approved coaches search for tryouts.",
       },
     ],
   };

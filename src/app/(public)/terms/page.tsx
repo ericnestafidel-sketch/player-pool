@@ -8,7 +8,7 @@ import { publicMetadata } from "@/lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Terms of Use",
   description:
-    "Terms for parents and travel baseball coaches on Player Pool. One-time Indiana listings, refunds, and hand-approved USSSA coach access from Coach Eric LLC.",
+    "Terms for parents and travel baseball coaches on Player Pool. One-time listings, refunds, and hand-approved USSSA coach access from Coach Eric LLC.",
   path: "/terms",
 });
 

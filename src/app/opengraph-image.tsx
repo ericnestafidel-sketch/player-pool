@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Player Pool, an Indiana travel baseball player pool from Coach Eric LLC";
+export const alt = "Player Pool, a nationwide travel baseball player pool from Coach Eric LLC";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -35,7 +35,7 @@ export default function OpenGraphImage() {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <div style={{ fontSize: 68, fontWeight: 800, lineHeight: 1.05, maxWidth: 900 }}>
-            Indiana travel baseball player pool
+            Find travel baseball players
           </div>
           <div style={{ fontSize: 30, color: "#e8b923" }}>USSSA level · county only · hand-approved coaches</div>
         </div>

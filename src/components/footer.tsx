@@ -6,7 +6,7 @@ export function SiteFooter() {
   const email = supportEmail();
   return (
     <footer>
-      <p>Built by a youth coach in Indiana · {BUSINESS_LEGAL_NAME}</p>
+      <p>Built by a youth travel coach · {BUSINESS_LEGAL_NAME}</p>
       <p>
         <Link href="/coaches">Coaches</Link>
         <Link href="/pricing">Pricing</Link>

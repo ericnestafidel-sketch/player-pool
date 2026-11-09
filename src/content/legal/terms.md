@@ -152,7 +152,7 @@ We'll remove or disable the material if appropriate and may notify the person wh
 
 - Parents can report any Coach with the Report button. **A report immediately suspends the Coach's access** while we review it.
 - We may remove content, suspend, or close any account that breaks these Terms or the Coach Code of Conduct, or that we believe in good faith puts a child at risk. We may do this without notice where safety requires it.
-- **We report suspected child abuse, exploitation, or grooming** to the Indiana Department of Child Services, the National Center for Missing & Exploited Children, and/or law enforcement, and we cooperate with investigations. In Indiana, *anyone* who has reason to believe a child is being abused or neglected must report it (DCS Hotline **1-800-800-5556**, or **911** in an emergency).
+- **We report suspected child abuse, exploitation, or grooming** to the family's state child-protection agency, the National Center for Missing & Exploited Children, and/or law enforcement, and we cooperate with investigations. Call your state's child abuse hotline or 1-800-422-4453 Childhelp; in Indiana, DCS 1-800-800-5556. Call **911** in an emergency.
 
 ---
 

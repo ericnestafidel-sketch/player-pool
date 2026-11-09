@@ -35,6 +35,7 @@ test("organization JSON-LD has no address or phone", () => {
   const encoded = JSON.stringify(siteJsonLd("https://player-pool.net"));
   assert.match(encoded, /Coach Eric LLC/);
   assert.match(encoded, /Player Pool/);
+  assert.equal(encoded.includes("Indiana"), false);
   for (const key of ["address", "streetAddress", "telephone", "phone", "email", "postalCode"]) {
     assert.equal(encoded.toLowerCase().includes(`"${key.toLowerCase()}"`), false);
   }

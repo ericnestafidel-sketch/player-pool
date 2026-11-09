@@ -3,20 +3,20 @@ import Link from "next/link";
 import { publicMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
-  title: "Find travel baseball players in Indiana",
+  title: "Find players for a travel team",
   description:
-    "Travel baseball coaches search Indiana players by age, USSSA level, and county. Player Pool is free for coaches. Request access, get hand-approved, and message parents in the app.",
+    "Search travel baseball players by age, USSSA level, state, and county. Player Pool is free for coaches. Request access, get hand-approved, and message parents about tryouts.",
   path: "/coaches",
 });
 
 export default function CoachesPage() {
   return (
     <main className="wrap">
-      <h1>Find travel baseball players in Indiana</h1>
+      <h1>Find players for a travel team</h1>
       <p className="lead">
-        Player Pool is a private list for travel baseball tryouts and pickup weekends. Parents list a
-        player as a number, with USSSA level, age group, state, and county. You never see a child&apos;s
-        name, town, address, email, or phone.
+        Player Pool is a private, nationwide list for travel baseball tryouts and pickup weekends.
+        Parents list a player as a number, with USSSA level, age group, state, and county. You never see
+        a child&apos;s name, town, address, email, or phone.
       </p>
       <p>
         Coaches use Player Pool free. Every coach is approved by hand before any profile opens. Send one
