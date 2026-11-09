@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Source_Sans_3 } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter } from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteOrigin } from "@/lib/launch";
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${outfit.variable} ${sourceSans.variable}`}>
       <body>
         {clerkConfigured() ? <ClerkProvider>{shell}</ClerkProvider> : shell}
+        <Analytics />
       </body>
     </html>
   );
