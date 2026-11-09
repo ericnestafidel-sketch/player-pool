@@ -55,8 +55,7 @@ async function Profile() {
     <main className="form-wrap">
       <h1>Your team card</h1>
       <p className="lead">
-        Parents see this card when you contact them. Your email, phone, and address stay off it.
-        Replies go through the Player Pool relay.
+        Parents see this card in an in-app message. Your email, phone, and address stay off it.
       </p>
       {approved ? (
         <CoachProfileForm

@@ -1,9 +1,12 @@
 import { connection } from "next/server";
+import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { PlayerForm } from "@/components/player-form";
+import { parents } from "@/db/schema";
+import { getDb } from "@/db";
 import { emptyDraft, upcomingWeekends, WEEKENDS_SHOWN } from "@/lib/player-rules";
 import { listSports, preferredSport } from "@/lib/sport";
 import { getRequestViewer } from "@/lib/viewer";
@@ -28,6 +31,14 @@ async function NewPlayer() {
   if (viewer.role !== "parent") redirect("/parent");
   const sports = await listSports();
   const sport = preferredSport(sports);
+  const db = getDb();
+  const [parent] = db
+    ? await db
+        .select({ termsAcceptedAt: parents.termsAcceptedAt })
+        .from(parents)
+        .where(eq(parents.userId, viewer.userId))
+        .limit(1)
+    : [];
   if (!sport) {
     return (
       <main className="parent-panel">
@@ -50,6 +61,7 @@ async function NewPlayer() {
         sports={sports}
         weekends={upcomingWeekends(WEEKENDS_SHOWN, new Date())}
         draft={emptyDraft(sport.slug)}
+        needsAgreement={!parent?.termsAcceptedAt}
       />
     </main>
   );

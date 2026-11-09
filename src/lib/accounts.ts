@@ -1,6 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { coachReferences, coaches, parents, users } from "@/db/schema";
+import { LEGAL_VERSION } from "@/lib/legal";
 import { getDb } from "@/db";
 import {
   AGE_GROUPS,
@@ -150,7 +151,6 @@ export async function submitCoachApplication(
   const refRole = text(formData.get("refRole"));
   const refTeam = text(formData.get("refTeam"));
   const refContact = text(formData.get("refContact"));
-  const agreed = formData.get("conduct") === "on";
 
   const fieldErrors: FieldErrors = {};
   if (fullName.length < 2) fieldErrors.fullName = "Enter your full name.";
@@ -186,7 +186,14 @@ export async function submitCoachApplication(
   }
   if (refTeam.length < 2) fieldErrors.refTeam = "Enter their team or organization.";
   if (refContact.length < 5) fieldErrors.refContact = "Enter an email or phone for the reference.";
-  if (!agreed) fieldErrors.conduct = "Agree to the Code of Conduct and Terms to continue.";
+  const eligible = formData.get("eligibility") === "on";
+  const safetyRules = formData.get("safetyRules") === "on";
+  if (!eligible) {
+    fieldErrors.eligibility = "Confirm you have no disqualifying criminal record or sanctions.";
+  }
+  if (!safetyRules) {
+    fieldErrors.safetyRules = "Agree to the safety rules in the Coach Code of Conduct.";
+  }
   if (Object.keys(fieldErrors).length) return { ok: false, fieldErrors };
 
   const now = new Date();
@@ -211,6 +218,9 @@ export async function submitCoachApplication(
         useNote,
         status: "pending",
         conductAgreedAt: now,
+        conductVersion: LEGAL_VERSION,
+        eligibilityAttestedAt: now,
+        safetyRulesAgreedAt: now,
         checklistConduct: true,
       });
       await tx.insert(coachReferences).values({

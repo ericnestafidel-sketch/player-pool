@@ -55,6 +55,9 @@ export const parents = pgTable("parents", {
     .primaryKey()
     .references(() => users.id, { onDelete: "cascade" }),
   displayName: text("display_name").notNull(),
+  /** Set when the parent first confirms they are 18+ and the player's guardian. */
+  termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
+  termsVersion: text("terms_version"),
 });
 
 export const coaches = pgTable(
@@ -76,6 +79,9 @@ export const coaches = pgTable(
     status: coachStatus("status").notNull().default("pending"),
     statusReason: text("status_reason"),
     conductAgreedAt: timestamp("conduct_agreed_at", { withTimezone: true }).notNull(),
+    conductVersion: text("conduct_version"),
+    eligibilityAttestedAt: timestamp("eligibility_attested_at", { withTimezone: true }),
+    safetyRulesAgreedAt: timestamp("safety_rules_agreed_at", { withTimezone: true }),
     approvedAt: timestamp("approved_at", { withTimezone: true }),
     approvedBy: text("approved_by"),
     dailyContactCount: integer("daily_contact_count").notNull().default(0),

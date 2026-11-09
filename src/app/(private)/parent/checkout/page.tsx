@@ -6,11 +6,11 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { players } from "@/db/schema";
 import { getDb } from "@/db";
-import { formatUsd, LAUNCH_FREE_SEASON_SPOTS, seasonPlan, SEASONS, yearlyPlan } from "@/lib/pricing";
+import { CheckoutForm } from "@/components/checkout-form";
 import { formatPlayerLabel } from "@/lib/safety";
-import { PROMO_CODE, stripeConfigured } from "@/lib/stripe-billing";
+import { seasonOffers } from "@/lib/seasons";
+import { stripeConfigured } from "@/lib/stripe-billing";
 import { getRequestViewer } from "@/lib/viewer";
-import { startCheckout } from "./actions";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -66,37 +66,11 @@ async function Checkout({
           Add a player before paying. <Link href="/parent/player/new">Add a player</Link>
         </div>
       ) : (
-        <form action={startCheckout} className="section-card">
-          <label htmlFor="playerId">Player</label>
-          <select id="playerId" name="playerId" required defaultValue={params.player ?? rows[0]?.id}>
-            {rows.map((row) => (
-              <option key={row.id} value={row.id}>
-                {formatPlayerLabel(row.publicNumber)}
-              </option>
-            ))}
-          </select>
-          <fieldset className="field">
-            <legend>Plan</legend>
-            <label className="check">
-              <input type="radio" name="plan" value="season" defaultChecked required />
-              <span>
-                Season · {formatUsd(seasonPlan.amountCents)} ·{" "}
-                {SEASONS.map((season) => season.name).join(", ")}
-              </span>
-            </label>
-            <label className="check">
-              <input type="radio" name="plan" value="yearly" />
-              <span>Yearly · {formatUsd(yearlyPlan.amountCents)} · through December 31</span>
-            </label>
-          </fieldset>
-          <p className="meta">
-            Season only: code {PROMO_CODE} on the Stripe page covers the first {LAUNCH_FREE_SEASON_SPOTS}{" "}
-            free seasons. A $0 checkout still turns the listing on.
-          </p>
-          <button className="btn gold" type="submit">
-            Continue to Stripe
-          </button>
-        </form>
+        <CheckoutForm
+          players={rows.map((row) => ({ id: row.id, label: formatPlayerLabel(row.publicNumber) }))}
+          offers={seasonOffers(new Date())}
+          defaultPlayer={params.player ?? rows[0]?.id ?? ""}
+        />
       )}
     </main>
   );

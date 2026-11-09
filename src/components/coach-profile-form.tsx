@@ -27,7 +27,7 @@ export function CoachProfileForm({
   return (
     <form action={action}>
       {state.error ? <p className="field-error">{state.error}</p> : null}
-      {state.ok ? <p className="meta">Saved. Parents see this card on a relay message.</p> : null}
+      {state.ok ? <p className="meta">Saved. Parents see this card in an in-app message.</p> : null}
       <label htmlFor="teamName">Team name</label>
       <input id="teamName" name="teamName" required defaultValue={teamName} maxLength={80} />
       <FieldError message={state.fieldErrors.teamName} />
