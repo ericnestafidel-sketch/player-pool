@@ -99,6 +99,7 @@ async function Search({
                 value={filters.skillLevel}
                 options={sport.levelLabels}
               />
+              <p className="meta">Matches a player who lists this level as either of their two.</p>
             </>
           ) : (
             <p className="meta">Sport labels are not loaded yet.</p>

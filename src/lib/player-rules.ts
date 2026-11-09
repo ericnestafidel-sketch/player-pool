@@ -23,7 +23,7 @@ export type PlayerDraft = {
   birthYear: string;
   ageGroup: string;
   positions: string[];
-  skillLevel: string;
+  skillLevels: string[];
   state: string;
   county: string;
   status: string;
@@ -39,7 +39,7 @@ export type PlayerInput = {
   birthYear: number;
   ageGroup: string;
   positions: string[];
-  skillLevel: string;
+  skillLevels: string[];
   state: string;
   county: string;
   status: PlayerStatus;
@@ -87,6 +87,11 @@ export function skillLevelLabel(sport: SportConfig): string {
   return sport.slug === "baseball" ? "USSSA skill level" : "Skill level";
 }
 
+/** Parent-facing list, in the order they chose. Example: "AA / AAA". */
+export function formatSkillLevels(levels: string[]): string {
+  return levels.filter((level) => level.length > 0).join(" / ");
+}
+
 export function emptyFilters(): SearchFilters {
   return {
     ageGroup: "",
@@ -106,7 +111,7 @@ export function emptyDraft(sport: string): PlayerDraft {
     birthYear: "",
     ageGroup: "",
     positions: [],
-    skillLevel: "",
+    skillLevels: [],
     state: "",
     county: "",
     status: "",
@@ -302,7 +307,7 @@ export function filtersFromUnknown(value: unknown, sport: SportConfig | null, no
   if (sport?.ageLabels.includes(age)) filters.ageGroup = age;
   const position = text("position");
   if (sport?.positionLabels.includes(position)) filters.position = position;
-  const level = text("skillLevel");
+  const level = text("skillLevel") || text("level");
   if (sport?.levelLabels.includes(level)) filters.skillLevel = level;
   const state = text("state").toUpperCase();
   if (isUsState(state)) filters.state = state;
@@ -353,10 +358,22 @@ export function parsePlayerForm(
     fieldErrors.positions = "Choose a position from the list.";
   }
 
-  const skillLevel = formText(formData.get("skillLevel"));
-  if (!sport || !sport.levelLabels.includes(skillLevel)) {
-    fieldErrors.skillLevel =
-      sport?.slug === "baseball" ? "Choose a USSSA skill level." : "Choose a skill level.";
+  const submittedLevels = [...formData.getAll("skillLevel"), ...formData.getAll("skillLevel2")]
+    .filter((value): value is string => typeof value === "string")
+    .map((value) => value.trim())
+    .filter((value) => value.length > 0);
+  const skillLevels = sport
+    ? submittedLevels.filter((level) => sport.levelLabels.includes(level))
+    : [];
+  const levelNoun = sport?.slug === "baseball" ? "USSSA skill level" : "skill level";
+  if (submittedLevels.length === 0) {
+    fieldErrors.skillLevel = `Choose at least one ${levelNoun}.`;
+  } else if (submittedLevels.length > 2) {
+    fieldErrors.skillLevel = `Choose at most two ${levelNoun}s.`;
+  } else if (skillLevels.length !== submittedLevels.length) {
+    fieldErrors.skillLevel = `Choose a ${levelNoun} from the list.`;
+  } else if (new Set(skillLevels).size !== skillLevels.length) {
+    fieldErrors.skillLevel = `Choose two different ${levelNoun}s.`;
   }
 
   const state = formText(formData.get("state")).toUpperCase();
@@ -497,7 +514,7 @@ export function parsePlayerForm(
       birthYear,
       ageGroup,
       positions,
-      skillLevel,
+      skillLevels,
       state,
       county,
       status,
