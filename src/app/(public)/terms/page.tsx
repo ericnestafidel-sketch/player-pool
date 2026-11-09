@@ -90,8 +90,9 @@ export default function TermsPage() {
       </p>
       <h2>8. Disclaimers and limitation of liability</h2>
       <p>
-        The site is provided &quot;as is.&quot; To the fullest extent allowed by law, On Deck Player
-        Pool LLC is not liable for the conduct of any user, or for indirect or consequential damages.
+        The site is provided &quot;as is.&quot; To the fullest extent allowed by law, Coach Eric LLC,
+        doing business as Player Pool, is not liable for the conduct of any user, or for indirect or
+        consequential damages.
         Our total liability is limited to the amount you paid in the past 12 months.
       </p>
       <h2>9. Indemnity</h2>

@@ -2,7 +2,7 @@
 
 Private youth travel baseball pool. Parents list a player. Coaches Eric has approved can search. Players are shown as **Player #NNN**, with **state and county only**.
 
-This repository is Session A: the Next.js app, the full Postgres schema, Clerk roles, the coach approval queue, and the public pages. Search, parent editing, relay email, and payments come later.
+Parents can create, edit, pause, and delete player profiles. Approved coaches can search, filter, save searches, and keep private notes. Relay email and payments come later.
 
 ## Stack
 
@@ -34,13 +34,11 @@ Redeploy after the keys exist. `npm run build` also succeeds with none of them s
 
 ### Make your user an admin
 
-In the Clerk dashboard, open your user → Public metadata:
+Set `ADMIN_EMAILS` on Vercel (production and preview) to a comma-separated list of verified primary emails. It is server-only. Do not prefix it with `NEXT_PUBLIC_`.
 
-```json
-{ "role": "admin" }
-```
+Sign up at `/sign-up` with one of those emails, then open `/admin`. Player Pool checks that the primary email is verified, saves `role=admin`, and sets Clerk public metadata `{ "role": "admin" }` so it sticks. An unverified address does not match.
 
-Sign in and open `/admin` once. That copies `role=admin` into the `users` table. The admin link is not in the public footer.
+Setting that metadata by hand in the Clerk dashboard still works. The first visit to `/admin` copies it into Postgres. The admin link is not in the public footer.
 
 Parents can only sign up at `/sign-up`. Coaches use `/coach/signup`, land in `pending`, and cannot open player pages until you approve them.
 
@@ -78,7 +76,7 @@ npm run db:migrate
 | `/sign-up` | Parents only |
 | `/coach/signup` | Coach requirements. New coaches are `pending` |
 | `/coach/search`, `/players/[id]` | Approved coaches, or the parent who owns that player |
-| `/parent`, `/parent/player/[id]` | That parent |
+| `/parent`, `/parent/player/new`, `/parent/player/[id]` | That parent |
 | `/admin` | Eric (`role=admin`) — Pending / Approved / Suspended |
 
 Next.js 16 calls the request gate `src/proxy.ts` (this used to be `middleware.ts`). It sends `X-Robots-Tag: noindex` on app routes. Public marketing pages can be indexed; player and account pages cannot.
@@ -89,7 +87,7 @@ Next.js 16 calls the request gate `src/proxy.ts` (this used to be `middleware.ts
 - Coach-visible player data goes through `toPublicPlayer` (`Player #NNN`, state, county, and baseball fields only).
 - A coach in `pending`, `denied`, or `suspended` cannot open search or a player page.
 - A blocked coach cannot read that parent's player (the block table is in place; the block button is later).
-- A coach only sees a player with an unexpired paid row. Parents can open their own player before payment.
+- Until Stripe exists, an approved coach sees a player that is not paused and not deleted. The paid-listing check lives in `paidListingEnforced()` and `hasActivePaidListing()` in `src/lib/player-access.ts`. Turn that on when checkout sets `expires_at`. Parents can open their own player either way.
 - Admin is the only place coach email, phone, and reference contact are rendered.
 
 ## Pricing copy
@@ -98,7 +96,6 @@ One-time payments, no auto-renew. Founders (first 25): **$15 / season** or **$36
 
 ## Stubbed for later sessions
 
-- Parent create/edit, pause, delete, availability, highlights
-- Coach search filters, notes, saved searches, contact relay (Resend)
+- Coach contact relay (Resend)
 - Stripe Checkout, founder checkout lock, refunds, season expiry cron
-- Report button (the `reports` table is ready; filing one must suspend the coach in the same transaction)
+- Block and report buttons (search already hides a player from a coach who is blocked; filing a report must still suspend that coach in the same transaction)

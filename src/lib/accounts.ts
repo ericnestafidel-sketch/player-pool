@@ -10,7 +10,7 @@ import {
 } from "@/lib/coach-options";
 import { httpUrlError, locationError } from "@/lib/safety";
 import { isUsState } from "@/lib/states";
-import { clerkSaysAdmin, mergePublicMetadata, type Viewer } from "@/lib/viewer";
+import { adminAccess, mergePublicMetadata, type Viewer } from "@/lib/viewer";
 
 function text(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
@@ -65,18 +65,34 @@ export async function claimParent(viewer: Viewer): Promise<{ ok: true } | { ok: 
 export async function ensureAdminRecord(
   userId: string,
 ): Promise<"ready" | "no-db" | "denied"> {
-  const allowed = (await clerkSaysAdmin(userId));
+  const access = await adminAccess(userId);
   const db = getDb();
-  if (!db) return allowed ? "no-db" : "denied";
+  if (!access.allowed) {
+    if (!db) return "denied";
+    const [existing] = await db
+      .select({ role: users.role })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    return existing?.role === "admin" ? "ready" : "denied";
+  }
+  if (!access.metadataAdmin) {
+    try {
+      await mergePublicMetadata(userId, { role: "admin" });
+    } catch (error) {
+      console.error("Could not sync admin role to Clerk", error instanceof Error ? error.name : "");
+    }
+  }
+  if (!db) return "no-db";
   const [existing] = await db
     .select({ role: users.role })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
   if (existing?.role === "admin") return "ready";
-  if (!allowed) return "denied";
   const clerkUser = await currentUser();
   const email =
+    access.verifiedEmail ??
     clerkUser?.primaryEmailAddress?.emailAddress ??
     clerkUser?.emailAddresses[0]?.emailAddress ??
     `${userId}@users.playerpool.local`;

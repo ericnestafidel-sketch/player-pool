@@ -11,8 +11,8 @@ export default function PrivacyPage() {
         <strong>Effective date:</strong> [DATE]
       </p>
       <p className="meta">
-        <strong>Operator:</strong> On Deck Player Pool LLC (&quot;Player Pool,&quot; &quot;we,&quot;
-        &quot;us&quot;), operating as Player Pool, Crawfordsville, Indiana. Contact: [business email
+        <strong>Operator:</strong> Coach Eric LLC, doing business as Player Pool (&quot;Player
+        Pool,&quot; &quot;we,&quot; &quot;us&quot;), Crawfordsville, Indiana. Contact: [business email
         coming soon]
       </p>
       <h2>Who this site is for</h2>
@@ -116,7 +116,8 @@ export default function PrivacyPage() {
       <p>We will email Parents about material changes before they take effect.</p>
       <h2>Contact</h2>
       <p>
-        On Deck Player Pool LLC, [mailing address available on request], [business email coming soon]
+        Coach Eric LLC, doing business as Player Pool, [mailing address available on request], [business
+        email coming soon]
       </p>
     </main>
   );

@@ -1,5 +1,6 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
+import { verifiedPrimaryIsAllowlisted } from "@/lib/admin-allowlist";
 import { coaches, users } from "@/db/schema";
 import { getDb } from "@/db";
 
@@ -42,6 +43,65 @@ function asCoachStatus(value: unknown): CoachStatus | null {
   return null;
 }
 
+type ClerkSnapshot = {
+  metadataRole: Role | null;
+  coachStatus: CoachStatus | null;
+  signupIntent: SignupIntent | null;
+  allowlisted: boolean;
+  verifiedEmail: string | null;
+};
+
+const CLERK_SNAPSHOT_TTL_MS = 15_000;
+const clerkSnapshots = new Map<string, { at: number; value: ClerkSnapshot }>();
+
+async function readClerkSnapshot(userId: string): Promise<ClerkSnapshot | null> {
+  const cached = clerkSnapshots.get(userId);
+  if (cached && Date.now() - cached.at < CLERK_SNAPSHOT_TTL_MS) return cached.value;
+  const value = await loadClerkSnapshot(userId);
+  if (value) clerkSnapshots.set(userId, { at: Date.now(), value });
+  return value;
+}
+
+async function loadClerkSnapshot(userId: string): Promise<ClerkSnapshot | null> {
+  if (!process.env.CLERK_SECRET_KEY) return null;
+  try {
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    const pub = user.publicMetadata ?? {};
+    const unsafe = user.unsafeMetadata ?? {};
+    const primary = user.primaryEmailAddress;
+    const verified =
+      primary?.verification?.status === "verified" ? primary.emailAddress : null;
+    return {
+      metadataRole: asRole(pub.role),
+      coachStatus: asCoachStatus(pub.coachStatus),
+      signupIntent: asIntent(pub.signupIntent) ?? asIntent(unsafe.signupIntent),
+      allowlisted: verifiedPrimaryIsAllowlisted(primary),
+      verifiedEmail: verified,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export type AdminAccess = {
+  allowed: boolean;
+  metadataAdmin: boolean;
+  verifiedEmail: string | null;
+};
+
+/** Metadata admin or a verified primary email in ADMIN_EMAILS. The list stays on the server. */
+export async function adminAccess(userId: string): Promise<AdminAccess> {
+  const snap = await readClerkSnapshot(userId);
+  if (!snap) return { allowed: false, metadataAdmin: false, verifiedEmail: null };
+  const metadataAdmin = snap.metadataRole === "admin";
+  return {
+    allowed: metadataAdmin || snap.allowlisted,
+    metadataAdmin,
+    verifiedEmail: snap.verifiedEmail,
+  };
+}
+
 export async function resolveViewer(userId: string): Promise<Viewer> {
   const base: Viewer = {
     userId,
@@ -50,6 +110,8 @@ export async function resolveViewer(userId: string): Promise<Viewer> {
     signupIntent: null,
   };
   const db = getDb();
+  let dbRole: Role | null = null;
+  let dbCoach: CoachStatus | null = null;
   if (db) {
     const [row] = await db
       .select({
@@ -60,34 +122,29 @@ export async function resolveViewer(userId: string): Promise<Viewer> {
       .leftJoin(coaches, eq(coaches.userId, users.id))
       .where(eq(users.id, userId))
       .limit(1);
+    if (row?.role === "admin") {
+      return { userId, role: "admin", coachStatus: null, signupIntent: null };
+    }
     if (row) {
-      return {
-        userId,
-        role: row.role,
-        coachStatus: row.coachStatus,
-        signupIntent: null,
-      };
+      dbRole = row.role;
+      dbCoach = row.coachStatus;
     }
   }
 
-  if (!process.env.CLERK_SECRET_KEY) return base;
-  try {
-    const client = await clerkClient();
-    const user = await client.users.getUser(userId);
-    const pub = user.publicMetadata ?? {};
-    const unsafe = user.unsafeMetadata ?? {};
-    if (asRole(pub.role) === "admin") {
-      return { userId, role: "admin", coachStatus: null, signupIntent: null };
-    }
-    return {
-      userId,
-      role: null,
-      coachStatus: asCoachStatus(pub.coachStatus),
-      signupIntent: asIntent(pub.signupIntent) ?? asIntent(unsafe.signupIntent),
-    };
-  } catch {
-    return base;
+  const snap = await readClerkSnapshot(userId);
+  if (snap?.allowlisted || snap?.metadataRole === "admin") {
+    return { userId, role: "admin", coachStatus: null, signupIntent: null };
   }
+  if (dbRole) {
+    return { userId, role: dbRole, coachStatus: dbCoach, signupIntent: null };
+  }
+  if (!snap) return base;
+  return {
+    userId,
+    role: null,
+    coachStatus: snap.coachStatus,
+    signupIntent: snap.signupIntent,
+  };
 }
 
 export async function getRequestViewer(): Promise<Viewer | null> {
@@ -112,14 +169,7 @@ export function homeFor(viewer: Viewer): string {
 }
 
 export async function clerkSaysAdmin(userId: string): Promise<boolean> {
-  if (!process.env.CLERK_SECRET_KEY) return false;
-  try {
-    const client = await clerkClient();
-    const user = await client.users.getUser(userId);
-    return user.publicMetadata?.role === "admin";
-  } catch {
-    return false;
-  }
+  return (await adminAccess(userId)).allowed;
 }
 
 export async function mergePublicMetadata(
