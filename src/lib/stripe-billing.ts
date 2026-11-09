@@ -3,11 +3,10 @@ import Stripe from "stripe";
 import { players, profileViews, subscriptions } from "@/db/schema";
 import { getDb } from "@/db";
 import { isPlayerId } from "@/lib/player-access";
-import { currentSeason, promoFreeSeason, refundEligible, yearlyExpiresAt } from "@/lib/seasons";
+import { coverageFor, promoFreeSeason, refundEligible } from "@/lib/seasons";
 
 export const SEASON_PRICE_LOOKUP = "player_pool_season";
 export const YEARLY_PRICE_LOOKUP = "player_pool_yearly";
-export const PROMO_CODE = "FIRST25";
 
 export function stripeConfigured(): boolean {
   return Boolean(process.env["STRIPE_SECRET_KEY"]);
@@ -40,6 +39,7 @@ export async function createCheckoutSession(input: {
   parentId: string;
   playerId: string;
   plan: "season" | "yearly";
+  startSeason: string;
   email: string | null;
   origin: string;
 }): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
@@ -61,6 +61,14 @@ export async function createCheckoutSession(input: {
       parent_id: input.parentId,
       player_id: input.playerId,
       plan: input.plan,
+      start_season: input.startSeason,
+    },
+    consent_collection: { terms_of_service: "required" },
+    custom_text: {
+      terms_of_service_acceptance: {
+        message:
+          "I agree to the Player Pool Terms of Use. Full refund within 15 days of payment only if no coach has opened the profile; otherwise no refund.",
+      },
     },
   });
   if (!session.url) return { ok: false, error: "Stripe did not return a checkout page." };
@@ -88,26 +96,28 @@ export async function fulfillCheckoutSession(
   if (!player || player.parentId !== parentId) return "ignored";
 
   const now = new Date();
-  const season = currentSeason(now);
   const amount = session.amount_total ?? 0;
   const discount = session.total_details?.amount_discount ?? 0;
   const paymentIntent =
     typeof session.payment_intent === "string"
       ? session.payment_intent
       : session.payment_intent?.id ?? null;
+  const coverage = coverageFor(session.metadata?.start_season ?? "", plan, now);
+  if (!coverage) return "ignored";
+  const year = Number(coverage.seasonCode.split("-").at(-1));
   try {
     await db.insert(subscriptions).values({
       parentId,
       playerId,
       plan,
-      seasonCode: plan === "season" ? season.seasonCode : null,
-      year: season.year,
+      seasonCode: coverage.seasonCode,
+      year: Number.isInteger(year) ? year : now.getFullYear(),
       amountCents: amount,
       promoFreeSeason: promoFreeSeason(amount, discount),
       stripeSessionId: session.id,
       stripePaymentIntent: paymentIntent,
       paidAt: now,
-      expiresAt: plan === "yearly" ? yearlyExpiresAt(now) : season.expiresAt,
+      expiresAt: coverage.expiresAt,
     });
   } catch {
     const [existing] = await db
@@ -120,7 +130,10 @@ export async function fulfillCheckoutSession(
   }
   await db
     .update(players)
-    .set({ season: plan === "yearly" ? `yearly-${season.year}` : season.seasonCode, updatedAt: now })
+    .set({
+      season: plan === "yearly" ? `yearly:${coverage.seasonCode}` : coverage.seasonCode,
+      updatedAt: now,
+    })
     .where(eq(players.id, playerId));
   return "created";
 }

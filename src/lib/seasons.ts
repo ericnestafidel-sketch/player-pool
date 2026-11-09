@@ -1,7 +1,7 @@
 const TZ = "America/Indiana/Indianapolis";
 const REFUND_WINDOW_MS = 15 * 24 * 60 * 60 * 1000;
 
-export type SeasonCode = "spring" | "summer" | "fall-winter";
+export type SeasonCode = "spring" | "summer" | "fall";
 
 export type CurrentSeason = {
   code: SeasonCode;
@@ -59,27 +59,119 @@ function nextDay(year: number, month: number, day: number): Date {
   return indianaStart(cursor.getUTCFullYear(), cursor.getUTCMonth() + 1, cursor.getUTCDate());
 }
 
-/** Spring Jan–May, Summer Jun–Aug, Fall/Winter Sep–Dec. Active through the last day. */
+function makeSeason(code: SeasonCode, year: number): CurrentSeason {
+  const expiresAt =
+    code === "spring"
+      ? nextDay(year, 5, 31)
+      : code === "summer"
+        ? nextDay(year, 8, 31)
+        : nextDay(year, 10, 31);
+  return { code, seasonCode: `${code}-${year}`, year, expiresAt };
+}
+
+/**
+ * Spring is November 1 through May 31 and is named for the year it ends
+ * (Spring 2027 = Nov 1, 2026 – May 31, 2027). Summer is June 1 – August 31.
+ * Fall is September 1 – October 31.
+ */
 export function currentSeason(now: Date): CurrentSeason {
   const { year, month } = indianaCalendar(now);
-  if (month <= 5) {
-    return { code: "spring", seasonCode: `spring-${year}`, year, expiresAt: nextDay(year, 5, 31) };
-  }
-  if (month <= 8) {
-    return { code: "summer", seasonCode: `summer-${year}`, year, expiresAt: nextDay(year, 8, 31) };
-  }
+  if (month >= 11) return makeSeason("spring", year + 1);
+  if (month <= 5) return makeSeason("spring", year);
+  if (month <= 8) return makeSeason("summer", year);
+  return makeSeason("fall", year);
+}
+
+/** Spring, then Summer, then Fall, then next Spring. */
+export function followingSeason(start: CurrentSeason): CurrentSeason {
+  if (start.code === "spring") return makeSeason("summer", start.year);
+  if (start.code === "summer") return makeSeason("fall", start.year);
+  return makeSeason("spring", start.year + 1);
+}
+
+/** Yearly is 12 months: the chosen season plus the next two, through the third season's last day. */
+export function yearlyFrom(start: CurrentSeason): { seasons: CurrentSeason[]; expiresAt: Date } {
+  const second = followingSeason(start);
+  const third = followingSeason(second);
+  return { seasons: [start, second, third], expiresAt: third.expiresAt };
+}
+
+export function yearlyExpiresAt(now: Date): Date {
+  return yearlyFrom(currentSeason(now)).expiresAt;
+}
+
+export type SeasonOffer = {
+  seasonCode: string;
+  label: string;
+  startsOn: string;
+  endsOn: string;
+  yearlyLabels: string;
+  yearlyEndsOn: string;
+};
+
+export function seasonStart(season: CurrentSeason): Date {
+  if (season.code === "spring") return indianaStart(season.year - 1, 11, 1);
+  if (season.code === "summer") return indianaStart(season.year, 6, 1);
+  return indianaStart(season.year, 9, 1);
+}
+
+function offerFrom(season: CurrentSeason): SeasonOffer {
+  const yearly = yearlyFrom(season);
+  const label = `${seasonTitle(season.code)} ${season.year}`;
   return {
-    code: "fall-winter",
-    seasonCode: `fall-winter-${year}`,
-    year,
-    expiresAt: nextDay(year, 12, 31),
+    seasonCode: season.seasonCode,
+    label,
+    startsOn: formatIndianaDate(seasonStart(season)),
+    endsOn: formatIndianaDate(new Date(season.expiresAt.getTime() - 60_000)),
+    yearlyLabels: yearly.seasons.map((item) => `${seasonTitle(item.code)} ${item.year}`).join(", "),
+    yearlyEndsOn: formatIndianaDate(new Date(yearly.expiresAt.getTime() - 60_000)),
   };
 }
 
-/** Yearly covers every season through December 31 of the purchase year. */
-export function yearlyExpiresAt(now: Date): Date {
-  const { year } = indianaCalendar(now);
-  return nextDay(year, 12, 31);
+export function seasonTitle(code: SeasonCode): string {
+  if (code === "spring") return "Spring";
+  if (code === "summer") return "Summer";
+  return "Fall";
+}
+
+export function formatIndianaDate(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ,
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+/** Current season and the next one. Both can be chosen at checkout. */
+export function seasonOffers(now: Date): [SeasonOffer, SeasonOffer] {
+  const current = currentSeason(now);
+  return [offerFrom(current), offerFrom(followingSeason(current))];
+}
+
+/** Accept only the current season or the next one. */
+export function coverageFor(
+  startCode: string,
+  plan: "season" | "yearly",
+  now: Date,
+): { expiresAt: Date; seasonCode: string; covered: string } | null {
+  const current = currentSeason(now);
+  const next = followingSeason(current);
+  const start = startCode === current.seasonCode ? current : startCode === next.seasonCode ? next : null;
+  if (!start) return null;
+  if (plan === "season") {
+    return {
+      expiresAt: start.expiresAt,
+      seasonCode: start.seasonCode,
+      covered: `${seasonTitle(start.code)} ${start.year}`,
+    };
+  }
+  const yearly = yearlyFrom(start);
+  return {
+    expiresAt: yearly.expiresAt,
+    seasonCode: start.seasonCode,
+    covered: yearly.seasons.map((item) => `${seasonTitle(item.code)} ${item.year}`).join(", "),
+  };
 }
 
 export function promoFreeSeason(amountTotal: number, discountCents: number): boolean {

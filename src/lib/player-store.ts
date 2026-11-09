@@ -251,14 +251,12 @@ export async function softDeletePlayer(
     .where(and(eq(players.id, playerId), eq(players.parentId, parentId), isNull(players.deletedAt)))
     .returning({ id: players.id });
   if (!updated) return { ok: false, error: "That profile is not available." };
-  await purgeDeletedPlayers();
   return { ok: true };
 }
 
 export async function listParentPlayers(parentId: string, now = new Date()): Promise<ParentPlayer[]> {
   const db = getDb();
   if (!db) return [];
-  await purgeDeletedPlayers(now);
   const rows = await db
     .select({
       ...playerColumns,
@@ -381,7 +379,6 @@ export async function searchPlayers(
   const db = getDb();
   const visibility = coachVisibilityConditions(coachId, now);
   if (!db || !visibility) return { hits: [], truncated: false };
-  await purgeDeletedPlayers(now);
   const conditions = [...visibility];
   if (filters.ageGroup) conditions.push(eq(players.ageGroup, filters.ageGroup));
   if (filters.position) conditions.push(sql`${filters.position} = any(${players.positions})`);

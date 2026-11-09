@@ -11,7 +11,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: `Simple, one-time pricing. No auto-renew. A season is ${formatUsd(seasonPlan.amountCents)}. All three seasons are ${formatUsd(yearlyPlan.amountCents)}.`,
+  description: `Simple, one-time pricing. No auto-renew. One season is ${formatUsd(seasonPlan.amountCents)}. Three seasons in a row are ${formatUsd(yearlyPlan.amountCents)}.`,
 };
 
 export default function PricingPage() {
@@ -43,7 +43,8 @@ export default function PricingPage() {
               <b>per season</b>, one-time payment
             </p>
             <p className="meta">
-              Seasons: {SEASONS.map((season) => `${season.name} (${season.months})`).join(", ")}.
+              One season you choose: {SEASONS.map((season) => `${season.name} (${season.months})`).join(", ")}.
+              It ends on that season&apos;s last day.
             </p>
             <ul>
               {PLAN_FEATURES.map((feature) => (
@@ -54,7 +55,7 @@ export default function PricingPage() {
               <Link className="btn gold" href="/sign-up">
                 Create parent account
               </Link>
-              <p className="meta">Checkout opens at launch.</p>
+              <p className="meta">You choose the season at checkout.</p>
             </div>
           </article>
           <article className="price-card featured">
@@ -62,9 +63,13 @@ export default function PricingPage() {
             <h2>Yearly</h2>
             <p className="amt">{formatUsd(yearlyPlan.amountCents)}</p>
             <p className="price-cadence">
-              <b>for all three seasons</b>, one-time payment.
+              <b>12 months, three seasons in a row</b>, one-time payment.
             </p>
-            <p className="meta">Best value (save {formatUsd(yearlyPlan.savingsCents)}).</p>
+            <p className="meta">
+              Starts with the season you choose and ends on the last day of the third season. Save{" "}
+              {formatUsd(yearlyPlan.savingsCents)} versus three season payments. Spring is named for
+              the year it ends (Spring 2027 starts November 1, 2026).
+            </p>
             <ul>
               {PLAN_FEATURES.map((feature) => (
                 <li key={feature}>{feature}</li>
@@ -74,7 +79,7 @@ export default function PricingPage() {
               <Link className="btn gold" href="/sign-up">
                 Create parent account
               </Link>
-              <p className="meta">Checkout opens at launch.</p>
+              <p className="meta">You choose the season at checkout.</p>
             </div>
           </article>
         </div>

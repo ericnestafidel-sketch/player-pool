@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState, type Dispatch, type SetStateAction } from "react";
 import { savePlayer, type PlayerFormState } from "@/app/(private)/parent/player/actions";
 import {
@@ -18,11 +19,13 @@ export function PlayerForm({
   weekends,
   draft,
   label,
+  needsAgreement = false,
 }: {
   sports: SportConfig[];
   weekends: string[];
   draft: PlayerDraft;
   label?: string;
+  needsAgreement?: boolean;
 }) {
   const [state, action, pending] = useActionState(savePlayer, initialState);
   const [sportSlug, setSportSlug] = useState(draft.sport);
@@ -352,6 +355,18 @@ export function PlayerForm({
         <FieldError id="weekends-error" message={state.fieldErrors.weekends} />
       </section>
 
+      {needsAgreement ? (
+        <>
+          <label className="check">
+            <input name="guardian" type="checkbox" required />
+            <span>
+              I am 18 or older and this player&apos;s parent or guardian, and I agree to the{" "}
+              <Link href="/terms">Terms</Link> and <Link href="/privacy">Privacy Policy</Link>.
+            </span>
+          </label>
+          <FieldError id="guardian-error" message={state.fieldErrors.guardian} />
+        </>
+      ) : null}
       <button className="btn gold save" type="submit" disabled={pending}>
         {pending ? "Saving…" : draft.playerId ? "Save profile" : "Create profile"}
       </button>

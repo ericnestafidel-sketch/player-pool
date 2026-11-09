@@ -3,7 +3,7 @@ import type { CoachStatus } from "@/lib/viewer";
 
 /**
  * The only coach shape a parent may see. Email, phone, and address are not fields
- * on this type. Contact stays on the relay.
+ * on this type. Messages stay in the app.
  */
 export type PublicCoach = {
   teamName: string;

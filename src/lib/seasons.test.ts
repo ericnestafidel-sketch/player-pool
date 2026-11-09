@@ -9,10 +9,10 @@ import {
   yearlyExpiresAt,
 } from "@/lib/seasons";
 
-test("Indiana season ends on the last day of the season", () => {
+test("seasons cross the year and yearly is the next 12 months", () => {
   assert.equal(indianaStart(2026, 6, 1).toISOString(), "2026-06-01T04:00:00.000Z");
-  assert.equal(indianaStart(2026, 9, 1).toISOString(), "2026-09-01T04:00:00.000Z");
-  assert.equal(indianaStart(2027, 1, 1).toISOString(), "2027-01-01T05:00:00.000Z");
+  assert.equal(indianaStart(2026, 11, 1).toISOString(), "2026-11-01T04:00:00.000Z");
+  assert.equal(indianaStart(2027, 11, 1).toISOString(), "2027-11-01T04:00:00.000Z");
 
   const spring = currentSeason(new Date("2026-03-15T16:00:00.000Z"));
   assert.equal(spring.seasonCode, "spring-2026");
@@ -22,10 +22,14 @@ test("Indiana season ends on the last day of the season", () => {
   assert.equal(summer.seasonCode, "summer-2026");
   assert.equal(summer.expiresAt.toISOString(), "2026-09-01T04:00:00.000Z");
 
-  const fall = currentSeason(new Date("2026-11-09T15:00:00.000Z"));
-  assert.equal(fall.seasonCode, "fall-winter-2026");
-  assert.equal(fall.expiresAt.toISOString(), "2027-01-01T05:00:00.000Z");
-  assert.equal(yearlyExpiresAt(new Date("2026-01-15T15:00:00.000Z")).toISOString(), "2027-01-01T05:00:00.000Z");
+  const fall = currentSeason(new Date("2026-10-15T16:00:00.000Z"));
+  assert.equal(fall.seasonCode, "fall-2026");
+  assert.equal(fall.expiresAt.toISOString(), "2026-11-01T04:00:00.000Z");
+
+  const launch = currentSeason(new Date("2026-11-22T17:00:00.000Z"));
+  assert.equal(launch.seasonCode, "spring-2027");
+  assert.equal(launch.expiresAt.toISOString(), "2027-06-01T04:00:00.000Z");
+  assert.equal(yearlyExpiresAt(new Date("2026-11-22T17:00:00.000Z")).toISOString(), "2027-11-01T04:00:00.000Z");
 });
 
 test("a zero total or a discount is the free-season promo", () => {

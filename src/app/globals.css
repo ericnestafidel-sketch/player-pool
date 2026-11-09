@@ -124,6 +124,12 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
 .legal h2{text-align:left;font-size:1.25rem;margin:28px 0 10px;color:var(--navy)}
 .legal h3{font-size:1rem;margin:18px 0 8px;color:var(--navy)}
 .legal p,.legal li{font-size:15px}
+.legal table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:14px}
+.legal th,.legal td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+.legal th{background:#eef3f9;color:var(--navy)}
+.legal hr{border:0;border-top:1px solid var(--border);margin:28px 0}
+.parent-panel .check{display:flex;gap:10px;align-items:flex-start;margin:14px 0;font-size:14px;font-weight:500;color:var(--text)}
+.parent-panel .check input{width:auto;margin-top:3px}
 .legal ul,.legal ol{padding-left:22px}
 .legal li{margin:6px 0}
 .status-badge{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;margin:6px 0}

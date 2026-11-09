@@ -5,20 +5,21 @@ export const SEASON_PRICE_CENTS = 2500;
 export const YEARLY_PRICE_CENTS = 6000;
 export const SEASONS_PER_YEAR = 3;
 export const LAUNCH_FREE_SEASON_SPOTS = 25;
+export const PROMO_CODE = "FIRST25";
 
 export const YEARLY_SAVINGS_CENTS = SEASON_PRICE_CENTS * SEASONS_PER_YEAR - YEARLY_PRICE_CENTS;
 
 export const SEASONS = [
-  { id: "spring", name: "Spring", months: "Jan to May" },
-  { id: "summer", name: "Summer", months: "Jun to Aug" },
-  { id: "fall-winter", name: "Fall/Winter", months: "Sep to Dec" },
+  { id: "spring", name: "Spring", months: "Nov 1 to May 31" },
+  { id: "summer", name: "Summer", months: "Jun 1 to Aug 31" },
+  { id: "fall", name: "Fall", months: "Sep 1 to Oct 31" },
 ] as const;
 
 export const PLAN_FEATURES = [
-  "Profile visible only to approved, verified coaches",
+  "Profile visible only to hand-approved coaches",
   "Player # instead of name, county only",
   "Highlights, stats, availability",
-  "Contact through a private relay, never your email or phone",
+  "Messages stay in Player Pool. Neither side sees email or phone",
   "Pause or delete anytime",
 ] as const;
 

@@ -68,15 +68,21 @@ async function upsertPromo(stripe: Stripe, couponId: string) {
   const found = existing.data[0];
   if (found) {
     console.log(`promotion code ${PROMO_CODE}: ${found.id}`);
+    if (!found.restrictions?.first_time_transaction) {
+      console.log(
+        "FIRST25 already exists without the first-time-customer limit. Stripe cannot add that limit later. Deactivate this code in the Dashboard, then run setup again.",
+      );
+    }
     return found;
   }
   const created = await stripe.promotionCodes.create({
     code: PROMO_CODE,
     max_redemptions: 25,
     promotion: { type: "coupon", coupon: couponId },
+    restrictions: { first_time_transaction: true },
     metadata: { player_pool_plan: "season" },
   });
-  console.log(`created promotion code ${PROMO_CODE}: ${created.id}`);
+  console.log(`created promotion code ${PROMO_CODE}: ${created.id} (season coupon only, 25 uses, first-time customers)`);
   return created;
 }
 

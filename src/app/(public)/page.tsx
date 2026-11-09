@@ -18,7 +18,7 @@ export default function HomePage() {
       <section className="hero">
         <h1>Get your player seen by travel coaches</h1>
         <p>
-          Parents list their son in a private, nationwide pool that verified travel coaches search
+          Parents list their son in a private, nationwide pool that hand-approved travel coaches search
           by age, position, USSSA level, state, and county. No names, no addresses, no phone numbers
           shown.
         </p>
@@ -57,10 +57,10 @@ export default function HomePage() {
           </div>
           <div className="box">
             <div className="num">4</div>
-            <h3>Contact through relay</h3>
+            <h3>Message in the app</h3>
             <p>
-              Coaches message parents through the site. Your email and phone stay private until you
-              choose to reply.
+              Coaches and parents message each other inside Player Pool. Neither side ever sees the
+              other&apos;s email or phone.
             </p>
           </div>
         </div>
@@ -73,7 +73,10 @@ export default function HomePage() {
             <li>Profiles are visible only to logged-in, hand-approved coaches.</li>
             <li>Players appear as a number (Player #234), never by name.</li>
             <li>Location shows state and county only — never a town or home address.</li>
-            <li>No parent or player email or phone is shown; contact goes through a relay form.</li>
+            <li>
+              No parent or player email or phone is shown. Messages stay inside Player Pool, and
+              neither side ever sees the other&apos;s email or phone.
+            </li>
             <li>Parents can delete a profile in one click.</li>
             <li>Payments go through Stripe so the site never handles card numbers.</li>
           </ul>
@@ -93,14 +96,15 @@ export default function HomePage() {
             <div className="status-badge status-pickup">Best value</div>
             <div className="amt">{formatUsd(yearlyPlan.amountCents)}</div>
             <p>
-              <b>all three seasons</b>
+              <b>three seasons in a row</b>
             </p>
             <p className="meta">One-time payment.</p>
           </div>
         </div>
         <p className="note" style={{ textAlign: "center", maxWidth: 560, margin: "0 auto 20px" }}>
-          One-time payments, no auto-renewal. Seasons: Spring (Jan–May) · Summer (Jun–Aug) ·
-          Fall/Winter (Sep–Dec). Full refund within 15 days if no coach has viewed the profile.
+          One-time payments, no auto-renewal. Seasons: Spring (Nov 1–May 31, named for the year it
+          ends) · Summer (Jun 1–Aug 31) · Fall (Sep 1–Oct 31). A yearly listing is those three seasons
+          in a row, 12 months. Full refund within 15 days if no coach has viewed the profile.
           Coaches use Player Pool free.
         </p>
         <p style={{ textAlign: "center" }}>

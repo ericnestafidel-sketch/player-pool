@@ -7,6 +7,7 @@ import { eq, and, isNull } from "drizzle-orm";
 import { players, users } from "@/db/schema";
 import { getDb } from "@/db";
 import { isPlayerId } from "@/lib/player-access";
+import { coverageFor } from "@/lib/seasons";
 import { createCheckoutSession, refundListing, requestOrigin, stripeConfigured } from "@/lib/stripe-billing";
 import { getRequestViewer } from "@/lib/viewer";
 
@@ -26,7 +27,9 @@ export async function startCheckout(formData: FormData) {
   if (!stripeConfigured()) redirect("/parent/checkout");
   const playerId = text(formData.get("playerId"));
   const plan = text(formData.get("plan"));
+  const startSeason = text(formData.get("startSeason"));
   if (!isPlayerId(playerId) || (plan !== "season" && plan !== "yearly")) redirect("/parent/checkout");
+  if (!coverageFor(startSeason, plan, new Date())) redirect("/parent/checkout");
   const db = getDb();
   if (!db) redirect("/parent/checkout");
   const [player] = await db
@@ -41,6 +44,7 @@ export async function startCheckout(formData: FormData) {
     parentId: id,
     playerId,
     plan,
+    startSeason,
     email: account?.email ?? null,
     origin,
   });

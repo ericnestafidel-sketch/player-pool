@@ -87,13 +87,24 @@ export function CoachSignupForm() {
         <FieldError message={state.fieldErrors.refContact} />
       </div>
       <label className="check">
-        <input id="conduct" name="conduct" type="checkbox" required />
+        <input id="eligibility" name="eligibility" type="checkbox" required />
         <span>
-          I agree to the <Link href="/conduct">Coach Code of Conduct</Link> and{" "}
+          I have no disqualifying criminal record or sanctions. I have not been convicted of, or
+          charged and awaiting trial for, a crime involving a child, sexual misconduct, or violence.
+          I am not on a sex-offender registry, and I am not suspended or sanctioned by SafeSport or
+          any sports organization.
+        </span>
+      </label>
+      <FieldError message={state.fieldErrors.eligibility} />
+      <label className="check">
+        <input id="safetyRules" name="safetyRules" type="checkbox" required />
+        <span>
+          I agree to the safety rules in the <Link href="/conduct">Coach Code of Conduct</Link>,
+          including contacting parents only and no one-on-one contact with a player, and to the{" "}
           <Link href="/terms">Terms of Use</Link>.
         </span>
       </label>
-      <FieldError message={state.fieldErrors.conduct} />
+      <FieldError message={state.fieldErrors.safetyRules} />
       <button className="btn gold" type="submit" disabled={pending}>
         {pending ? "Sending…" : "Submit request"}
       </button>
