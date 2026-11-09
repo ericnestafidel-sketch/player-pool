@@ -141,7 +141,8 @@ export const players = pgTable(
     birthYear: integer("birth_year").notNull(),
     ageGroup: text("age_group").notNull(),
     positions: text("positions").array().notNull(),
-    skillLevel: text("skill_level").notNull(),
+    /** One or two USSSA (or sport) skill levels. Existing rows are copied from skill_level. */
+    skillLevels: text("skill_levels").array().notNull(),
     state: text("state").notNull(),
     county: text("county").notNull(),
     status: playerStatus("status").notNull(),

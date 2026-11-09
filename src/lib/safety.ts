@@ -62,7 +62,7 @@ export type PublicPlayer = {
   birthYear: number;
   ageGroup: string;
   positions: string[];
-  skillLevel: string;
+  skillLevels: string[];
   state: string;
   county: string;
   status: keyof typeof PLAYER_STATUS_LABEL;
@@ -80,7 +80,7 @@ export function toPublicPlayer(row: {
   birthYear: number;
   ageGroup: string;
   positions: string[];
-  skillLevel: string;
+  skillLevels: string[];
   state: string;
   county: string;
   status: keyof typeof PLAYER_STATUS_LABEL;
@@ -96,7 +96,7 @@ export function toPublicPlayer(row: {
     birthYear: row.birthYear,
     ageGroup: row.ageGroup,
     positions: row.positions,
-    skillLevel: row.skillLevel,
+    skillLevels: row.skillLevels,
     state: row.state,
     county: row.county,
     status: row.status,

@@ -90,7 +90,7 @@ const playerColumns = {
   birthYear: players.birthYear,
   ageGroup: players.ageGroup,
   positions: players.positions,
-  skillLevel: players.skillLevel,
+  skillLevels: players.skillLevels,
   state: players.state,
   county: players.county,
   status: players.status,
@@ -158,7 +158,7 @@ async function insertOwnedPlayer(tx: Tx, parentId: string, input: PlayerInput): 
       birthYear: input.birthYear,
       ageGroup: input.ageGroup,
       positions: input.positions,
-      skillLevel: input.skillLevel,
+      skillLevels: input.skillLevels,
       state: input.state,
       county: input.county,
       status: input.status,
@@ -183,7 +183,7 @@ async function updateOwnedPlayer(
       birthYear: input.birthYear,
       ageGroup: input.ageGroup,
       positions: input.positions,
-      skillLevel: input.skillLevel,
+      skillLevels: input.skillLevels,
       state: input.state,
       county: input.county,
       status: input.status,
@@ -331,7 +331,7 @@ export async function loadPlayerEditor(
       birthYear: String(row.birthYear),
       ageGroup: row.ageGroup,
       positions: row.positions,
-      skillLevel: row.skillLevel,
+      skillLevels: row.skillLevels,
       state: row.state,
       county: row.county,
       status: row.status,
@@ -391,7 +391,9 @@ export async function searchPlayers(
   const conditions = [...visibility];
   if (filters.ageGroup) conditions.push(eq(players.ageGroup, filters.ageGroup));
   if (filters.position) conditions.push(sql`${filters.position} = any(${players.positions})`);
-  if (filters.skillLevel) conditions.push(eq(players.skillLevel, filters.skillLevel));
+  if (filters.skillLevel) {
+    conditions.push(sql`${filters.skillLevel} = any(${players.skillLevels})`);
+  }
   if (filters.state) conditions.push(eq(players.state, filters.state));
   if (filters.county) conditions.push(sql`lower(${players.county}) = ${filters.county.toLowerCase()}`);
   if (filters.status) conditions.push(eq(players.status, filters.status));

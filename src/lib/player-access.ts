@@ -102,7 +102,7 @@ async function loadPlayer(id: string) {
       birthYear: players.birthYear,
       ageGroup: players.ageGroup,
       positions: players.positions,
-      skillLevel: players.skillLevel,
+      skillLevels: players.skillLevels,
       state: players.state,
       county: players.county,
       status: players.status,

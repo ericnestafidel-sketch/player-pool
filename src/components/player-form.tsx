@@ -30,19 +30,23 @@ export function PlayerForm({
   const [state, action, pending] = useActionState(savePlayer, initialState);
   const [sportSlug, setSportSlug] = useState(draft.sport);
   const [ageGroup, setAgeGroup] = useState(draft.ageGroup);
-  const [skillLevel, setSkillLevel] = useState(draft.skillLevel);
+  const [skillLevel, setSkillLevel] = useState(draft.skillLevels[0] ?? "");
+  const [skillLevel2, setSkillLevel2] = useState(draft.skillLevels[1] ?? "");
   const [positions, setPositions] = useState(draft.positions);
   const [stats, setStats] = useState(draft.stats);
   const [highlights, setHighlights] = useState(draft.highlights);
   const sport = sports.find((item) => item.slug === sportSlug) ?? sports[0];
   const ageValue = sport?.ageLabels.includes(ageGroup) ? ageGroup : "";
   const levelValue = sport?.levelLabels.includes(skillLevel) ? skillLevel : "";
+  const levelValue2 =
+    sport?.levelLabels.includes(skillLevel2) && skillLevel2 !== levelValue ? skillLevel2 : "";
   if (!sport) return <p className="field-error">Sport list is not available.</p>;
 
   function chooseSport(next: string) {
     setSportSlug(next);
     setAgeGroup("");
     setSkillLevel("");
+    setSkillLevel2("");
     setPositions([]);
   }
 
@@ -128,16 +132,39 @@ export function PlayerForm({
         </fieldset>
 
         <label htmlFor="skillLevel">{skillLevelLabel(sport)}</label>
+        <p className="meta" id="skillLevel-hint">
+          Choose one or two. At least one is required.
+        </p>
         <select
           id="skillLevel"
           name="skillLevel"
           required
           value={levelValue}
-          onChange={(event) => setSkillLevel(event.target.value)}
+          aria-describedby={state.fieldErrors.skillLevel ? "skillLevel-error" : "skillLevel-hint"}
+          onChange={(event) => {
+            const next = event.target.value;
+            setSkillLevel(next);
+            if (next && next === skillLevel2) setSkillLevel2("");
+          }}
         >
           <option value="">Choose a level</option>
           {sport.levelLabels.map((level) => (
             <option key={level} value={level}>
+              {level}
+            </option>
+          ))}
+        </select>
+        <label htmlFor="skillLevel2">Second {skillLevelLabel(sport)} (optional)</label>
+        <select
+          id="skillLevel2"
+          name="skillLevel2"
+          value={levelValue2}
+          aria-describedby={state.fieldErrors.skillLevel ? "skillLevel-error" : undefined}
+          onChange={(event) => setSkillLevel2(event.target.value)}
+        >
+          <option value="">No second level</option>
+          {sport.levelLabels.map((level) => (
+            <option key={level} value={level} disabled={level === levelValue}>
               {level}
             </option>
           ))}

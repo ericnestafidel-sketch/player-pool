@@ -43,6 +43,13 @@
       "when": 1794248196668,
       "tag": "0005_admin_test_players",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794249621613,
+      "tag": "0006_skill_levels",
+      "breakpoints": true
     }
   ]
 }

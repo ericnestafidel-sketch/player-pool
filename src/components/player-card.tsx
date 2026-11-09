@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatWeekend, type WeekendMark } from "@/lib/player-rules";
+import { formatSkillLevels, formatWeekend, type WeekendMark } from "@/lib/player-rules";
 import { PLAYER_STATUS_LABEL, type PublicPlayer } from "@/lib/safety";
 
 export function PlayerCard({
@@ -31,7 +31,7 @@ export function PlayerCard({
       {highlightFresh ? <span className="badge-hl">90-day highlight</span> : null}
       <span className={`status-badge ${badge}`}>{PLAYER_STATUS_LABEL[player.status]}</span>
       <p className="meta">
-        {player.ageGroup} · {player.skillLevel} · {player.sport}
+        {player.ageGroup} · {formatSkillLevels(player.skillLevels)} · {player.sport}
       </p>
       <p className="meta">
         {player.state} · {player.county} County

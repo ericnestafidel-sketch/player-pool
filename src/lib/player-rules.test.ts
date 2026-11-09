@@ -5,6 +5,9 @@ import {
   assertNoContactFields,
   calendarYear,
   filtersFromParams,
+  filtersFromUnknown,
+  filtersToQuery,
+  formatSkillLevels,
   highlightUrlError,
   isSaturdayDate,
   normalizeCounty,
@@ -86,6 +89,7 @@ test("a player form accepts state and county and rejects a name-shaped stat", ()
     ageGroup: "12U",
     positions: ["Pitcher"],
     skillLevel: "AA",
+    skillLevel2: "Major",
     state: "IN",
     county: "Montgomery County",
     status: "pickup",
@@ -100,6 +104,8 @@ test("a player form accepts state and county and rejects a name-shaped stat", ()
   assert.equal(good.ok, true);
   if (good.ok) {
     assert.equal(good.value.county, "Montgomery");
+    assert.deepEqual(good.value.skillLevels, ["AA", "Major"]);
+    assert.equal(formatSkillLevels(good.value.skillLevels), "AA / Major");
     assert.deepEqual(good.value.weekends, [{ weekendStart: "2026-11-14", state: "avail" }]);
     assert.deepEqual(good.value.stats, [{ name: "ERA", value: "3.20" }]);
   }
@@ -144,7 +150,67 @@ test("search filters keep only known labels", () => {
   );
   assert.equal(filters.ageGroup, "12U");
   assert.equal(filters.position, "");
+  assert.equal(filters.skillLevel, "AA");
   assert.equal(filters.state, "IN");
   assert.equal(filters.status, "pickup");
   assert.equal("email" in filters, false);
+});
+
+test("a saved search keeps its single skill level", () => {
+  const stored = { ageGroup: "12U", skillLevel: "AA", county: "Marion" };
+  const filters = filtersFromUnknown(stored, baseball, now);
+  assert.equal(filters.skillLevel, "AA");
+  assert.equal(filters.ageGroup, "12U");
+  assert.equal(filtersToQuery(filters), "?age=12U&level=AA&county=Marion");
+});
+
+test("a player needs one skill level and can list two", () => {
+  const missing = parsePlayerForm(
+    form({
+      sport: "baseball",
+      birthYear: "2015",
+      ageGroup: "12U",
+      positions: ["Pitcher"],
+      state: "IN",
+      county: "Marion",
+      status: "full",
+    }),
+    [baseball],
+    now,
+  );
+  assert.equal(missing.ok, false);
+  if (!missing.ok) assert.match(missing.fieldErrors.skillLevel ?? "", /at least one/);
+
+  const same = parsePlayerForm(
+    form({
+      sport: "baseball",
+      birthYear: "2015",
+      ageGroup: "12U",
+      positions: ["Pitcher"],
+      skillLevel: "AA",
+      skillLevel2: "AA",
+      state: "IN",
+      county: "Marion",
+      status: "full",
+    }),
+    [baseball],
+    now,
+  );
+  assert.equal(same.ok, false);
+  if (!same.ok) assert.match(same.fieldErrors.skillLevel ?? "", /two different/);
+
+  const extra = form({
+    sport: "baseball",
+    birthYear: "2015",
+    ageGroup: "12U",
+    positions: ["Pitcher"],
+    skillLevel: ["AA", "Major"],
+    skillLevel2: "AA",
+    state: "IN",
+    county: "Marion",
+    status: "full",
+  });
+  const tooMany = parsePlayerForm(extra, [baseball], now);
+  assert.equal(tooMany.ok, false);
+  if (!tooMany.ok) assert.match(tooMany.fieldErrors.skillLevel ?? "", /at most two/);
 });
