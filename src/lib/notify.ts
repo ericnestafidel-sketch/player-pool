@@ -1,3 +1,4 @@
+import { absoluteUrl, fallbackOrigin } from "@/lib/launch";
 import { notificationCopy } from "@/lib/message-text";
 
 /**
@@ -39,14 +40,5 @@ export async function sendNotification(to: string, linkPath: string): Promise<vo
 
 function appLink(path: string): string | null {
   if (!path.startsWith("/parent/inbox/") && !path.startsWith("/coach/messages/")) return null;
-  if (path.includes("://") || path.includes("\\") || path.includes("\n") || path.includes(" ")) return null;
-  const configured = process.env["APP_URL"]?.trim();
-  const vercel = process.env["VERCEL_URL"]?.trim();
-  const origin = configured
-    ? configured.replace(/\/$/, "")
-    : vercel
-      ? `https://${vercel.replace(/^https?:\/\//, "")}`
-      : "";
-  if (!origin) return null;
-  return `${origin}${path}`;
+  return absoluteUrl(path, fallbackOrigin());
 }

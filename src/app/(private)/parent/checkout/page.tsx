@@ -7,6 +7,8 @@ import { Suspense } from "react";
 import { players } from "@/db/schema";
 import { getDb } from "@/db";
 import { CheckoutForm } from "@/components/checkout-form";
+import { PlayerSignupSoon } from "@/components/player-signup-gate";
+import { playerSignupOpen } from "@/lib/launch";
 import { formatPlayerLabel } from "@/lib/safety";
 import { seasonOffers } from "@/lib/seasons";
 import { stripeConfigured } from "@/lib/stripe-billing";
@@ -37,6 +39,7 @@ async function Checkout({
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
+  if (!playerSignupOpen() && viewer.role !== "admin") return <PlayerSignupSoon />;
   if (!usesParentArea(viewer)) redirect("/parent");
   const db = getDb();
   const params = await searchParams;

@@ -3,6 +3,8 @@ import { connection } from "next/server";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AdminNav } from "@/components/admin-nav";
+import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
+import { playerSignupOpen } from "@/lib/launch";
 import { withRedirect } from "@/lib/redirects";
 import { clerkConfigured, getRequestViewer } from "@/lib/viewer";
 
@@ -35,7 +37,11 @@ async function HeaderSession() {
     return (
       <>
         <Link href="/sign-in">Sign in</Link>
-        <Link href={withRedirect("/sign-up", "/parent")}>List a player</Link>
+        {playerSignupOpen() ? (
+          <Link href={withRedirect("/sign-up", "/parent")}>List a player</Link>
+        ) : (
+          <PlayerSignupClosedButton tone="nav" />
+        )}
       </>
     );
   }

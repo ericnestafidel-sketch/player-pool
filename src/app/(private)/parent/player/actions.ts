@@ -9,7 +9,9 @@ import { LEGAL_VERSION } from "@/lib/legal";
 import { parsePlayerForm } from "@/lib/player-rules";
 import { saveParentPlayer, setPlayerPaused, softDeletePlayer } from "@/lib/player-store";
 import { listSports } from "@/lib/sport";
+import { playerSignupOpen } from "@/lib/launch";
 import { requireParentActor } from "@/lib/parent-actor";
+import { getRequestViewer } from "@/lib/viewer";
 
 export type PlayerFormState = {
   ok?: boolean;
@@ -36,11 +38,14 @@ export async function savePlayer(
   _previous: PlayerFormState,
   formData: FormData,
 ): Promise<PlayerFormState> {
+  const viewer = await getRequestViewer();
+  if (!viewer) redirect("/sign-in");
+  const existingId = text(formData.get("playerId"));
+  if (!existingId && !playerSignupOpen() && viewer.role !== "admin") redirect("/parent/player/new");
   const id = await parentId();
   const sports = await listSports();
   const parsed = parsePlayerForm(formData, sports, new Date());
   if (!parsed.ok) return { error: parsed.error, fieldErrors: parsed.fieldErrors };
-  const existingId = text(formData.get("playerId"));
   if (!existingId) {
     const agreement = await recordFirstPlayerAgreement(id, formData.get("guardian") === "on");
     if (agreement) return { error: agreement, fieldErrors: { guardian: agreement } };

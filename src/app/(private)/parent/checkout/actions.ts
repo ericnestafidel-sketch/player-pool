@@ -9,7 +9,9 @@ import { getDb } from "@/db";
 import { isPlayerId } from "@/lib/player-access";
 import { coverageFor } from "@/lib/seasons";
 import { createCheckoutSession, refundListing, requestOrigin, stripeConfigured } from "@/lib/stripe-billing";
+import { playerSignupOpen } from "@/lib/launch";
 import { requireParentActor } from "@/lib/parent-actor";
+import { getRequestViewer } from "@/lib/viewer";
 
 function text(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
@@ -20,6 +22,9 @@ async function parentId(): Promise<string> {
 }
 
 export async function startCheckout(formData: FormData) {
+  const viewer = await getRequestViewer();
+  if (!viewer) redirect("/sign-in");
+  if (!playerSignupOpen() && viewer.role !== "admin") redirect("/parent/checkout");
   const id = await parentId();
   if (!stripeConfigured()) redirect("/parent/checkout");
   const playerId = text(formData.get("playerId"));
