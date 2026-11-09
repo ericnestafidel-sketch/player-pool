@@ -53,7 +53,7 @@ Profile fields and messages are automatically checked so they can't contain an e
 ### From Coaches (you give us this)
 - Full name, email, and phone number
 - Team name, organization, age group coached, years of experience, and county and state
-- A team web page (for example a USSSA or Perfect Game page) and how you plan to use Player Pool
+- At least one proof that you coach the team (a website, league listing, social page, tournament roster, or a request for a short phone call) and how you plan to use Player Pool
 - At least one reference (name, role, team or organization, and email or phone). **We may contact your references.**
 - Your agreement to the Coach Code of Conduct and your answers to our safety questions, with the date
 - Messages you send, private notes you write about players (visible only to you), and searches you save
@@ -83,7 +83,7 @@ When you pay, Stripe tells us whether the payment succeeded, the amount, any dis
 
 We use information only to:
 - run Player Pool: create accounts, show player profiles to approved Coaches, power search and filters, and deliver messages;
-- review and approve Coaches (including checking team pages and contacting references);
+- review and approve Coaches (including checking the proof you send and contacting references);
 - keep the site safe: screen messages for contact details, limit how many new conversations a Coach can start each day, handle blocks and reports, suspend accounts, and investigate misuse;
 - process payments, promotions, and refunds;
 - send account and service emails (see Section 7);
@@ -105,7 +105,7 @@ We don't use player information for anything else, and we don't use it to train 
 | Coach's private notes and saved searches | Only that Coach (and Player Pool when needed for safety or legal reasons). |
 | Profile view log | The Parent (as a list of which Coach teams viewed the profile) and Player Pool. |
 
-**What "approved" means:** Player Pool reviews each Coach request by hand (team page, organization, and at least one reference) before granting access. **Approval is not a background check or an identity guarantee.** See our Terms of Use and Coach Code of Conduct.
+**What "approved" means:** Player Pool reviews each Coach request by hand (one proof of coaching, organization, and at least one reference) before granting access. **Approval is not a background check or an identity guarantee.** See our Terms of Use and Coach Code of Conduct.
 
 ---
 

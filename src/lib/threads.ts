@@ -61,6 +61,8 @@ const coachCardColumns = {
   agesCoached: coaches.agesCoached,
   yearsExperience: coaches.yearsExperience,
   status: coaches.status,
+  foundingCoach: coaches.foundingCoach,
+  foundingNumber: coaches.foundingNumber,
 };
 
 export async function startContact(
@@ -584,6 +586,8 @@ function publicCoach(row: {
   agesCoached: string;
   yearsExperience: number | null;
   status: "pending" | "approved" | "denied" | "suspended";
+  foundingCoach: boolean;
+  foundingNumber: number | null;
 }): PublicCoach {
   return toPublicCoach({
     teamName: row.teamName,
@@ -591,5 +595,7 @@ function publicCoach(row: {
     agesCoached: row.agesCoached,
     yearsExperience: row.yearsExperience,
     status: row.status,
+    foundingCoach: row.foundingCoach,
+    foundingNumber: row.foundingNumber,
   });
 }

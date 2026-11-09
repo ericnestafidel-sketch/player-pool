@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -15,6 +16,8 @@ import {
   upcomingWeekends,
   WEEKENDS_SHOWN,
 } from "@/lib/player-rules";
+import { coaches } from "@/db/schema";
+import { getDb } from "@/db";
 import { listSavedSearches, searchPlayers } from "@/lib/player-store";
 import { listSports, preferredSport } from "@/lib/sport";
 import { PLAYER_STATUS_LABEL } from "@/lib/safety";
@@ -53,10 +56,22 @@ async function Search({
   const [raw, sports] = await Promise.all([searchParams, listSports()]);
   const sport = preferredSport(sports);
   const filters = filtersFromParams(raw, sport, now);
-  const [saved, results] = await Promise.all([
+  const db = getDb();
+  const [saved, results, badgeRows] = await Promise.all([
     listSavedSearches(viewer.userId, sport, now),
     searchPlayers(viewer.userId, filters, now),
+    db
+      ? db
+          .select({
+            foundingCoach: coaches.foundingCoach,
+            foundingNumber: coaches.foundingNumber,
+          })
+          .from(coaches)
+          .where(eq(coaches.userId, viewer.userId))
+          .limit(1)
+      : Promise.resolve([]),
   ]);
+  const badge = badgeRows[0];
   const weekendOptions = upcomingWeekends(WEEKENDS_SHOWN, now);
   if (filters.weekend && !weekendOptions.includes(filters.weekend)) {
     weekendOptions.unshift(filters.weekend);
@@ -124,6 +139,11 @@ async function Search({
         </form>
       </aside>
       <section>
+        {badge?.foundingCoach ? (
+          <p className="status-badge badge-founding">
+            Founding Coach{badge.foundingNumber ? ` #${badge.foundingNumber}` : ""}
+          </p>
+        ) : null}
         <h1>Coach search</h1>
         <p className="lead">
           Players are listed as Player #NNN, with state and county. Parent and coach email and phone

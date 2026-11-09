@@ -596,6 +596,8 @@ async function loadViewers(playerIds: string[]): Promise<Map<string, ProfileView
       agesCoached: coaches.agesCoached,
       yearsExperience: coaches.yearsExperience,
       status: coaches.status,
+      foundingCoach: coaches.foundingCoach,
+      foundingNumber: coaches.foundingNumber,
     })
     .from(profileViews)
     .innerJoin(players, eq(players.id, profileViews.playerId))
@@ -623,6 +625,8 @@ async function loadViewers(playerIds: string[]): Promise<Map<string, ProfileView
           agesCoached: row.agesCoached,
           yearsExperience: row.yearsExperience,
           status: row.status,
+          foundingCoach: row.foundingCoach,
+          foundingNumber: row.foundingNumber,
         }),
         viewedAt: row.viewedAt,
       });

@@ -29,6 +29,13 @@
       "when": 1794246853160,
       "tag": "0003_legal_agreements",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794247363363,
+      "tag": "0004_founding_coach",
+      "breakpoints": true
     }
   ]
 }

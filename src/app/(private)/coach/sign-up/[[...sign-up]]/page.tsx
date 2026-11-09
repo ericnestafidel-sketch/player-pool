@@ -19,15 +19,14 @@ function ApprovalRequirements() {
       </p>
       <ol className="approval-steps">
         <li>
-          A public team presence: a team website, social page, or USSSA/GameChanger listing that
-          shows you coach the team.
+          At least one proof: a team website, league listing, social page, tournament roster, or a
+          short phone call with Eric.
         </li>
-        <li>Your name, team, and organization, matching that public listing.</li>
+        <li>Your name, team, and organization.</li>
         <li>
           At least one reference: another coach, a director, or a parent from a current or recent
           team. We keep it on file and only contact them if something doesn&apos;t add up.
         </li>
-        <li>A possible short verification call with the site owner.</li>
         <li>
           <span>
             Agreeing to the Player Pool <Link href="/conduct">Coach Code of Conduct</Link>.

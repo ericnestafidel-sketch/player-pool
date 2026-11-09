@@ -10,6 +10,11 @@ export function CoachCard({ coach }: { coach: PublicCoach }) {
       {coach.approved ? (
         <span className="status-badge badge-ok">Approved by Player Pool</span>
       ) : null}
+      {coach.foundingCoach ? (
+        <span className="status-badge badge-founding">
+          Founding Coach{coach.foundingNumber ? ` #${coach.foundingNumber}` : ""}
+        </span>
+      ) : null}
       <p className="meta">{coach.organization}</p>
       {ages.length ? (
         <div className="tags">

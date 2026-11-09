@@ -74,7 +74,12 @@ export const coaches = pgTable(
     yearsExperience: integer("years_experience"),
     state: text("state").notNull(),
     county: text("county").notNull(),
-    verifyUrl: text("verify_url").notNull(),
+    /** One public proof link. Empty when the coach asked for a phone call instead. */
+    verifyUrl: text("verify_url"),
+    proofKind: text("proof_kind"),
+    callRequested: boolean("call_requested").notNull().default(false),
+    foundingCoach: boolean("founding_coach").notNull().default(false),
+    foundingNumber: integer("founding_number"),
     useNote: text("use_note").notNull(),
     status: coachStatus("status").notNull().default("pending"),
     statusReason: text("status_reason"),
@@ -93,7 +98,10 @@ export const coaches = pgTable(
     infoRequestedAt: timestamp("info_requested_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => [index("coaches_status_idx").on(table.status)],
+  (table) => [
+    index("coaches_status_idx").on(table.status),
+    uniqueIndex("coaches_founding_number_unique").on(table.foundingNumber),
+  ],
 );
 
 export const coachReferences = pgTable("coach_references", {

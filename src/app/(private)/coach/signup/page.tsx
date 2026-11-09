@@ -25,8 +25,10 @@ function Requirements() {
     <div className="req-box">
       <strong>What we require</strong>
       <ul>
-        <li>A public team presence (team website, USSSA/Perfect Game listing, or organization page)</li>
-        <li>A possible short verification call with Eric</li>
+        <li>
+          At least one of: a team website, USSSA or other league listing, team social page, tournament
+          roster link, or a request for a short phone call with Eric
+        </li>
         <li>At least one reference (another coach, director, or parent from your current or recent team)</li>
         <li>
           Agreement to the <Link href="/conduct">Coach Code of Conduct</Link> and Terms
@@ -58,8 +60,8 @@ async function CoachSignup() {
       <main className="form-wrap">
         <h1>Coaches: request access</h1>
         <p className="lead">
-          Player Pool is free for coaches. Create a coach account, then send your team page and one
-          reference. You cannot see players while the request is pending.
+          Player Pool is free for coaches. Create a coach account, then send one proof of coaching and
+          one reference. You cannot see players while the request is pending.
         </p>
         <Requirements />
         <Link className="btn gold" href="/coach/sign-up">
