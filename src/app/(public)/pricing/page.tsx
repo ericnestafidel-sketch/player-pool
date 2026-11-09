@@ -29,7 +29,10 @@ export default function PricingPage() {
           Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players to sign up get their first
           season FREE.
         </p>
-        <p className="launch-sub">After that, regular pricing applies.</p>
+        <p className="launch-sub">
+          At checkout, use code FIRST25. After those {LAUNCH_FREE_SEASON_SPOTS}, regular pricing
+          applies. Yearly is not included.
+        </p>
       </div>
       <section className="wrap">
         <div className="price-grid pricing-plans">

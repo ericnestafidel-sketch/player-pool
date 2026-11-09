@@ -5,13 +5,12 @@ import { toPublicPlayer, type PublicPlayer } from "@/lib/safety";
 import type { Viewer } from "@/lib/viewer";
 
 /**
- * Stripe is not wired yet. A profile is visible to approved coaches when it is
- * not paused and not deleted.
- * When checkout exists, return true here so search and profile reads both require
- * subscriptions.paid_at and subscriptions.expires_at > now() (see hasActivePaidListing).
+ * Off until launch. Set REQUIRE_PAID_LISTING=true so search only shows a player
+ * with paid_at set and expires_at in the future. $0 promo checkouts count.
  */
 export function paidListingEnforced(): boolean {
-  return false;
+  const value = process.env["REQUIRE_PAID_LISTING"]?.trim().toLowerCase();
+  return value === "1" || value === "true" || value === "yes";
 }
 
 export async function hasActivePaidListing(playerId: string, now = new Date()): Promise<boolean> {

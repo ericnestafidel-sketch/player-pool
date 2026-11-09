@@ -37,8 +37,12 @@ function form(fields: Record<string, string | string[]>): FormData {
   return data;
 }
 
-test("paid listings stay off until Stripe", () => {
+test("paid listings stay off until the launch flag is set", () => {
+  const previous = process.env.REQUIRE_PAID_LISTING;
+  delete process.env.REQUIRE_PAID_LISTING;
   assert.equal(paidListingEnforced(), false);
+  if (previous === undefined) delete process.env.REQUIRE_PAID_LISTING;
+  else process.env.REQUIRE_PAID_LISTING = previous;
 });
 
 test("weekends start on the coming Saturday in Indiana", () => {

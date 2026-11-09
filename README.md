@@ -66,7 +66,7 @@ Apply the schema with:
 npm run db:migrate
 ```
 
-`drizzle-kit` prefers `DATABASE_URL_UNPOOLED`, then `DATABASE_URL`. The first migration creates every table, seeds the `baseball` sport, and inserts the founder counter (cap **25**).
+`drizzle-kit` prefers `DATABASE_URL_UNPOOLED`, then `DATABASE_URL`. The first migration creates every table and seeds the `baseball` sport.
 
 ## Routes in this session
 
@@ -87,15 +87,13 @@ Next.js 16 calls the request gate `src/proxy.ts` (this used to be `middleware.ts
 - Coach-visible player data goes through `toPublicPlayer` (`Player #NNN`, state, county, and baseball fields only).
 - A coach in `pending`, `denied`, or `suspended` cannot open search or a player page.
 - A blocked coach cannot read that parent's player (the block table is in place; the block button is later).
-- Until Stripe exists, an approved coach sees a player that is not paused and not deleted. The paid-listing check lives in `paidListingEnforced()` and `hasActivePaidListing()` in `src/lib/player-access.ts`. Turn that on when checkout sets `expires_at`. Parents can open their own player either way.
+- Coach search hides unpaid and expired profiles only when `REQUIRE_PAID_LISTING=true`. Until that flag is on, a profile is visible when it is not paused and not deleted. Parents can open their own player either way.
 - Admin is the only place coach email, phone, and reference contact are rendered.
 
 ## Pricing copy
 
-One-time payments, no auto-renew. Founders (first 25): **$15 / season** or **$36 / year**. Regular: **$25 / season** or **$60 / year**. Seasons are Spring (Jan–May), Summer (Jun–Aug), and Fall/Winter (Sep–Dec). Refunds and checkout are not built yet. Legal pages are drafts for an attorney.
+One-time payments, no auto-renew. Season **$25**. Yearly **$60** through December 31. Seasons are Spring (Jan–May), Summer (Jun–Aug), and Fall/Winter (Sep–Dec). The first 25 seasons are free with Stripe code **FIRST25**. A refund is available for 15 days if no coach has viewed the profile since payment. Legal pages are drafts for an attorney.
 
-## Stubbed for later sessions
-
-- Stripe Checkout, founder checkout lock, refunds, season expiry cron
+Run `npm run stripe:setup` with `STRIPE_SECRET_KEY`, then set `STRIPE_WEBHOOK_SECRET`. Set `REQUIRE_PAID_LISTING=true` at launch. `CRON_SECRET` protects the daily expiry check.
 
 Approved coaches message parents from a player profile. Parents reply in `/parent/inbox`. Neither side sees the other's email or phone. If `RESEND_API_KEY` and `NOTIFY_FROM_EMAIL` are set, each new message also sends a notice with a link and no message body. A parent can block or report a coach from a thread or the viewed list. A report suspends that coach until Eric reinstates them on `/admin`.
