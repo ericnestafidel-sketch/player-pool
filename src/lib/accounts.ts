@@ -11,6 +11,7 @@ import {
 } from "@/lib/coach-options";
 import { httpUrlError, locationError } from "@/lib/safety";
 import { isUsState } from "@/lib/states";
+import { planAdminClaim } from "@/lib/admin-record";
 import { playerSignupOpen } from "@/lib/launch";
 import { adminAccess, mergePublicMetadata, type Viewer } from "@/lib/viewer";
 
@@ -109,6 +110,21 @@ export async function ensureAdminRecord(
       .limit(1);
     return existing?.role === "admin" ? "ready" : "denied";
   }
+  if (!db) return "no-db";
+  const clerkUser = await currentUser();
+  const email =
+    access.verifiedEmail ??
+    clerkUser?.primaryEmailAddress?.emailAddress ??
+    clerkUser?.emailAddresses[0]?.emailAddress ??
+    `${userId}@users.playerpool.local`;
+  try {
+    await db.transaction(async (tx) => {
+      await claimAdminUser(tx, userId, email);
+    });
+  } catch (error) {
+    console.error("Could not save admin record", error instanceof Error ? error.name : "");
+    return "denied";
+  }
   if (!access.metadataAdmin) {
     try {
       await mergePublicMetadata(userId, { role: "admin" });
@@ -116,25 +132,99 @@ export async function ensureAdminRecord(
       console.error("Could not sync admin role to Clerk", error instanceof Error ? error.name : "");
     }
   }
-  if (!db) return "no-db";
-  const [existing] = await db
+  return "ready";
+}
+
+type AdminTx = Parameters<NonNullable<ReturnType<typeof getDb>>["transaction"]>[0] extends (
+  tx: infer T,
+) => Promise<unknown>
+  ? T
+  : never;
+
+/** Move a dev-instance user (same email, old Clerk id) onto the signed-in id. */
+async function claimAdminUser(tx: AdminTx, userId: string, email: string) {
+  const [byId] = await tx
     .select({ role: users.role })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
-  if (existing?.role === "admin") return "ready";
-  const clerkUser = await currentUser();
-  const email =
-    access.verifiedEmail ??
-    clerkUser?.primaryEmailAddress?.emailAddress ??
-    clerkUser?.emailAddresses[0]?.emailAddress ??
-    `${userId}@users.playerpool.local`;
-  if (existing) {
-    await db.update(users).set({ role: "admin" }).where(eq(users.id, userId));
-    return "ready";
+  const [byEmail] = await tx
+    .select({ id: users.id, phone: users.phone })
+    .from(users)
+    .where(sql`lower(${users.email}) = ${email.toLowerCase()}`)
+    .limit(1);
+  const plan = planAdminClaim({
+    userId,
+    byIdRole: byId?.role ?? null,
+    emailOwnerId: byEmail?.id ?? null,
+  });
+  if (plan === "ready") return;
+  if (plan === "promote") {
+    await tx.update(users).set({ role: "admin", email }).where(eq(users.id, userId));
+    return;
   }
-  await db.insert(users).values({ id: userId, role: "admin", email });
-  return "ready";
+  if (plan === "insert") {
+    await tx.insert(users).values({ id: userId, role: "admin", email });
+    return;
+  }
+  const oldId = byEmail?.id;
+  if (!oldId || oldId === userId) return;
+  await tx
+    .update(users)
+    .set({ email: `${oldId}@replaced.playerpool.invalid` })
+    .where(eq(users.id, oldId));
+  if (byId) {
+    await tx.update(users).set({ role: "admin", email }).where(eq(users.id, userId));
+  } else {
+    await tx.insert(users).values({
+      id: userId,
+      role: "admin",
+      email,
+      phone: byEmail?.phone ?? null,
+    });
+  }
+  await tx.execute(sql`
+    insert into parents (user_id, display_name, terms_accepted_at, terms_version)
+    select ${userId}, display_name, terms_accepted_at, terms_version
+    from parents where user_id = ${oldId}
+    on conflict (user_id) do nothing
+  `);
+  await tx.execute(sql`update players set parent_id = ${userId} where parent_id = ${oldId}`);
+  await tx.execute(sql`update subscriptions set parent_id = ${userId} where parent_id = ${oldId}`);
+  await tx.execute(sql`update blocks set parent_id = ${userId} where parent_id = ${oldId}`);
+  await tx.execute(sql`update reports set reporter_parent_id = ${userId} where reporter_parent_id = ${oldId}`);
+  await tx.execute(sql`delete from parents where user_id = ${oldId}`);
+  await tx.execute(sql`
+    with old as (select * from coaches where user_id = ${oldId}),
+    cleared as (update coaches set founding_number = null where user_id = ${oldId})
+    insert into coaches (
+      user_id, full_name, team_name, organization, ages_coached, years_experience,
+      state, county, verify_url, proof_kind, call_requested, founding_coach, founding_number,
+      use_note, status, status_reason, conduct_agreed_at, conduct_version,
+      eligibility_attested_at, safety_rules_agreed_at, approved_at, approved_by,
+      daily_contact_count, contact_count_reset_at, checklist_team_page, checklist_org,
+      checklist_conduct, info_request_note, info_requested_at, created_at
+    )
+    select
+      ${userId}, full_name, team_name, organization, ages_coached, years_experience,
+      state, county, verify_url, proof_kind, call_requested, founding_coach, founding_number,
+      use_note, status, status_reason, conduct_agreed_at, conduct_version,
+      eligibility_attested_at, safety_rules_agreed_at, approved_at, approved_by,
+      daily_contact_count, contact_count_reset_at, checklist_team_page, checklist_org,
+      checklist_conduct, info_request_note, info_requested_at, created_at
+    from old
+    on conflict (user_id) do nothing
+  `);
+  await tx.execute(sql`update coach_references set coach_id = ${userId} where coach_id = ${oldId}`);
+  await tx.execute(sql`update profile_views set coach_id = ${userId} where coach_id = ${oldId}`);
+  await tx.execute(sql`update contact_requests set coach_id = ${userId} where coach_id = ${oldId}`);
+  await tx.execute(sql`update blocks set coach_id = ${userId} where coach_id = ${oldId}`);
+  await tx.execute(sql`update reports set coach_id = ${userId} where coach_id = ${oldId}`);
+  await tx.execute(sql`update coach_notes set coach_id = ${userId} where coach_id = ${oldId}`);
+  await tx.execute(sql`update saved_searches set coach_id = ${userId} where coach_id = ${oldId}`);
+  await tx.execute(sql`update coaches set approved_by = ${userId} where approved_by = ${oldId}`);
+  await tx.execute(sql`delete from coaches where user_id = ${oldId}`);
+  await tx.execute(sql`delete from users where id = ${oldId}`);
 }
 
 export type FieldErrors = Record<string, string>;
