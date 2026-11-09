@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
+import { playerSignupOpen } from "@/lib/launch";
 import { formatUsd, LAUNCH_FREE_SEASON_SPOTS, seasonPlan, yearlyPlan } from "@/lib/pricing";
 import { withRedirect } from "@/lib/redirects";
 
@@ -23,9 +25,13 @@ export default function HomePage() {
           by age, position, USSSA level, state, and county. No names, no addresses, no phone numbers
           shown.
         </p>
-        <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
-          List my player
-        </Link>{" "}
+        {playerSignupOpen() ? (
+          <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
+            List my player
+          </Link>
+        ) : (
+          <PlayerSignupClosedButton />
+        )}{" "}
         <Link className="btn ghost" href="/coach/signup">
           I&apos;m a coach — request access
         </Link>

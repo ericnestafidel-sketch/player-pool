@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { players, profileViews, subscriptions } from "@/db/schema";
 import { getDb } from "@/db";
 import { isPlayerId } from "@/lib/player-access";
+import { appOriginFromEnv } from "@/lib/launch";
 import { coverageFor, promoFreeSeasonForPlayer, refundEligible } from "@/lib/seasons";
 
 export const SEASON_PRICE_LOOKUP = "player_pool_season";
@@ -19,8 +20,8 @@ export function getStripe(): Stripe | null {
 }
 
 export function requestOrigin(headerStore: { get(name: string): string | null }): string {
-  const configured = process.env["APP_URL"]?.trim();
-  if (configured) return configured.replace(/\/$/, "");
+  const configured = appOriginFromEnv();
+  if (configured) return configured;
   const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
   const proto = headerStore.get("x-forwarded-proto") ?? "https";
   if (!host) return "";

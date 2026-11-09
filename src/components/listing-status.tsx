@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requestRefund } from "@/app/(private)/parent/checkout/actions";
+import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
 import { paidListingEnforced } from "@/lib/player-access";
 import { formatViewedDate } from "@/lib/player-rules";
 import type { PlayerListing } from "@/lib/stripe-billing";
@@ -11,16 +12,20 @@ function endLabel(expiresAt: Date): string {
 export function ListingStatus({
   playerId,
   listing,
+  canPay = true,
 }: {
   playerId: string;
   listing: PlayerListing | null;
+  canPay?: boolean;
 }) {
   const enforced = paidListingEnforced();
   const active = Boolean(listing?.active);
-  const renew = (
+  const renew = canPay ? (
     <Link className="btn navy btn-sm" href={`/parent/checkout?player=${playerId}`}>
       {active ? "Renew" : "Pay to list"}
     </Link>
+  ) : (
+    <PlayerSignupClosedButton />
   );
   return (
     <div className="roster-actions">

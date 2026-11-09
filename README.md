@@ -42,6 +42,8 @@ Setting that metadata by hand in the Clerk dashboard still works. The first visi
 
 Parents can only sign up at `/sign-up`. Coaches use `/coach/signup`, land in `pending`, and cannot open player pages until you approve them.
 
+The coaches-first launch leaves `PLAYER_SIGNUP_OPEN` unset. Parent sign-up buttons say coming soon, `/sign-up` does not create a parent account, and a non-admin cannot add a player or start checkout. Set `PLAYER_SIGNUP_OPEN=true` when parents should list players. Admins can still create test players. Set `APP_URL=https://player-pool.net` so checkout return URLs and message links use that origin.
+
 ## Local setup
 
 ```bash

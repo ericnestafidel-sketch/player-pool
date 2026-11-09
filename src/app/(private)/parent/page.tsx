@@ -6,6 +6,8 @@ import { DeletePlayerButton } from "@/components/delete-player-button";
 import { PlayerCard } from "@/components/player-card";
 import { ViewerList } from "@/components/viewer-list";
 import { AdminNav } from "@/components/admin-nav";
+import { PlayerSignupClosedButton, PlayerSignupSoon } from "@/components/player-signup-gate";
+import { playerSignupOpen } from "@/lib/launch";
 import { claimParent, ensureParentProfile } from "@/lib/accounts";
 import { ListingStatus } from "@/components/listing-status";
 import { listParentPlayers, type ParentPlayer } from "@/lib/player-store";
@@ -49,6 +51,9 @@ async function ParentHome() {
         </main>
       );
     }
+  }
+  if (!playerSignupOpen() && viewer.role !== "admin" && viewer.role !== "parent") {
+    return <PlayerSignupSoon />;
   }
   if (viewer.role === null && viewer.signupIntent === "parent") {
     const claimed = await claimParent(viewer);
@@ -99,9 +104,13 @@ async function ParentHome() {
         </p>
       ) : null}
       <p>
-        <Link className="btn gold" href="/parent/player/new">
-          Add a player
-        </Link>
+        {viewer.role === "admin" || playerSignupOpen() ? (
+          <Link className="btn gold" href="/parent/player/new">
+            Add a player
+          </Link>
+        ) : (
+          <PlayerSignupClosedButton />
+        )}
       </p>
       {roster.length === 0 ? (
         <div className="hint">
@@ -115,6 +124,7 @@ async function ParentHome() {
               key={entry.player.id}
               entry={entry}
               listing={listings.get(entry.player.id) ?? null}
+              canPay={viewer.role === "admin" || playerSignupOpen()}
             />
           ))}
         </div>
@@ -126,7 +136,15 @@ async function ParentHome() {
   );
 }
 
-function RosterCard({ entry, listing }: { entry: ParentPlayer; listing: PlayerListing | null }) {
+function RosterCard({
+  entry,
+  listing,
+  canPay,
+}: {
+  entry: ParentPlayer;
+  listing: PlayerListing | null;
+  canPay: boolean;
+}) {
   return (
     <section className="section-card">
       <PlayerCard
@@ -135,7 +153,7 @@ function RosterCard({ entry, listing }: { entry: ParentPlayer; listing: PlayerLi
         weekends={entry.weekends}
         href={`/parent/player/${entry.player.id}`}
       />
-      <ListingStatus playerId={entry.player.id} listing={listing} />
+      <ListingStatus playerId={entry.player.id} listing={listing} canPay={canPay} />
       <div className="roster-actions">
         <Link className="btn navy" href={`/parent/player/${entry.player.id}`}>
           Edit

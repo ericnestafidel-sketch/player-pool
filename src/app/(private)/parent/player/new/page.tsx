@@ -5,6 +5,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { PlayerForm } from "@/components/player-form";
+import { PlayerSignupSoon } from "@/components/player-signup-gate";
+import { playerSignupOpen } from "@/lib/launch";
 import { parents } from "@/db/schema";
 import { getDb } from "@/db";
 import { emptyDraft, upcomingWeekends, WEEKENDS_SHOWN } from "@/lib/player-rules";
@@ -29,6 +31,7 @@ async function NewPlayer() {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
+  if (!playerSignupOpen() && viewer.role !== "admin") return <PlayerSignupSoon />;
   if (!usesParentArea(viewer)) redirect("/parent");
   if (viewer.role === "admin") {
     const ready = await ensureParentProfile(viewer.userId);

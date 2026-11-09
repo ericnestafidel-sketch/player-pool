@@ -8,6 +8,8 @@ import {
   seasonPlan,
   yearlyPlan,
 } from "@/lib/pricing";
+import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
+import { playerSignupOpen } from "@/lib/launch";
 import { withRedirect } from "@/lib/redirects";
 
 export const metadata: Metadata = {
@@ -53,9 +55,13 @@ export default function PricingPage() {
               ))}
             </ul>
             <div className="price-cta">
-              <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
-                Create parent account
-              </Link>
+              {playerSignupOpen() ? (
+                <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
+                  Create parent account
+                </Link>
+              ) : (
+                <PlayerSignupClosedButton />
+              )}
               <p className="meta">You choose the season at checkout.</p>
             </div>
           </article>
@@ -77,9 +83,13 @@ export default function PricingPage() {
               ))}
             </ul>
             <div className="price-cta">
-              <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
-                Create parent account
-              </Link>
+              {playerSignupOpen() ? (
+                <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
+                  Create parent account
+                </Link>
+              ) : (
+                <PlayerSignupClosedButton />
+              )}
               <p className="meta">You choose the season at checkout.</p>
             </div>
           </article>
