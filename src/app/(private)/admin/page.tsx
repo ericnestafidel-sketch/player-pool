@@ -52,6 +52,14 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
   const tab: Tab =
     params.tab === "approved" || params.tab === "suspended" ? params.tab : "pending";
   const db = getDb();
+  if (adminState === "denied") {
+    return (
+      <main className="admin">
+        <h1>Coach approvals</h1>
+        <p>This sign-in is allowed, but the admin record could not be saved. Sign out, sign back in, and open /admin again.</p>
+      </main>
+    );
+  }
   if (!db || adminState === "no-db") {
     return (
       <main className="admin">
