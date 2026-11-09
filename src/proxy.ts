@@ -26,6 +26,7 @@ const isPublic = createRouteMatcher([
   "/privacy(.*)",
   "/terms(.*)",
   "/conduct(.*)",
+  "/code-of-conduct(.*)",
 ]);
 
 function stamp(response: NextResponse, request: NextRequest) {
@@ -134,6 +135,10 @@ const withClerk = clerkMiddleware(async (auth, request) => {
  * Player routes fail closed: an approved coach, or the parent who owns the profile.
  */
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
+  const path = request.nextUrl.pathname;
+  if (path === "/code-of-conduct" || path === "/code-of-conduct/") {
+    return redirectTo(request, "/conduct");
+  }
   if (!clerkConfigured()) {
     if (isPublic(request)) return stamp(NextResponse.next(), request);
     const locked =

@@ -6,10 +6,7 @@ export default function ConductPage() {
   return (
     <main className="legal">
       <h1>Coach Code of Conduct</h1>
-      <div className="draft">
-        <strong>Draft – pending attorney review.</strong> Not legal advice. Effective date and
-        remaining brackets will be finalized with counsel before launch.
-      </div>
+      <p className="draft">Draft, last updated November 2026.</p>
       <p>Every Coach must agree to this before access is approved. Breaking it means immediate removal.</p>
       <ol>
         <li>

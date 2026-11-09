@@ -272,6 +272,7 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
   color:#e7eef6;
   font-size:15px;
 }
+.approval-steps a{color:var(--gold);font-weight:700}
 .approval-steps li::before{
   content:counter(approval);
   width:36px;
