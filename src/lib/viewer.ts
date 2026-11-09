@@ -158,6 +158,10 @@ export async function getRequestViewer(): Promise<Viewer | null> {
   }
 }
 
+export function usesParentArea(viewer: Viewer): boolean {
+  return viewer.role === "parent" || viewer.role === "admin";
+}
+
 export function homeFor(viewer: Viewer): string {
   if (viewer.role === "admin") return "/admin";
   if (viewer.role === "parent") return "/parent";

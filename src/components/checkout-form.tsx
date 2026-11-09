@@ -9,8 +9,10 @@ export function CheckoutForm({
   players,
   offers,
   defaultPlayer,
+  allowPromo = true,
 }: {
   players: { id: string; label: string }[];
+  allowPromo?: boolean;
   offers: SeasonOffer[];
   defaultPlayer: string;
 }) {
@@ -77,9 +79,16 @@ export function CheckoutForm({
         <b>You are paying for:</b> {summary}
       </p>
       <p className="meta">
-        Season only: code {PROMO_CODE} on the Stripe page covers the first {LAUNCH_FREE_SEASON_SPOTS}{" "}
-        free seasons, including the next season. A $0 checkout still turns the listing on. Yearly is
-        not included. Card numbers are entered on Stripe, not here.
+        {allowPromo ? (
+          <>
+            Season only: code {PROMO_CODE} on the Stripe page covers the first {LAUNCH_FREE_SEASON_SPOTS}{" "}
+            free seasons, including the next season. A $0 checkout still turns the listing on. Yearly is
+            not included.{" "}
+          </>
+        ) : (
+          <>Admin test players do not use FIRST25. </>
+        )}
+        Card numbers are entered on Stripe, not here.
       </p>
       <button className="btn gold" type="submit">
         Continue to Stripe

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { formatUsd, LAUNCH_FREE_SEASON_SPOTS, seasonPlan, yearlyPlan } from "@/lib/pricing";
+import { withRedirect } from "@/lib/redirects";
 
 export const metadata: Metadata = {
   title: "Get your player seen by travel coaches",
@@ -22,7 +23,7 @@ export default function HomePage() {
           by age, position, USSSA level, state, and county. No names, no addresses, no phone numbers
           shown.
         </p>
-        <Link className="btn gold" href="/sign-up">
+        <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
           List my player
         </Link>{" "}
         <Link className="btn ghost" href="/coach/signup">

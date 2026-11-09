@@ -5,7 +5,8 @@ import { Suspense } from "react";
 import { DeletePlayerButton } from "@/components/delete-player-button";
 import { PlayerCard } from "@/components/player-card";
 import { ViewerList } from "@/components/viewer-list";
-import { claimParent } from "@/lib/accounts";
+import { AdminNav } from "@/components/admin-nav";
+import { claimParent, ensureParentProfile } from "@/lib/accounts";
 import { ListingStatus } from "@/components/listing-status";
 import { listParentPlayers, type ParentPlayer } from "@/lib/player-store";
 import { listingsForParent, type PlayerListing } from "@/lib/stripe-billing";
@@ -26,7 +27,6 @@ async function ParentHome() {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role === "admin") redirect("/admin");
   if (viewer.role === "coach" || viewer.signupIntent === "coach") redirect("/coach/signup");
   if (!getDb()) {
     return (
@@ -37,6 +37,18 @@ async function ParentHome() {
         </p>
       </main>
     );
+  }
+  if (viewer.role === "admin") {
+    const ready = await ensureParentProfile(viewer.userId);
+    if (!ready.ok) {
+      return (
+        <main className="parent-panel">
+          <AdminNav />
+          <h1>Parent view</h1>
+          <p className="field-error">{ready.error}</p>
+        </main>
+      );
+    }
   }
   if (viewer.role === null && viewer.signupIntent === "parent") {
     const claimed = await claimParent(viewer);
@@ -74,11 +86,18 @@ async function ParentHome() {
   ]);
   return (
     <main className="parent-panel">
-      <h1>Your players</h1>
+      {viewer.role === "admin" ? <AdminNav /> : null}
+      <h1>{viewer.role === "admin" ? "Parent view" : "Your players"}</h1>
       <p className="lead">
         Each player is shown to approved coaches as a number, plus state and county. Pause hides a
         profile. Delete removes it and Player Pool purges the record within 30 days.
       </p>
+      {viewer.role === "admin" ? (
+        <p className="hint">
+          You are still an admin. Players you add here are marked Admin test, stay out of real coach
+          search, and do not use FIRST25. Delete them when you are done testing.
+        </p>
+      ) : null}
       <p>
         <Link className="btn gold" href="/parent/player/new">
           Add a player

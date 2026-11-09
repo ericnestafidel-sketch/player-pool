@@ -5,6 +5,7 @@ import {
   currentSeason,
   indianaStart,
   promoFreeSeason,
+  promoFreeSeasonForPlayer,
   refundEligible,
   yearlyExpiresAt,
 } from "@/lib/seasons";
@@ -36,6 +37,9 @@ test("a zero total or a discount is the free-season promo", () => {
   assert.equal(promoFreeSeason(0, 0), true);
   assert.equal(promoFreeSeason(2500, 2500), true);
   assert.equal(promoFreeSeason(2500, 0), false);
+  assert.equal(promoFreeSeasonForPlayer(false, 0, 0), true);
+  assert.equal(promoFreeSeasonForPlayer(true, 0, 0), false);
+  assert.equal(promoFreeSeasonForPlayer(true, 2500, 2500), false);
 });
 
 test("refunds are only inside 15 days with no views and a real charge", () => {

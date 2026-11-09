@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { AdminNav } from "@/components/admin-nav";
 import { askForInfo, reviewReport, toggleFoundingCoach, updateCoachStatus } from "./actions";
 import { ensureAdminRecord } from "@/lib/accounts";
 import { coachReferences, coaches, contactRequests, profileViews, reports, users } from "@/db/schema";
@@ -54,6 +55,7 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
   if (!db || adminState === "no-db") {
     return (
       <main className="admin">
+        <AdminNav />
         <h1>Coach approvals</h1>
         <p>Connect Neon (`DATABASE_URL`) before the queue can load. No coach records are shown.</p>
       </main>
@@ -144,6 +146,7 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
 
   return (
     <main className="admin">
+      <AdminNav />
       {params.notice === "founding-full" ? (
         <p className="field-error">The 20 founding coach spots are filled.</p>
       ) : null}

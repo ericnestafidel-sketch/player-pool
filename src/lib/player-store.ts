@@ -8,6 +8,7 @@ import {
   playerStats,
   players,
   profileViews,
+  users,
   savedSearches,
   subscriptions,
 } from "@/db/schema";
@@ -96,6 +97,7 @@ const playerColumns = {
   travelMiles: players.travelMiles,
   note: players.note,
   paused: players.paused,
+  adminTest: players.adminTest,
 };
 
 export async function purgeDeletedPlayers(now = new Date()): Promise<void> {
@@ -142,10 +144,16 @@ export async function saveParentPlayer(
 }
 
 async function insertOwnedPlayer(tx: Tx, parentId: string, input: PlayerInput): Promise<string | null> {
+  const [owner] = await tx
+    .select({ role: users.role })
+    .from(users)
+    .where(eq(users.id, parentId))
+    .limit(1);
   const [created] = await tx
     .insert(players)
     .values({
       parentId,
+      adminTest: owner?.role === "admin",
       sport: input.sport,
       birthYear: input.birthYear,
       ageGroup: input.ageGroup,
@@ -375,9 +383,10 @@ export async function searchPlayers(
   coachId: string,
   filters: SearchFilters,
   now = new Date(),
+  options?: { includeAdminTests?: boolean },
 ): Promise<{ hits: SearchHit[]; truncated: boolean }> {
   const db = getDb();
-  const visibility = coachVisibilityConditions(coachId, now);
+  const visibility = coachVisibilityConditions(coachId, now, options);
   if (!db || !visibility) return { hits: [], truncated: false };
   const conditions = [...visibility];
   if (filters.ageGroup) conditions.push(eq(players.ageGroup, filters.ageGroup));

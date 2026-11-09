@@ -174,6 +174,16 @@ export function coverageFor(
   };
 }
 
+/** Admin test listings never consume a FIRST25 spot, even at a $0 total. */
+export function promoFreeSeasonForPlayer(
+  adminTest: boolean,
+  amountTotal: number,
+  discountCents: number,
+): boolean {
+  if (adminTest) return false;
+  return promoFreeSeason(amountTotal, discountCents);
+}
+
 export function promoFreeSeason(amountTotal: number, discountCents: number): boolean {
   return amountTotal === 0 || discountCents > 0;
 }

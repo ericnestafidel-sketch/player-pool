@@ -22,6 +22,7 @@ import { listSavedSearches, searchPlayers } from "@/lib/player-store";
 import { listSports, preferredSport } from "@/lib/sport";
 import { PLAYER_STATUS_LABEL } from "@/lib/safety";
 import { US_STATES } from "@/lib/states";
+import { AdminNav } from "@/components/admin-nav";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -49,7 +50,8 @@ async function Search({
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "coach" || viewer.coachStatus !== "approved") {
+  const preview = viewer.role === "admin";
+  if (!preview && (viewer.role !== "coach" || viewer.coachStatus !== "approved")) {
     redirect(viewer.role === "coach" ? "/coach/pending" : "/access-denied");
   }
   const now = new Date();
@@ -58,8 +60,8 @@ async function Search({
   const filters = filtersFromParams(raw, sport, now);
   const db = getDb();
   const [saved, results, badgeRows] = await Promise.all([
-    listSavedSearches(viewer.userId, sport, now),
-    searchPlayers(viewer.userId, filters, now),
+    preview ? Promise.resolve([]) : listSavedSearches(viewer.userId, sport, now),
+    searchPlayers(viewer.userId, filters, now, { includeAdminTests: preview }),
     db
       ? db
           .select({
@@ -139,6 +141,15 @@ async function Search({
         </form>
       </aside>
       <section>
+        {preview ? (
+          <>
+            <AdminNav />
+            <p className="hint">
+              Admin preview. You are still an admin. Admin test players are marked and hidden from
+              real coaches. Notes and saved searches stay off in this view.
+            </p>
+          </>
+        ) : null}
         {badge?.foundingCoach ? (
           <p className="status-badge badge-founding">
             Founding Coach{badge.foundingNumber ? ` #${badge.foundingNumber}` : ""}
@@ -149,24 +160,28 @@ async function Search({
           Players are listed as Player #NNN, with state and county. Parent and coach email and phone
           are not on this page.
         </p>
-        <SaveSearchForm filters={filters} />
-        <div className="saved-list">
-          {saved.length === 0 ? (
-            <p className="saved-empty">No saved searches yet.</p>
-          ) : (
-            saved.map((item) => (
-              <span className="saved-chip" key={item.id}>
-                <Link href={item.href}>{item.name}</Link>
-                <form action={removeSavedSearch}>
-                  <input type="hidden" name="searchId" value={item.id} />
-                  <button className="x" type="submit" aria-label={`Delete saved search ${item.name}`}>
-                    ×
-                  </button>
-                </form>
-              </span>
-            ))
-          )}
-        </div>
+        {preview ? null : (
+          <>
+            <SaveSearchForm filters={filters} />
+            <div className="saved-list">
+              {saved.length === 0 ? (
+                <p className="saved-empty">No saved searches yet.</p>
+              ) : (
+                saved.map((item) => (
+                  <span className="saved-chip" key={item.id}>
+                    <Link href={item.href}>{item.name}</Link>
+                    <form action={removeSavedSearch}>
+                      <input type="hidden" name="searchId" value={item.id} />
+                      <button className="x" type="submit" aria-label={`Delete saved search ${item.name}`}>
+                        ×
+                      </button>
+                    </form>
+                  </span>
+                ))
+              )}
+            </div>
+          </>
+        )}
         <p className="count">
           {results.truncated
             ? `Showing the first ${results.hits.length}. Narrow the filters to see fewer.`
@@ -191,14 +206,16 @@ async function Search({
                     Open profile
                   </Link>
                 </p>
-                <CoachNoteForm playerId={hit.player.id} note={hit.note ?? ""} />
+                {preview ? null : <CoachNoteForm playerId={hit.player.id} note={hit.note ?? ""} />}
               </div>
             ))}
           </div>
         )}
-        <p>
-          <Link href="/coach/profile">Your team card</Link>
-        </p>
+        {preview ? null : (
+          <p>
+            <Link href="/coach/profile">Your team card</Link>
+          </p>
+        )}
       </section>
     </main>
   );

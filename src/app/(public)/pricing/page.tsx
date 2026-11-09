@@ -8,6 +8,7 @@ import {
   seasonPlan,
   yearlyPlan,
 } from "@/lib/pricing";
+import { withRedirect } from "@/lib/redirects";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -52,7 +53,7 @@ export default function PricingPage() {
               ))}
             </ul>
             <div className="price-cta">
-              <Link className="btn gold" href="/sign-up">
+              <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
                 Create parent account
               </Link>
               <p className="meta">You choose the season at checkout.</p>
@@ -76,7 +77,7 @@ export default function PricingPage() {
               ))}
             </ul>
             <div className="price-cta">
-              <Link className="btn gold" href="/sign-up">
+              <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
                 Create parent account
               </Link>
               <p className="meta">You choose the season at checkout.</p>

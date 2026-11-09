@@ -69,6 +69,7 @@ export type PublicPlayer = {
   travelMiles: number | null;
   note: string | null;
   paused: boolean;
+  adminTest: boolean;
 };
 
 /** The only player shape that may be rendered. Contact fields throw. */
@@ -86,6 +87,7 @@ export function toPublicPlayer(row: {
   travelMiles: number | null;
   note: string | null;
   paused: boolean;
+  adminTest: boolean;
 }): PublicPlayer {
   const player: PublicPlayer = {
     id: row.id,
@@ -101,6 +103,7 @@ export function toPublicPlayer(row: {
     travelMiles: row.travelMiles,
     note: row.note,
     paused: row.paused,
+    adminTest: row.adminTest,
   };
   for (const key of BANNED_PUBLIC_KEYS) {
     if (key in player) {

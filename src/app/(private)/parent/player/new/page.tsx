@@ -9,7 +9,8 @@ import { parents } from "@/db/schema";
 import { getDb } from "@/db";
 import { emptyDraft, upcomingWeekends, WEEKENDS_SHOWN } from "@/lib/player-rules";
 import { listSports, preferredSport } from "@/lib/sport";
-import { getRequestViewer } from "@/lib/viewer";
+import { ensureParentProfile } from "@/lib/accounts";
+import { getRequestViewer, usesParentArea } from "@/lib/viewer";
 
 export const metadata: Metadata = {
   title: "Add a player",
@@ -28,7 +29,11 @@ async function NewPlayer() {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
+  if (!usesParentArea(viewer)) redirect("/parent");
+  if (viewer.role === "admin") {
+    const ready = await ensureParentProfile(viewer.userId);
+    if (!ready.ok) redirect("/parent");
+  }
   const sports = await listSports();
   const sport = preferredSport(sports);
   const db = getDb();
