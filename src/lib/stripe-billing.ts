@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { players, profileViews, subscriptions } from "@/db/schema";
 import { getDb } from "@/db";
 import { isPlayerId } from "@/lib/player-access";
-import { coverageFor, promoFreeSeason, refundEligible } from "@/lib/seasons";
+import { coverageFor, promoFreeSeasonForPlayer, refundEligible } from "@/lib/seasons";
 
 export const SEASON_PRICE_LOOKUP = "player_pool_season";
 export const YEARLY_PRICE_LOOKUP = "player_pool_yearly";
@@ -42,6 +42,7 @@ export async function createCheckoutSession(input: {
   startSeason: string;
   email: string | null;
   origin: string;
+  allowPromotionCodes?: boolean;
 }): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
   const stripe = getStripe();
   if (!stripe) return { ok: false, error: "Payments coming soon." };
@@ -53,7 +54,7 @@ export async function createCheckoutSession(input: {
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     line_items: [{ price, quantity: 1 }],
-    allow_promotion_codes: true,
+    allow_promotion_codes: input.allowPromotionCodes !== false,
     customer_email: input.email ?? undefined,
     success_url: `${input.origin}/parent/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${input.origin}/parent/checkout`,
@@ -62,6 +63,7 @@ export async function createCheckoutSession(input: {
       player_id: input.playerId,
       plan: input.plan,
       start_season: input.startSeason,
+      admin_test: input.allowPromotionCodes === false ? "true" : "false",
     },
     consent_collection: { terms_of_service: "required" },
     custom_text: {
@@ -89,7 +91,7 @@ export async function fulfillCheckoutSession(
   const db = getDb();
   if (!db) throw new Error("Database is not configured.");
   const [player] = await db
-    .select({ parentId: players.parentId })
+    .select({ parentId: players.parentId, adminTest: players.adminTest })
     .from(players)
     .where(eq(players.id, playerId))
     .limit(1);
@@ -113,7 +115,7 @@ export async function fulfillCheckoutSession(
       seasonCode: coverage.seasonCode,
       year: Number.isInteger(year) ? year : now.getFullYear(),
       amountCents: amount,
-      promoFreeSeason: promoFreeSeason(amount, discount),
+      promoFreeSeason: promoFreeSeasonForPlayer(player.adminTest, amount, discount),
       stripeSessionId: session.id,
       stripePaymentIntent: paymentIntent,
       paidAt: now,

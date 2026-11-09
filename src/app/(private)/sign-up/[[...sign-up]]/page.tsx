@@ -1,8 +1,11 @@
 import { SignUp } from "@clerk/nextjs";
+import { connection } from "next/server";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { clerkConfigured } from "@/lib/viewer";
+import { safeRedirectPath, withRedirect } from "@/lib/redirects";
+import { clerkConfigured, getRequestViewer, homeFor, usesParentArea } from "@/lib/viewer";
 
 export const metadata: Metadata = {
   title: "Parent sign up",
@@ -18,7 +21,26 @@ function Agreement() {
   );
 }
 
-export default function ParentSignUpPage() {
+export default function ParentSignUpPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect_url?: string | string[] }>;
+}) {
+  return (
+    <Suspense fallback={<main className="auth-wrap">Loading…</main>}>
+      <ParentSignUp searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function ParentSignUp({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect_url?: string | string[] }>;
+}) {
+  await connection();
+  const params = await searchParams;
+  const destination = safeRedirectPath(params.redirect_url) ?? "/parent";
   if (!clerkConfigured()) {
     return (
       <main className="form-wrap">
@@ -30,6 +52,13 @@ export default function ParentSignUpPage() {
       </main>
     );
   }
+  const viewer = await getRequestViewer();
+  if (viewer) {
+    if (usesParentArea(viewer) || (viewer.role === null && viewer.signupIntent !== "coach")) {
+      redirect(destination);
+    }
+    redirect(homeFor(viewer));
+  }
   return (
     <main className="auth-wrap">
       <h1>Parent sign up</h1>
@@ -40,15 +69,13 @@ export default function ParentSignUpPage() {
       <p className="meta">
         Coaches do not use this form. <Link href="/coach/signup">Request coach access</Link>.
       </p>
-      <Suspense fallback={<p className="lead">Loading…</p>}>
-        <SignUp
-          routing="path"
-          path="/sign-up"
-          signInUrl="/sign-in"
-          forceRedirectUrl="/parent"
-          unsafeMetadata={{ signupIntent: "parent" }}
-        />
-      </Suspense>
+      <SignUp
+        routing="path"
+        path="/sign-up"
+        signInUrl={withRedirect("/sign-in", destination)}
+        fallbackRedirectUrl={destination}
+        unsafeMetadata={{ signupIntent: "parent" }}
+      />
     </main>
   );
 }

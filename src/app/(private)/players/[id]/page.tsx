@@ -8,7 +8,7 @@ import { ContactCoachForm } from "@/components/contact-coach-form";
 import { PlayerCard } from "@/components/player-card";
 import { RecordProfileView } from "@/components/record-profile-view";
 import { ViewerList } from "@/components/viewer-list";
-import { canReadPlayer } from "@/lib/player-access";
+import { canEditPlayer, canReadPlayer } from "@/lib/player-access";
 import { formatViewedDate, formatWeekend, upcomingWeekends, WEEKENDS_SHOWN } from "@/lib/player-rules";
 import { listPlayerViewers, loadCoachNote, loadReadableDetail } from "@/lib/player-store";
 import { listCoachPlayerThreads } from "@/lib/threads";
@@ -33,13 +33,14 @@ async function PlayerView({ params }: { params: Promise<{ id: string }> }) {
   if (!viewer) redirect("/sign-in");
   const { id } = await params;
   if (!(await canReadPlayer(viewer, id))) notFound();
+  const owner = await canEditPlayer(viewer, id);
   const now = new Date();
   const detail = await loadReadableDetail(id, now);
   if (!detail) notFound();
   const coach = viewer.role === "coach" && viewer.coachStatus === "approved";
   const [note, viewers, threads] = await Promise.all([
     coach ? loadCoachNote(viewer.userId, id) : Promise.resolve(null),
-    viewer.role === "parent" ? listPlayerViewers(id) : Promise.resolve([]),
+    owner ? listPlayerViewers(id) : Promise.resolve([]),
     coach ? listCoachPlayerThreads(viewer.userId, id) : Promise.resolve([]),
   ]);
   const weekends = upcomingWeekends(WEEKENDS_SHOWN, now).map((value) => ({
@@ -50,8 +51,8 @@ async function PlayerView({ params }: { params: Promise<{ id: string }> }) {
     <main className="form-wrap">
       {coach ? <RecordProfileView playerId={id} /> : null}
       <p className="meta">
-        <Link href={coach ? "/coach/search" : "/parent"}>
-          {coach ? "Back to search" : "Back to your players"}
+        <Link href={owner ? "/parent" : "/coach/search"}>
+          {owner ? "Back to your players" : "Back to search"}
         </Link>
       </p>
       <h1>{detail.player.label}</h1>
@@ -98,7 +99,7 @@ async function PlayerView({ params }: { params: Promise<{ id: string }> }) {
           <CoachNoteForm playerId={id} note={note ?? ""} />
         </>
       ) : null}
-      {viewer.role === "parent" ? (
+      {owner ? (
         <section>
           <p>
             <Link href={`/parent/player/${id}`}>Edit this profile</Link>

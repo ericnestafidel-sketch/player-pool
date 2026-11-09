@@ -9,7 +9,7 @@ import { ThreadReplyForm } from "@/components/thread-reply-form";
 import { replyAsParent } from "@/app/(private)/parent/inbox/actions";
 import { formatViewedDate, formatWeekend } from "@/lib/player-rules";
 import { loadParentThread } from "@/lib/threads";
-import { getRequestViewer } from "@/lib/viewer";
+import { getRequestViewer, usesParentArea } from "@/lib/viewer";
 
 export const metadata: Metadata = {
   title: "Message",
@@ -28,7 +28,7 @@ async function Thread({ params }: { params: Promise<{ id: string }> }) {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
+  if (!usesParentArea(viewer)) redirect("/parent");
   const { id } = await params;
   const thread = await loadParentThread(viewer.userId, id);
   if (!thread) notFound();

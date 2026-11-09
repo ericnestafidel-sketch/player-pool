@@ -27,6 +27,7 @@ export function PlayerCard({
           player.label
         )}
       </h3>
+      {player.adminTest ? <span className="status-badge badge-test">Admin test</span> : null}
       {highlightFresh ? <span className="badge-hl">90-day highlight</span> : null}
       <span className={`status-badge ${badge}`}>{PLAYER_STATUS_LABEL[player.status]}</span>
       <p className="meta">

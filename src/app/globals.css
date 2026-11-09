@@ -43,6 +43,9 @@ small,.meta,.note{font-size:.875rem;color:var(--muted)}
 .site-header nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end}
 .site-header nav a{color:var(--white);text-decoration:none;margin-left:16px;font-size:.875rem;font-weight:600}
 .site-header nav a:hover,.site-header nav a.active{color:var(--gold)}
+.admin-nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.admin-nav a{background:var(--navy);color:var(--white);text-decoration:none;font-size:13px;font-weight:700;padding:6px 10px;border-radius:999px}
+.admin-nav a:hover{background:var(--gold);color:var(--navy)}
 .site-header .pill{background:var(--gold);color:var(--navy);padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;margin-left:18px}
 .btn{display:inline-block;padding:12px 22px;border-radius:8px;font-weight:700;text-decoration:none;border:0;cursor:pointer;font-size:.95rem;font-family:var(--font-display)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
@@ -206,6 +209,7 @@ ul.checklist{list-style:none}
 .badge-pend{background:var(--gold-soft);color:var(--warn)}
 .badge-ok{background:var(--success-bg);color:var(--success)}
 .badge-founding{background:var(--gold);color:var(--navy)}
+.badge-test{background:#7c2d12;color:#fff}
 .badge-bad{background:var(--danger-bg);color:#991b1b}
 .brand .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin:16px 0 28px}
 .swatch{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:var(--white)}

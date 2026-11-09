@@ -9,7 +9,7 @@ import { LEGAL_VERSION } from "@/lib/legal";
 import { parsePlayerForm } from "@/lib/player-rules";
 import { saveParentPlayer, setPlayerPaused, softDeletePlayer } from "@/lib/player-store";
 import { listSports } from "@/lib/sport";
-import { getRequestViewer } from "@/lib/viewer";
+import { requireParentActor } from "@/lib/parent-actor";
 
 export type PlayerFormState = {
   ok?: boolean;
@@ -29,10 +29,7 @@ function refreshPlayer(playerId: string) {
 }
 
 async function parentId(): Promise<string> {
-  const viewer = await getRequestViewer();
-  if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
-  return viewer.userId;
+  return requireParentActor();
 }
 
 export async function savePlayer(

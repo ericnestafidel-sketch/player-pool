@@ -10,7 +10,7 @@ import { CheckoutForm } from "@/components/checkout-form";
 import { formatPlayerLabel } from "@/lib/safety";
 import { seasonOffers } from "@/lib/seasons";
 import { stripeConfigured } from "@/lib/stripe-billing";
-import { getRequestViewer } from "@/lib/viewer";
+import { getRequestViewer, usesParentArea } from "@/lib/viewer";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -37,7 +37,7 @@ async function Checkout({
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
+  if (!usesParentArea(viewer)) redirect("/parent");
   const db = getDb();
   const params = await searchParams;
   const rows = db
@@ -70,6 +70,7 @@ async function Checkout({
           players={rows.map((row) => ({ id: row.id, label: formatPlayerLabel(row.publicNumber) }))}
           offers={seasonOffers(new Date())}
           defaultPlayer={params.player ?? rows[0]?.id ?? ""}
+          allowPromo={viewer.role !== "admin"}
         />
       )}
     </main>

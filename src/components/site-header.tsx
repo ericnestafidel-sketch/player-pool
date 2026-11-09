@@ -2,6 +2,8 @@ import { UserButton } from "@clerk/nextjs";
 import { connection } from "next/server";
 import Link from "next/link";
 import { Suspense } from "react";
+import { AdminNav } from "@/components/admin-nav";
+import { withRedirect } from "@/lib/redirects";
 import { clerkConfigured, getRequestViewer } from "@/lib/viewer";
 
 export function SiteHeader() {
@@ -33,7 +35,7 @@ async function HeaderSession() {
     return (
       <>
         <Link href="/sign-in">Sign in</Link>
-        <Link href="/sign-up">List a player</Link>
+        <Link href={withRedirect("/sign-up", "/parent")}>List a player</Link>
       </>
     );
   }
@@ -55,7 +57,7 @@ async function HeaderSession() {
       {viewer.role === "coach" && viewer.coachStatus !== "approved" ? (
         <Link href="/coach/pending">Request status</Link>
       ) : null}
-      {viewer.role === "admin" ? <Link href="/admin">Admin</Link> : null}
+      {viewer.role === "admin" ? <AdminNav tone="header" /> : null}
       {viewer.role === null ? <Link href="/continue">Finish setup</Link> : null}
       <span className="nav-user">
         <UserButton />

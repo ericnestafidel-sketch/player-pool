@@ -9,17 +9,14 @@ import { getDb } from "@/db";
 import { isPlayerId } from "@/lib/player-access";
 import { coverageFor } from "@/lib/seasons";
 import { createCheckoutSession, refundListing, requestOrigin, stripeConfigured } from "@/lib/stripe-billing";
-import { getRequestViewer } from "@/lib/viewer";
+import { requireParentActor } from "@/lib/parent-actor";
 
 function text(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
 async function parentId(): Promise<string> {
-  const viewer = await getRequestViewer();
-  if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
-  return viewer.userId;
+  return requireParentActor();
 }
 
 export async function startCheckout(formData: FormData) {
@@ -33,7 +30,7 @@ export async function startCheckout(formData: FormData) {
   const db = getDb();
   if (!db) redirect("/parent/checkout");
   const [player] = await db
-    .select({ id: players.id })
+    .select({ id: players.id, adminTest: players.adminTest })
     .from(players)
     .where(and(eq(players.id, playerId), eq(players.parentId, id), isNull(players.deletedAt)))
     .limit(1);
@@ -47,6 +44,7 @@ export async function startCheckout(formData: FormData) {
     startSeason,
     email: account?.email ?? null,
     origin,
+    allowPromotionCodes: !player.adminTest,
   });
   if (!session.ok || !session.url) redirect("/parent/checkout?notice=soon");
   redirect(session.url);

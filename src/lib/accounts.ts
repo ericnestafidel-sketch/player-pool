@@ -63,6 +63,36 @@ export async function claimParent(viewer: Viewer): Promise<{ ok: true } | { ok: 
   return { ok: true };
 }
 
+/** A parents row for an admin test account. Does not change users.role or Clerk metadata. */
+export async function ensureParentProfile(
+  userId: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const db = getDb();
+  if (!db) return { ok: false, error: "Database is not configured yet." };
+  const [account] = await db
+    .select({ role: users.role })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  if (!account) {
+    const created = await ensureAdminRecord(userId);
+    if (created !== "ready") return { ok: false, error: "Database is not configured yet." };
+  } else if (account.role !== "admin") {
+    return { ok: false, error: "This account already has a role." };
+  }
+  const [existing] = await db
+    .select({ userId: parents.userId })
+    .from(parents)
+    .where(eq(parents.userId, userId))
+    .limit(1);
+  if (existing) return { ok: true };
+  const clerkUser = await currentUser();
+  const displayName =
+    [clerkUser?.firstName, clerkUser?.lastName].filter(Boolean).join(" ").trim() || "Admin";
+  await db.insert(parents).values({ userId, displayName }).onConflictDoNothing();
+  return { ok: true };
+}
+
 export async function ensureAdminRecord(
   userId: string,
 ): Promise<"ready" | "no-db" | "denied"> {

@@ -12,7 +12,7 @@ import { upcomingWeekends, weekendInRange, WEEKENDS_SHOWN } from "@/lib/player-r
 import { loadPlayerEditor } from "@/lib/player-store";
 import { listingsForParent } from "@/lib/stripe-billing";
 import { listSports } from "@/lib/sport";
-import { getRequestViewer } from "@/lib/viewer";
+import { getRequestViewer, usesParentArea } from "@/lib/viewer";
 
 export const metadata: Metadata = {
   title: "Your player",
@@ -31,7 +31,7 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
+  if (!usesParentArea(viewer)) redirect("/parent");
   const { id } = await params;
   const now = new Date();
   const [editor, sports, listings] = await Promise.all([

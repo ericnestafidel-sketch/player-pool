@@ -3,7 +3,8 @@ import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server
 import { canEditPlayer, canReadPlayer, isPlayerId } from "@/lib/player-access";
 import { clerkConfigured, clerkSaysAdmin, resolveViewer, type Viewer } from "@/lib/viewer";
 
-const isSearch = createRouteMatcher(["/coach/search(.*)", "/coach/messages(.*)"]);
+const isCoachSearch = createRouteMatcher(["/coach/search(.*)"]);
+const isCoachMessages = createRouteMatcher(["/coach/messages(.*)"]);
 const isPlayerRead = createRouteMatcher(["/players(.*)", "/api/players(.*)"]);
 const isPlayerEdit = createRouteMatcher(["/parent/player(.*)"]);
 const isParent = createRouteMatcher(["/parent(.*)"]);
@@ -78,7 +79,8 @@ async function gatePlayer(
 async function authorize(request: NextRequest, userId: string | null) {
   if (isPublic(request)) return stamp(NextResponse.next(), request);
   const needsSession =
-    isSearch(request) ||
+    isCoachSearch(request) ||
+    isCoachMessages(request) ||
     isPlayerRead(request) ||
     isPlayerEdit(request) ||
     isParent(request) ||
@@ -104,7 +106,16 @@ async function authorize(request: NextRequest, userId: string | null) {
     return redirectTo(request, "/");
   }
 
-  if (isSearch(request)) {
+  if (isCoachSearch(request)) {
+    if (viewer.role === "admin") return stamp(NextResponse.next(), request);
+    if (viewer.role === "coach" && viewer.coachStatus === "approved") {
+      return stamp(NextResponse.next(), request);
+    }
+    if (viewer.role === "coach") return redirectTo(request, "/coach/pending");
+    return redirectTo(request, "/access-denied");
+  }
+
+  if (isCoachMessages(request)) {
     if (viewer.role === "coach" && viewer.coachStatus === "approved") {
       return stamp(NextResponse.next(), request);
     }
@@ -113,13 +124,12 @@ async function authorize(request: NextRequest, userId: string | null) {
   }
 
   if (isNewPlayer(request)) {
-    if (viewer.role === "parent" || viewer.role === null) {
+    if (viewer.role === "parent" || viewer.role === "admin" || viewer.role === null) {
       if (viewer.role === null && viewer.signupIntent === "coach") {
         return redirectTo(request, "/coach/signup");
       }
       return stamp(NextResponse.next(), request);
     }
-    if (viewer.role === "admin") return redirectTo(request, "/admin");
     return redirectTo(
       request,
       viewer.coachStatus === "approved" ? "/coach/search" : "/coach/pending",
@@ -130,13 +140,12 @@ async function authorize(request: NextRequest, userId: string | null) {
   if (isPlayerEdit(request)) return gatePlayer(request, viewer, "edit");
 
   if (isParent(request)) {
-    if (viewer.role === "parent" || viewer.role === null) {
+    if (viewer.role === "parent" || viewer.role === "admin" || viewer.role === null) {
       if (viewer.role === null && viewer.signupIntent === "coach") {
         return redirectTo(request, "/coach/signup");
       }
       return stamp(NextResponse.next(), request);
     }
-    if (viewer.role === "admin") return redirectTo(request, "/admin");
     return redirectTo(request, viewer.coachStatus === "approved" ? "/coach/search" : "/coach/pending");
   }
 
@@ -164,7 +173,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   if (!clerkConfigured()) {
     if (isPublic(request)) return stamp(NextResponse.next(), request);
     const locked =
-      isSearch(request) ||
+      isCoachSearch(request) ||
+      isCoachMessages(request) ||
       isPlayerRead(request) ||
       isPlayerEdit(request) ||
       isParent(request) ||

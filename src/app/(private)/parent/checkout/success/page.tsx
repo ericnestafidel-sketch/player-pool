@@ -4,7 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { fulfillCheckoutSession, getStripe } from "@/lib/stripe-billing";
-import { getRequestViewer } from "@/lib/viewer";
+import { getRequestViewer, usesParentArea } from "@/lib/viewer";
 import { revalidatePath } from "next/cache";
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ async function Success({ searchParams }: { searchParams: Promise<{ session_id?: 
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
+  if (!usesParentArea(viewer)) redirect("/parent");
   const params = await searchParams;
   const stripe = getStripe();
   let confirmed = false;

@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { blockCoach, replyToRequest, reportCoach, unblockCoach } from "@/lib/threads";
-import { getRequestViewer } from "@/lib/viewer";
+import { requireParentActor } from "@/lib/parent-actor";
+import { getRequestViewer, usesParentArea } from "@/lib/viewer";
 
 export type MessageState = { error?: string };
 
@@ -25,10 +26,7 @@ function safeReturn(value: string): string {
 }
 
 async function parentId(): Promise<string> {
-  const viewer = await getRequestViewer();
-  if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
-  return viewer.userId;
+  return requireParentActor();
 }
 
 export async function replyAsParent(
@@ -37,7 +35,7 @@ export async function replyAsParent(
 ): Promise<MessageState> {
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
+  if (!usesParentArea(viewer)) redirect("/parent");
   const requestId = text(formData.get("requestId")).trim();
   const result = await replyToRequest(viewer, requestId, text(formData.get("body")));
   if (!result.ok) return { error: result.error };

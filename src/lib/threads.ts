@@ -164,7 +164,7 @@ export async function replyToRequest(
   const request = await loadRequest(requestId);
   if (!request) return { ok: false, error: "That message is not available." };
   const message = rawMessage.trim();
-  if (viewer.role === "parent" && viewer.userId === request.parentId) {
+  if ((viewer.role === "parent" || viewer.role === "admin") && viewer.userId === request.parentId) {
     if (request.blocked) return { ok: false, error: "Unblock this coach before you reply." };
     if (request.coachStatus !== "approved") {
       return { ok: false, error: "This coach cannot reply right now." };

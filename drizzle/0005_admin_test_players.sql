@@ -1,0 +1,1 @@
+ALTER TABLE "players" ADD COLUMN "admin_test" boolean DEFAULT false NOT NULL;

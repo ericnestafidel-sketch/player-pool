@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { CoachCard } from "@/components/coach-card";
 import { formatViewedDate } from "@/lib/player-rules";
 import { listParentThreads } from "@/lib/threads";
-import { getRequestViewer } from "@/lib/viewer";
+import { getRequestViewer, usesParentArea } from "@/lib/viewer";
 
 export const metadata: Metadata = {
   title: "Messages",
@@ -25,7 +25,7 @@ async function Inbox() {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role !== "parent") redirect("/parent");
+  if (!usesParentArea(viewer)) redirect("/parent");
   const threads = await listParentThreads(viewer.userId);
   return (
     <main className="parent-panel">
