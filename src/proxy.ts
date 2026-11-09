@@ -12,7 +12,9 @@ const isAdmin = createRouteMatcher(["/admin(.*)"]);
 const isCoachArea = createRouteMatcher(["/coach/profile(.*)", "/coach/pending(.*)", "/continue(.*)"]);
 const isPrivate = createRouteMatcher([
   "/parent(.*)",
-  "/coach(.*)",
+  // "/coach(.*)" also matches /coaches, the public coach landing page.
+  "/coach",
+  "/coach/(.*)",
   "/admin(.*)",
   "/players(.*)",
   "/sign-in(.*)",
@@ -32,10 +34,9 @@ const isPublic = createRouteMatcher([
 ]);
 
 function stamp(response: NextResponse, request: NextRequest) {
-  if (isPrivate(request)) {
-    response.headers.set("X-Robots-Tag", "noindex, nofollow");
-    response.headers.set("Cache-Control", "private, no-store");
-  }
+  if (isPublic(request) || !isPrivate(request)) return response;
+  response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  response.headers.set("Cache-Control", "private, no-store");
   return response;
 }
 
