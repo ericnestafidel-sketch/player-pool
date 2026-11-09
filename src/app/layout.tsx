@@ -22,11 +22,11 @@ const sourceSans = Source_Sans_3({
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin()),
   title: {
-    default: "Indiana travel baseball player pool",
+    default: "Find travel baseball players",
     template: "%s · Player Pool",
   },
   description:
-    "Find travel baseball players in Indiana. Parents list a player by number, USSSA level, and county. Hand-approved coaches search for tryouts. Free for coaches.",
+    "Find players for a travel team anywhere in the U.S. Parents list a player by number, USSSA level, county, and state. Hand-approved coaches search for travel baseball tryouts. Free for coaches.",
   applicationName: "Player Pool",
   openGraph: {
     siteName: "Player Pool",

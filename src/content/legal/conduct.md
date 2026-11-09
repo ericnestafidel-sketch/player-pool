@@ -37,7 +37,7 @@ This Code follows the same principles as the U.S. Center for SafeSport's Minor A
 14. **No alcohol, drugs, or tobacco** around players in anything connected to Player Pool, and no inappropriate conduct of any kind toward a minor.
 
 ### Reporting
-15. **I'll report concerns right away.** If I see or suspect anything unsafe for a child, I'll report it to Player Pool. **If I have reason to believe a child is being abused or neglected, I'll report it to the authorities.** In Indiana, every person is legally required to do so: call the Department of Child Services Hotline at **1-800-800-5556** (24/7) or law enforcement, and call **911** in an emergency. Outside Indiana, I'll follow my state's reporting law. I'll also report sexual misconduct to the U.S. Center for SafeSport where it applies (uscenterforsafesport.org).
+15. **I'll report concerns right away.** If I see or suspect anything unsafe for a child, I'll report it to Player Pool. **If I have reason to believe a child is being abused or neglected, I'll report it to the authorities.** Call your state's child abuse hotline or 1-800-422-4453 Childhelp; in Indiana, DCS 1-800-800-5556. Call **911** in an emergency. I'll also report sexual misconduct to the U.S. Center for SafeSport where it applies (uscenterforsafesport.org).
 16. **I'll cooperate** with any Player Pool review and with law enforcement or child-protection investigations.
 
 ### Enforcement

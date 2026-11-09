@@ -114,7 +114,14 @@ async function Search({
             ))}
           </select>
           <label htmlFor="county">County</label>
-          <input id="county" name="county" defaultValue={filters.county} autoComplete="off" />
+          <input
+            id="county"
+            name="county"
+            defaultValue={filters.county}
+            autoComplete="off"
+            placeholder="Any county"
+          />
+          <p className="meta">Any U.S. state, plus a county name.</p>
           <label htmlFor="weekend">Available this weekend</label>
           <select id="weekend" name="weekend" defaultValue={filters.weekend}>
             <option value="">Any</option>

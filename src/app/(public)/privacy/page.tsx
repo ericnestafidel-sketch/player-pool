@@ -8,7 +8,7 @@ import { publicMetadata } from "@/lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Privacy Policy",
   description:
-    "How Coach Eric LLC dba Player Pool protects an Indiana travel baseball listing. Players are numbers, location is state and county only, and coaches never see a child's email or phone.",
+    "How Coach Eric LLC dba Player Pool protects a travel baseball listing. Players are numbers, location is state and county only, and coaches never see a child's email or phone.",
   path: "/privacy",
 });
 

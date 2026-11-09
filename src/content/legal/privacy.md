@@ -131,7 +131,7 @@ We share information only with companies that help us run Player Pool, and only 
 These providers are bound by their own privacy and security terms and may use the data only to provide their service. Our data is stored in the United States.
 
 We may also disclose information:
-- **to protect a child or anyone else**, including reporting suspected child abuse or exploitation to the Indiana Department of Child Services, the National Center for Missing & Exploited Children, or law enforcement;
+- **to protect a child or anyone else**, including reporting suspected child abuse or exploitation to your state's child abuse hotline or 1-800-422-4453 Childhelp; in Indiana, DCS 1-800-800-5556, the National Center for Missing & Exploited Children, or law enforcement;
 - when required by law, subpoena, or court order;
 - to enforce our Terms or defend legal claims; or
 - to a buyer or successor if Player Pool is sold or merged, in which case this policy (or one at least as protective) will continue to apply, and we'll notify Parents first.
@@ -191,4 +191,4 @@ Coach Eric LLC, doing business as Player Pool
 [mailing address available on request]
 {{SUPPORT_EMAIL}}
 
-To report a safety concern about a child, use the Report button on the site or email us. **If a child is in immediate danger, call 911.** In Indiana, you can also call the Department of Child Services Child Abuse and Neglect Hotline at **1-800-800-5556** (24/7).
+To report a safety concern about a child, use the Report button on the site or email us. **If a child is in immediate danger, call 911.** You can also call your state's child abuse hotline or 1-800-422-4453 Childhelp; in Indiana, DCS 1-800-800-5556.

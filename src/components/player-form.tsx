@@ -205,7 +205,7 @@ export function PlayerForm({
 
       <section className="section-card">
         <h3>Location</h3>
-        <p className="meta">State and county only. Town and street address are not collected.</p>
+        <p className="meta">Any U.S. state. Enter the county name only — not a town or street.</p>
         <label htmlFor="state">State</label>
         <select id="state" name="state" required defaultValue={draft.state}>
           <option value="">Choose a state</option>
@@ -224,7 +224,7 @@ export function PlayerForm({
           autoComplete="off"
           maxLength={60}
           defaultValue={draft.county}
-          placeholder="Montgomery"
+          placeholder="County name"
         />
         <FieldError id="county-error" message={state.fieldErrors.county} />
       </section>

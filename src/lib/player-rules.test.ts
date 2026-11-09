@@ -133,6 +133,28 @@ test("a player form accepts state and county and rejects a name-shaped stat", ()
   }
 });
 
+test("a player form accepts any U.S. state and a free-text county", () => {
+  const parsed = parsePlayerForm(
+    form({
+      sport: "baseball",
+      birthYear: "2015",
+      ageGroup: "12U",
+      positions: ["Pitcher"],
+      skillLevel: "AA",
+      state: "tx",
+      county: "Travis County",
+      status: "full",
+    }),
+    [baseball],
+    now,
+  );
+  assert.equal(parsed.ok, true);
+  if (parsed.ok) {
+    assert.equal(parsed.value.state, "TX");
+    assert.equal(parsed.value.county, "Travis");
+  }
+});
+
 test("search filters keep only known labels", () => {
   const filters = filtersFromParams(
     {
