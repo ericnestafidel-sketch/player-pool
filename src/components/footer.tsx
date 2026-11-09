@@ -8,6 +8,7 @@ export function SiteFooter() {
     <footer>
       <p>Built by a youth coach in Indiana · {BUSINESS_LEGAL_NAME}</p>
       <p>
+        <Link href="/coaches">Coaches</Link>
         <Link href="/pricing">Pricing</Link>
         <Link href="/privacy">Privacy</Link>
         <Link href="/terms">Terms</Link>
