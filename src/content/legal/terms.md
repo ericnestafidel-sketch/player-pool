@@ -40,7 +40,7 @@ Player Pool **is not** a team, league, club, recruiter, agent, or tournament org
 
 ## 4. Coach approval: what it means
 
-We review every Coach request by hand. We look at the Coach's team page and organization and check at least one reference before approving access. **Approval is not a background check, an identity guarantee, or an endorsement of any Coach or team.** We can't verify everything a Coach tells us, and we can't monitor what happens off the site.
+We review every Coach request by hand. We look at at least one proof that you coach the team (a website, league listing, social page, tournament roster, or a short phone call) and check at least one reference before approving access. **Approval is not a background check, an identity guarantee, or an endorsement of any Coach or team.** We can't verify everything a Coach tells us, and we can't monitor what happens off the site.
 
 **Parents are responsible for deciding whether to respond to a Coach, for checking a Coach and team themselves** (for example, by confirming the team with its organization and asking about background checks and SafeSport training), and for supervising every contact and meeting involving their child.
 

@@ -41,7 +41,7 @@ export function httpUrlError(value: string): string | null {
     }
     return null;
   } catch {
-    return "Enter a valid team page link.";
+    return "Enter a valid public http(s) link.";
   }
 }
 

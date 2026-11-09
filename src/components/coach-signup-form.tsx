@@ -55,11 +55,23 @@ export function CoachSignupForm() {
       <label htmlFor="county">County</label>
       <input id="county" name="county" required />
       <FieldError message={state.fieldErrors.county} />
-      <label htmlFor="verifyUrl">
-        Team website or USSSA / Perfect Game team page
-      </label>
-      <input id="verifyUrl" name="verifyUrl" type="url" required placeholder="https://" />
-      <FieldError message={state.fieldErrors.verifyUrl} />
+      <fieldset className="field">
+        <legend>Proof you coach this team</legend>
+        <p className="meta">Provide at least one. A link or a call is enough.</p>
+        <label htmlFor="websiteUrl">Team website</label>
+        <input id="websiteUrl" name="websiteUrl" type="url" placeholder="https://" />
+        <label htmlFor="leagueUrl">USSSA or other league listing</label>
+        <input id="leagueUrl" name="leagueUrl" type="url" placeholder="https://" />
+        <label htmlFor="socialUrl">Team social media page</label>
+        <input id="socialUrl" name="socialUrl" type="url" placeholder="https://" />
+        <label htmlFor="rosterUrl">Tournament roster link</label>
+        <input id="rosterUrl" name="rosterUrl" type="url" placeholder="https://" />
+        <label className="check">
+          <input id="callRequested" name="callRequested" type="checkbox" />
+          <span>Request a short phone call with Eric instead</span>
+        </label>
+        <FieldError message={state.fieldErrors.proof} />
+      </fieldset>
       <label htmlFor="useNote">How will you use Player Pool?</label>
       <textarea id="useNote" name="useNote" required rows={4} />
       <FieldError message={state.fieldErrors.useNote} />

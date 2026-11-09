@@ -1,5 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { coachReferences, coaches, parents, users } from "@/db/schema";
 import { LEGAL_VERSION } from "@/lib/legal";
 import { getDb } from "@/db";
@@ -145,7 +145,18 @@ export async function submitCoachApplication(
   const yearsRaw = text(formData.get("yearsExperience"));
   const state = text(formData.get("state"));
   const county = text(formData.get("county"));
-  const verifyUrl = text(formData.get("verifyUrl"));
+  const websiteUrl = text(formData.get("websiteUrl"));
+  const leagueUrl = text(formData.get("leagueUrl"));
+  const socialUrl = text(formData.get("socialUrl"));
+  const rosterUrl = text(formData.get("rosterUrl"));
+  const callRequested = formData.get("callRequested") === "on";
+  const proofs = [
+    ["website", websiteUrl],
+    ["league", leagueUrl],
+    ["social", socialUrl],
+    ["roster", rosterUrl],
+  ] as const;
+  const provided = proofs.filter(([, url]) => url.length > 0);
   const useNote = text(formData.get("useNote"));
   const refName = text(formData.get("refName"));
   const refRole = text(formData.get("refRole"));
@@ -177,8 +188,18 @@ export async function submitCoachApplication(
     const countyProblem = locationError(state, county);
     if (countyProblem) fieldErrors.county = countyProblem;
   }
-  const urlError = httpUrlError(verifyUrl);
-  if (urlError) fieldErrors.verifyUrl = urlError;
+  for (const [, url] of provided) {
+    const urlError = httpUrlError(url);
+    if (urlError) {
+      fieldErrors.proof = urlError;
+      break;
+    }
+  }
+  if (!provided.length && !callRequested) {
+    fieldErrors.proof = "Add one link, or request a short phone call with Eric.";
+  }
+  const proofKind = provided[0]?.[0] ?? (callRequested ? "call" : null);
+  const verifyUrl = provided[0]?.[1] || null;
   if (useNote.length < 8) fieldErrors.useNote = "Tell Eric briefly how you will use the pool.";
   if (refName.length < 2) fieldErrors.refName = "Enter a reference name.";
   if (!(REFERENCE_ROLES as readonly string[]).includes(refRole)) {
@@ -215,6 +236,8 @@ export async function submitCoachApplication(
         state,
         county,
         verifyUrl,
+        proofKind,
+        callRequested,
         useNote,
         status: "pending",
         conductAgreedAt: now,
@@ -320,28 +343,99 @@ export async function setCoachStatus(input: {
   }
   const db = getDb();
   if (!db) return { ok: false, error: "Database is not configured yet." };
-  const [coach] = await db
-    .select({ userId: coaches.userId })
-    .from(coaches)
-    .where(eq(coaches.userId, input.coachId))
-    .limit(1);
-  if (!coach) return { ok: false, error: "Coach not found." };
   const now = new Date();
-  await db
-    .update(coaches)
-    .set({
-      status: input.status,
-      statusReason: input.reason || null,
-      approvedAt: input.status === "approved" ? now : null,
-      approvedBy: input.status === "approved" ? input.adminId : null,
-    })
-    .where(eq(coaches.userId, input.coachId));
+  const updated = await db.transaction(async (tx) => {
+    await tx.execute(sql`select pg_advisory_xact_lock(48201)`);
+    const [coach] = await tx
+      .select({
+        userId: coaches.userId,
+        foundingCoach: coaches.foundingCoach,
+        foundingNumber: coaches.foundingNumber,
+      })
+      .from(coaches)
+      .where(eq(coaches.userId, input.coachId))
+      .limit(1);
+    if (!coach) return false;
+    let foundingCoach = coach.foundingCoach;
+    let foundingNumber = coach.foundingNumber;
+    if (input.status === "approved" && !foundingCoach && foundingNumber == null) {
+      const [countRow] = await tx
+        .select({ total: sql<number>`count(*)::int` })
+        .from(coaches)
+        .where(eq(coaches.foundingCoach, true));
+      if ((countRow?.total ?? 0) < 20) {
+        const [maxRow] = await tx
+          .select({ max: sql<number>`coalesce(max(${coaches.foundingNumber}), 0)::int` })
+          .from(coaches);
+        foundingNumber = (maxRow?.max ?? 0) + 1;
+        foundingCoach = true;
+      }
+    }
+    await tx
+      .update(coaches)
+      .set({
+        status: input.status,
+        statusReason: input.reason || null,
+        approvedAt: input.status === "approved" ? now : null,
+        approvedBy: input.status === "approved" ? input.adminId : null,
+        foundingCoach,
+        foundingNumber,
+      })
+      .where(eq(coaches.userId, input.coachId));
+    return true;
+  });
+  if (!updated) return { ok: false, error: "Coach not found." };
   try {
     await mergePublicMetadata(input.coachId, { role: "coach", coachStatus: input.status });
   } catch (error) {
     console.error("Could not sync coach status to Clerk", error instanceof Error ? error.name : "");
   }
   return { ok: true };
+}
+
+export async function setFoundingCoach(
+  coachId: string,
+  enabled: boolean,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const db = getDb();
+  if (!db) return { ok: false, error: "Database is not configured yet." };
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`select pg_advisory_xact_lock(48201)`);
+    const [coach] = await tx
+      .select({
+        userId: coaches.userId,
+        foundingCoach: coaches.foundingCoach,
+        foundingNumber: coaches.foundingNumber,
+      })
+      .from(coaches)
+      .where(eq(coaches.userId, coachId))
+      .limit(1);
+    if (!coach) return { ok: false, error: "Coach not found." };
+    if (!enabled) {
+      await tx.update(coaches).set({ foundingCoach: false }).where(eq(coaches.userId, coachId));
+      return { ok: true };
+    }
+    if (coach.foundingCoach) return { ok: true };
+    const [countRow] = await tx
+      .select({ total: sql<number>`count(*)::int` })
+      .from(coaches)
+      .where(eq(coaches.foundingCoach, true));
+    if ((countRow?.total ?? 0) >= 20) {
+      return { ok: false, error: "The 20 founding coach spots are filled." };
+    }
+    if (coach.foundingNumber != null) {
+      await tx.update(coaches).set({ foundingCoach: true }).where(eq(coaches.userId, coachId));
+      return { ok: true };
+    }
+    const [maxRow] = await tx
+      .select({ max: sql<number>`coalesce(max(${coaches.foundingNumber}), 0)::int` })
+      .from(coaches);
+    await tx
+      .update(coaches)
+      .set({ foundingCoach: true, foundingNumber: (maxRow?.max ?? 0) + 1 })
+      .where(eq(coaches.userId, coachId));
+    return { ok: true };
+  });
 }
 
 export async function saveCoachChecklist(input: {

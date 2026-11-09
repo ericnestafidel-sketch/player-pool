@@ -44,6 +44,8 @@ async function Profile() {
       agesCoached: coaches.agesCoached,
       yearsExperience: coaches.yearsExperience,
       status: coaches.status,
+      foundingCoach: coaches.foundingCoach,
+      foundingNumber: coaches.foundingNumber,
     })
     .from(coaches)
     .where(eq(coaches.userId, viewer.userId))

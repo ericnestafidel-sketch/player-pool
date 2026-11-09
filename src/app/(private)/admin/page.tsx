@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { askForInfo, reviewReport, updateChecklist, updateCoachStatus } from "./actions";
+import { askForInfo, reviewReport, toggleFoundingCoach, updateCoachStatus } from "./actions";
 import { ensureAdminRecord } from "@/lib/accounts";
 import { coachReferences, coaches, contactRequests, profileViews, reports, users } from "@/db/schema";
 import { DAILY_CONTACT_CAP } from "@/lib/message-text";
@@ -22,7 +22,7 @@ type Tab = "pending" | "approved" | "suspended";
 export default function AdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; notice?: string }>;
 }) {
   return (
     <Suspense fallback={<main className="admin">Loading the queue…</main>}>
@@ -40,7 +40,7 @@ function formatWhen(value: Date) {
   }).format(value);
 }
 
-async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; notice?: string }> }) {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
@@ -72,6 +72,13 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
         state: coaches.state,
         county: coaches.county,
         verifyUrl: coaches.verifyUrl,
+        proofKind: coaches.proofKind,
+        callRequested: coaches.callRequested,
+        foundingCoach: coaches.foundingCoach,
+        foundingNumber: coaches.foundingNumber,
+        conductAgreedAt: coaches.conductAgreedAt,
+        eligibilityAttestedAt: coaches.eligibilityAttestedAt,
+        safetyRulesAgreedAt: coaches.safetyRulesAgreedAt,
         useNote: coaches.useNote,
         status: coaches.status,
         statusReason: coaches.statusReason,
@@ -137,6 +144,9 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
 
   return (
     <main className="admin">
+      {params.notice === "founding-full" ? (
+        <p className="field-error">The 20 founding coach spots are filled.</p>
+      ) : null}
       <h1>Coach approvals</h1>
       <p className="meta">
         Hand-approve every coach before they can see profiles. Email and phone on this screen are for
@@ -217,11 +227,21 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
                 {coach.phone ? ` · ${coach.phone}` : ""}
               </p>
               <p className="meta">
-                Verify:{" "}
-                <a href={coach.verifyUrl} target="_blank" rel="noreferrer">
-                  {coach.verifyUrl}
-                </a>
+                Proof:{" "}
+                {coach.verifyUrl ? (
+                  <a href={coach.verifyUrl} target="_blank" rel="noreferrer">
+                    {coach.proofKind ?? "link"} — open
+                  </a>
+                ) : (
+                  "No link"
+                )}
+                {coach.callRequested ? " · Call requested" : ""}
               </p>
+              {coach.foundingCoach ? (
+                <p className="status-badge badge-founding">
+                  Founding Coach{coach.foundingNumber ? ` #${coach.foundingNumber}` : ""}
+                </p>
+              ) : null}
               <p className="meta">
                 <b>Why:</b> {coach.useNote}
               </p>
@@ -232,25 +252,26 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
               ))}
               {coach.status === "pending" ? (
                 <>
-                  <form className="checklist" action={updateChecklist}>
-                    <div style={{ fontWeight: 700, marginBottom: 4 }}>Verification checklist</div>
-                    <input type="hidden" name="coachId" value={coach.userId} />
-                    <label>
-                      <input type="checkbox" name="teamPage" defaultChecked={coach.checklistTeamPage} /> Team
-                      page checked
-                    </label>
-                    <label>
-                      <input type="checkbox" name="org" defaultChecked={coach.checklistOrg} /> Organization
-                      confirmed
-                    </label>
-                    <label>
-                      <input type="checkbox" defaultChecked={coach.checklistConduct} disabled /> Code of conduct
-                      agreed
-                    </label>
-                    <button className="btn-info" type="submit">
-                      Save checklist
-                    </button>
-                  </form>
+                  <ul className="checklist">
+                    <li>
+                      Proof link:{" "}
+                      {coach.verifyUrl ? (
+                        <a href={coach.verifyUrl} target="_blank" rel="noreferrer">
+                          Opens
+                        </a>
+                      ) : (
+                        "None"
+                      )}
+                    </li>
+                    <li>Reference given: {refs.length > 0 ? "Yes" : "No"}</li>
+                    <li>
+                      Checkboxes agreed:{" "}
+                      {coach.conductAgreedAt && coach.eligibilityAttestedAt && coach.safetyRulesAgreedAt
+                        ? "Yes"
+                        : "No"}
+                    </li>
+                    <li>Call requested: {coach.callRequested ? "Yes" : "No"}</li>
+                  </ul>
                   {coach.infoRequestNote ? (
                     <p className="meta">
                       <b>Ask-for-info note (not emailed yet):</b> {coach.infoRequestNote}
@@ -296,6 +317,13 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
                     </span>
                     <span className="stat">Profiles viewed: {views.get(coach.userId) ?? 0}</span>
                   </div>
+                  <form action={toggleFoundingCoach}>
+                    <input type="hidden" name="coachId" value={coach.userId} />
+                    <input type="hidden" name="founding" value={coach.foundingCoach ? "false" : "true"} />
+                    <button className="btn-info" type="submit">
+                      {coach.foundingCoach ? "Remove founding badge" : "Mark founding coach"}
+                    </button>
+                  </form>
                   <form className="coach-actions" action={updateCoachStatus}>
                     <input type="hidden" name="coachId" value={coach.userId} />
                     <input type="hidden" name="status" value="suspended" />

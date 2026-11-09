@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { saveCoachChecklist, saveInfoRequest, setCoachStatus } from "@/lib/accounts";
+import { saveCoachChecklist, saveInfoRequest, setCoachStatus, setFoundingCoach } from "@/lib/accounts";
 import { resolveReport } from "@/lib/threads";
 import { clerkSaysAdmin, getRequestViewer } from "@/lib/viewer";
 
@@ -30,6 +30,17 @@ export async function updateCoachStatus(formData: FormData) {
     reason: typeof reason === "string" ? reason.trim() : "",
   });
   revalidatePath("/admin");
+}
+
+export async function toggleFoundingCoach(formData: FormData) {
+  await requireAdminId();
+  const enabled = formData.get("founding") === "true";
+  const result = await setFoundingCoach(coachId(formData), enabled);
+  revalidatePath("/admin");
+  revalidatePath("/coach/profile");
+  revalidatePath("/coach/search");
+  revalidatePath("/parent/inbox");
+  if (!result.ok) redirect("/admin?notice=founding-full");
 }
 
 export async function updateChecklist(formData: FormData) {

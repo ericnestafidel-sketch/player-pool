@@ -108,6 +108,8 @@ aside select:disabled{background:#eef1f5;color:var(--muted-soft)}
 aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap textarea:focus,.parent-panel select:focus,.parent-panel input:focus,.parent-panel textarea:focus,.modal select:focus,.modal textarea:focus{
   outline:0;border-color:var(--navy);box-shadow:0 0 0 3px rgba(15,42,74,.15)}
 .field-error{color:var(--danger);font-size:12px;margin-top:4px}
+.form-wrap fieldset{border:1px solid var(--border);border-radius:8px;margin:16px 0;padding:4px 12px 12px}
+.form-wrap legend{font-weight:700;color:var(--navy);padding:0 4px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 .card h3{margin:0 0 6px;color:var(--navy)}
 .card .meta{font-size:13px;color:var(--muted);margin:4px 0}
@@ -188,6 +190,7 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
 .admin-grid{display:grid;gap:14px}
 .coach-card h3{margin:0 0 4px;color:var(--navy)}
 .checklist{margin:10px 0;padding:10px 12px;background:#f8fafc;border-radius:8px;font-size:13px}
+ul.checklist{list-style:none}
 .checklist label{display:flex;gap:8px;align-items:center;margin:4px 0;font-weight:500;color:var(--text)}
 .checklist input{width:auto}
 .coach-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
@@ -202,6 +205,7 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
 .reports h3{margin:0 0 6px;color:var(--navy);font-size:16px}
 .badge-pend{background:var(--gold-soft);color:var(--warn)}
 .badge-ok{background:var(--success-bg);color:var(--success)}
+.badge-founding{background:var(--gold);color:var(--navy)}
 .badge-bad{background:var(--danger-bg);color:#991b1b}
 .brand .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin:16px 0 28px}
 .swatch{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:var(--white)}

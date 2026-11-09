@@ -11,6 +11,8 @@ export type PublicCoach = {
   agesCoached: string;
   yearsExperience: number | null;
   approved: boolean;
+  foundingCoach: boolean;
+  foundingNumber: number | null;
 };
 
 const PUBLIC_ROW_KEYS = new Set([
@@ -19,6 +21,8 @@ const PUBLIC_ROW_KEYS = new Set([
   "agesCoached",
   "yearsExperience",
   "status",
+  "foundingCoach",
+  "foundingNumber",
 ]);
 
 function isStatus(value: unknown): value is CoachStatus {
@@ -38,12 +42,15 @@ export function toPublicCoach(row: Record<string, unknown>): PublicCoach {
     }
   }
   const years = row.yearsExperience;
+  const foundingNumber = row.foundingNumber;
   if (
     typeof row.teamName !== "string" ||
     typeof row.organization !== "string" ||
     typeof row.agesCoached !== "string" ||
     !isStatus(row.status) ||
-    (years != null && typeof years !== "number")
+    typeof row.foundingCoach !== "boolean" ||
+    (years != null && typeof years !== "number") ||
+    (foundingNumber != null && typeof foundingNumber !== "number")
   ) {
     throw new Error("Coach card is missing a public field.");
   }
@@ -53,6 +60,8 @@ export function toPublicCoach(row: Record<string, unknown>): PublicCoach {
     agesCoached: row.agesCoached,
     yearsExperience: typeof years === "number" ? years : null,
     approved: row.status === "approved",
+    foundingCoach: row.foundingCoach,
+    foundingNumber: typeof foundingNumber === "number" ? foundingNumber : null,
   };
 }
 
