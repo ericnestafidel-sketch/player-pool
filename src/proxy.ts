@@ -20,6 +20,14 @@ const isPrivate = createRouteMatcher([
   "/access-denied(.*)",
   "/api(.*)",
 ]);
+const isPublic = createRouteMatcher([
+  "/",
+  "/pricing(.*)",
+  "/privacy(.*)",
+  "/terms(.*)",
+  "/conduct(.*)",
+  "/code-of-conduct(.*)",
+]);
 
 function stamp(response: NextResponse, request: NextRequest) {
   if (isPrivate(request)) {
@@ -63,6 +71,7 @@ async function gatePlayer(
 }
 
 async function authorize(request: NextRequest, userId: string | null) {
+  if (isPublic(request)) return stamp(NextResponse.next(), request);
   const needsSession =
     isSearch(request) ||
     isPlayerRead(request) ||
@@ -126,7 +135,12 @@ const withClerk = clerkMiddleware(async (auth, request) => {
  * Player routes fail closed: an approved coach, or the parent who owns the profile.
  */
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
+  const path = request.nextUrl.pathname;
+  if (path === "/code-of-conduct" || path === "/code-of-conduct/") {
+    return redirectTo(request, "/conduct");
+  }
   if (!clerkConfigured()) {
+    if (isPublic(request)) return stamp(NextResponse.next(), request);
     const locked =
       isSearch(request) ||
       isPlayerRead(request) ||

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { formatUsd, LAUNCH_FREE_SEASON_SPOTS, seasonPlan, yearlyPlan } from "@/lib/pricing";
 
 export const metadata: Metadata = {
   title: "Get your player seen by travel coaches",
@@ -10,10 +11,10 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <div className="founders">
-        ⭐ Founding Families: first 25 parents pay $15 a season (or $36/year for all three seasons),
-        locked in for good.
-      </div>
+      <Link className="founders" href="/pricing">
+        Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players to sign up get their first season
+        FREE.
+      </Link>
       <section className="hero">
         <h1>Get your player seen by travel coaches</h1>
         <p>
@@ -81,29 +82,20 @@ export default function HomePage() {
       <section className="wrap" id="price">
         <h2>Simple pricing</h2>
         <div className="price-grid">
-          <div className="price-card featured">
-            <div className="status-badge status-pickup">Founding Families</div>
-            <div className="amt">$15</div>
-            <p>
-              <b>per season</b>
-            </p>
-            <p className="meta">First 25 parents. Locked in for good.</p>
-            <div className="amt" style={{ fontSize: "1.5rem", marginTop: 12 }}>
-              $36 / year
-            </div>
-            <p className="meta">All three seasons</p>
-          </div>
           <div className="price-card">
-            <div className="status-badge status-full">Regular</div>
-            <div className="amt">$25</div>
+            <div className="amt">{formatUsd(seasonPlan.amountCents)}</div>
             <p>
               <b>per season</b>
             </p>
-            <p className="meta">After founding spots fill.</p>
-            <div className="amt" style={{ fontSize: "1.5rem", marginTop: 12 }}>
-              $60 / year
-            </div>
-            <p className="meta">All three seasons</p>
+            <p className="meta">One-time payment.</p>
+          </div>
+          <div className="price-card featured">
+            <div className="status-badge status-pickup">Best value</div>
+            <div className="amt">{formatUsd(yearlyPlan.amountCents)}</div>
+            <p>
+              <b>all three seasons</b>
+            </p>
+            <p className="meta">One-time payment.</p>
           </div>
         </div>
         <p className="note" style={{ textAlign: "center", maxWidth: 560, margin: "0 auto 20px" }}>
@@ -112,8 +104,8 @@ export default function HomePage() {
           Coaches use Player Pool free.
         </p>
         <p style={{ textAlign: "center" }}>
-          <Link className="btn gold" href="/sign-up">
-            Claim a founding spot
+          <Link className="btn gold" href="/pricing">
+            See pricing
           </Link>
         </p>
       </section>

@@ -54,6 +54,8 @@ small,.meta,.note{font-size:.875rem;color:var(--muted)}
 .btn-muted{background:#eef3f9;color:var(--navy)}
 .demo{background:var(--gold-soft);border-bottom:1px solid var(--gold);padding:8px 24px;font-size:13px;text-align:center}
 .founders{background:var(--gold);color:var(--navy);text-align:center;padding:10px 24px;font-weight:700}
+a.founders{display:block;text-decoration:none}
+a.founders:hover{text-decoration:underline}
 .hero{background:linear-gradient(180deg,rgba(10,30,55,.78),rgba(10,30,55,.45) 60%,rgba(10,30,55,.7)),url('/field.jpg') center 60%/cover no-repeat;color:var(--white);padding:120px 24px 130px;text-align:center}
 .hero h1{font-size:2.75rem;margin:0 0 12px;text-shadow:0 2px 12px rgba(0,0,0,.5)}
 .hero p{font-size:1.15rem;max-width:660px;margin:0 auto 28px;text-shadow:0 1px 8px rgba(0,0,0,.6)}
@@ -75,6 +77,25 @@ small,.meta,.note{font-size:.875rem;color:var(--muted)}
 .price-card{background:var(--bg-card);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow);text-align:center}
 .price-card.featured{outline:2px solid var(--gold)}
 .price-card .amt{font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--navy);margin:8px 0}
+.pricing-hero{background:linear-gradient(180deg,var(--navy-deep),var(--navy));color:var(--white);text-align:center;padding:72px 24px 64px}
+.pricing-hero h1{font-size:2.6rem;max-width:16em;margin:0 auto}
+.launch-banner{background:var(--gold);color:var(--navy);text-align:center;padding:16px 24px}
+.launch-banner p{margin:0}
+.launch-banner .launch-lead{font-family:var(--font-display);font-weight:700;font-size:1.05rem}
+.launch-banner .launch-sub{margin-top:4px;font-size:.875rem;font-weight:600}
+.pricing-plans{max-width:920px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));align-items:stretch}
+.pricing-plans .price-card{display:flex;flex-direction:column;text-align:left;padding:28px 24px 22px}
+.pricing-plans h2{text-align:left;font-size:1.35rem;margin:0 0 4px;color:var(--navy)}
+.pricing-plans .price-cadence{margin:0 0 8px}
+.pricing-plans ul{margin:8px 0 18px;padding-left:1.15rem;font-size:15px}
+.pricing-plans li{margin:8px 0}
+.pricing-plans .price-cta{margin-top:auto;text-align:center}
+.pricing-plans .price-cta .btn{display:block}
+.pricing-plans .price-cta .meta{margin:10px 0 0}
+.best-value{align-self:flex-start;width:fit-content;background:var(--gold);color:var(--navy);font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:.02em;padding:4px 10px;border-radius:999px;margin:0 0 8px}
+.pricing-foot{text-align:center;max-width:640px;margin:0 auto 12px}
+.pricing-foot a{color:var(--navy);font-weight:700}
+.pricing-plans .price-card > *{min-width:0}
 footer{background:var(--navy-deep);color:#cbd5e1;padding:28px 24px;text-align:center;font-size:13px}
 footer a{color:var(--gold);text-decoration:none;margin:0 8px}
 footer a:hover{text-decoration:underline}
@@ -189,6 +210,9 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
   .search{grid-template-columns:1fr}
   .hero h1{font-size:2rem}
   .hero{padding:80px 20px 90px}
+  .pricing-hero{padding:48px 20px 40px}
+  .pricing-hero h1{font-size:1.85rem}
+  .pricing-plans .price-card{padding:22px 18px}
   .site-header{flex-direction:column;gap:10px;align-items:flex-start}
   .site-header nav a{margin:4px 10px 4px 0}
 }
@@ -248,6 +272,7 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
   color:#e7eef6;
   font-size:15px;
 }
+.approval-steps a{color:var(--gold);font-weight:700}
 .approval-steps li::before{
   content:counter(approval);
   width:36px;

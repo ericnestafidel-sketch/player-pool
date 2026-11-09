@@ -6,10 +6,7 @@ export default function PrivacyPage() {
   return (
     <main className="legal">
       <h1>Privacy Policy</h1>
-      <div className="draft">
-        <strong>Draft – pending attorney review.</strong> Not legal advice. Effective date and
-        remaining brackets will be finalized with counsel before launch.
-      </div>
+      <p className="draft">Draft, last updated November 2026.</p>
       <p className="meta">
         <strong>Effective date:</strong> [DATE]
       </p>
@@ -118,7 +115,9 @@ export default function PrivacyPage() {
       <h2>Changes</h2>
       <p>We will email Parents about material changes before they take effect.</p>
       <h2>Contact</h2>
-      <p>On Deck Player Pool LLC, [mailing address coming soon], [business email coming soon]</p>
+      <p>
+        On Deck Player Pool LLC, [mailing address available on request], [business email coming soon]
+      </p>
     </main>
   );
 }
