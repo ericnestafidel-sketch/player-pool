@@ -37,6 +37,7 @@ export const contactRequestStatus = pgEnum("contact_request_status", [
   "closed",
 ]);
 export const reportStatus = pgEnum("report_status", ["open", "reviewed"]);
+export const contactAuthor = pgEnum("contact_author", ["parent", "coach"]);
 
 export const users = pgTable(
   "users",
@@ -273,6 +274,21 @@ export const contactRequests = pgTable(
   (table) => [index("contact_requests_coach_day_idx").on(table.coachId, table.createdAt)],
 );
 
+/** Replies on a contact request. The opening note stays on contact_requests. */
+export const contactMessages = pgTable(
+  "contact_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    requestId: uuid("request_id")
+      .notNull()
+      .references(() => contactRequests.id, { onDelete: "cascade" }),
+    authorRole: contactAuthor("author_role").notNull(),
+    body: text("body").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("contact_messages_request_idx").on(table.requestId, table.createdAt)],
+);
+
 export const blocks = pgTable(
   "blocks",
   {
@@ -289,7 +305,7 @@ export const blocks = pgTable(
 
 /**
  * A parent report inserts here and sets coaches.status to suspended in the same
- * transaction. The report UI lands in a later session; the columns are ready.
+ * transaction. Eric reinstates or keeps the suspension from /admin.
  */
 export const reports = pgTable(
   "reports",

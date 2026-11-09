@@ -96,6 +96,6 @@ One-time payments, no auto-renew. Founders (first 25): **$15 / season** or **$36
 
 ## Stubbed for later sessions
 
-- Coach contact relay (Resend)
 - Stripe Checkout, founder checkout lock, refunds, season expiry cron
-- Block and report buttons (search already hides a player from a coach who is blocked; filing a report must still suspend that coach in the same transaction)
+
+Approved coaches message parents from a player profile. Parents reply in `/parent/inbox`. Neither side sees the other's email or phone. If `RESEND_API_KEY` and `NOTIFY_FROM_EMAIL` are set, each new message also sends a notice with a link and no message body. A parent can block or report a coach from a thread or the viewed list. A report suspends that coach until Eric reinstates them on `/admin`.

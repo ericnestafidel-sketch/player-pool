@@ -48,6 +48,7 @@ async function HeaderSession() {
       {viewer.role === "coach" && viewer.coachStatus === "approved" ? (
         <>
           <Link href="/coach/search">Search</Link>
+          <Link href="/coach/messages">Messages</Link>
           <Link href="/coach/profile">Team card</Link>
         </>
       ) : null}

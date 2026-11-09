@@ -1,12 +1,14 @@
 import { connection } from "next/server";
-import { count, desc, eq } from "drizzle-orm";
+import { count, desc, eq, sql } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { askForInfo, updateChecklist, updateCoachStatus } from "./actions";
+import { askForInfo, reviewReport, updateChecklist, updateCoachStatus } from "./actions";
 import { ensureAdminRecord } from "@/lib/accounts";
-import { coachReferences, coaches, profileViews, reports, users } from "@/db/schema";
+import { coachReferences, coaches, contactRequests, profileViews, reports, users } from "@/db/schema";
+import { DAILY_CONTACT_CAP } from "@/lib/message-text";
+import { countContactRequests } from "@/lib/threads";
 import { getDb } from "@/db";
 import { clerkSaysAdmin, getRequestViewer } from "@/lib/viewer";
 
@@ -58,7 +60,7 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
     );
   }
 
-  const [coachRows, referenceRows, reportRows, viewRows] = await Promise.all([
+  const [coachRows, referenceRows, reportRows, viewRows, contactTotal, todayRows] = await Promise.all([
     db
       .select({
         userId: coaches.userId,
@@ -77,7 +79,6 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
         checklistOrg: coaches.checklistOrg,
         checklistConduct: coaches.checklistConduct,
         infoRequestNote: coaches.infoRequestNote,
-        dailyContactCount: coaches.dailyContactCount,
         createdAt: coaches.createdAt,
         email: users.email,
         phone: users.phone,
@@ -110,9 +111,19 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
       .select({ coachId: profileViews.coachId, total: count() })
       .from(profileViews)
       .groupBy(profileViews.coachId),
+    countContactRequests(),
+    db
+      .select({ coachId: contactRequests.coachId, total: count() })
+      .from(contactRequests)
+      .where(
+        sql`(${contactRequests.createdAt} at time zone 'America/Indiana/Indianapolis')::date = (now() at time zone 'America/Indiana/Indianapolis')::date`,
+      )
+      .groupBy(contactRequests.coachId),
   ]);
 
   const views = new Map(viewRows.map((row) => [row.coachId, Number(row.total)]));
+  const sentToday = new Map(todayRows.map((row) => [row.coachId, Number(row.total)]));
+  const openReports = reportRows.filter((report) => report.status === "open");
   const counts = {
     pending: coachRows.filter((row) => row.status === "pending").length,
     approved: coachRows.filter((row) => row.status === "approved").length,
@@ -133,20 +144,44 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
       </p>
       <div className="reports">
         <h3>Reports</h3>
+        <p className="meta">Contact requests: {contactTotal}</p>
         {reportRows.length === 0 ? (
           <p className="meta" style={{ margin: 0 }}>
             No reports yet. When a parent files one, that coach is suspended in the same step.
           </p>
         ) : (
           reportRows.map((report) => (
-            <p key={report.id} className="meta">
-              <b>
-                Parent report · {formatWhen(report.createdAt)} · {report.status}
-              </b>{" "}
-              — {report.coachName} ({report.coachStatus}). {report.reason}
-            </p>
+            <div key={report.id} className="meta">
+              <p>
+                <b>
+                  Parent report · {formatWhen(report.createdAt)} · {report.status}
+                </b>{" "}
+                — {report.coachName} ({report.coachStatus}). {report.reason}
+              </p>
+              {report.status === "open" ? (
+                <div className="coach-actions">
+                  <form action={reviewReport}>
+                    <input type="hidden" name="reportId" value={report.id} />
+                    <input type="hidden" name="decision" value="reinstate" />
+                    <button className="btn-approve" type="submit">
+                      Reinstate
+                    </button>
+                  </form>
+                  <form action={reviewReport}>
+                    <input type="hidden" name="reportId" value={report.id} />
+                    <input type="hidden" name="decision" value="keep" />
+                    <button className="btn-suspend" type="submit">
+                      Keep suspended
+                    </button>
+                  </form>
+                </div>
+              ) : null}
+            </div>
           ))
         )}
+        {openReports.length > 0 ? (
+          <p className="meta">{openReports.length} open. Reinstate restores search and contact.</p>
+        ) : null}
       </div>
       <div className="admin-tabs">
         <Link className={tab === "pending" ? "on" : ""} href="/admin?tab=pending">
@@ -256,7 +291,9 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string }>
               {coach.status === "approved" ? (
                 <>
                   <div className="stats-row">
-                    <span className="stat">Contact requests today: {coach.dailyContactCount}/10</span>
+                    <span className="stat">
+                      Contact requests today: {sentToday.get(coach.userId) ?? 0}/{DAILY_CONTACT_CAP}
+                    </span>
                     <span className="stat">Profiles viewed: {views.get(coach.userId) ?? 0}</span>
                   </div>
                   <form className="coach-actions" action={updateCoachStatus}>

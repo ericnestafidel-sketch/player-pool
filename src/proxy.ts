@@ -3,7 +3,7 @@ import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server
 import { canEditPlayer, canReadPlayer, isPlayerId } from "@/lib/player-access";
 import { clerkConfigured, clerkSaysAdmin, resolveViewer, type Viewer } from "@/lib/viewer";
 
-const isSearch = createRouteMatcher(["/coach/search(.*)"]);
+const isSearch = createRouteMatcher(["/coach/search(.*)", "/coach/messages(.*)"]);
 const isPlayerRead = createRouteMatcher(["/players(.*)", "/api/players(.*)"]);
 const isPlayerEdit = createRouteMatcher(["/parent/player(.*)"]);
 const isParent = createRouteMatcher(["/parent(.*)"]);

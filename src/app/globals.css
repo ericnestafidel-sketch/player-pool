@@ -330,3 +330,8 @@ aside select:focus,.form-wrap input:focus,.form-wrap select:focus,.form-wrap tex
 @media(max-width:640px){
   .stat-row,.highlight-row{grid-template-columns:1fr}
 }
+.thread{display:grid;gap:10px;margin:12px 0 18px}
+.bubble{background:var(--bg-card);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow)}
+.bubble.parent{border-left:4px solid var(--gold)}
+.bubble.coach{border-left:4px solid var(--navy)}
+.bubble p:last-child{margin-bottom:0}

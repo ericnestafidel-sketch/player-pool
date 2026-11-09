@@ -1,6 +1,7 @@
 import { and, desc, eq, exists, inArray, isNotNull, isNull, lt, sql } from "drizzle-orm";
 import {
   availabilityWeekends,
+  blocks,
   coachNotes,
   coaches,
   highlights,
@@ -38,8 +39,10 @@ const SEARCH_LIMIT = 100;
 type Tx = Parameters<Parameters<Database["transaction"]>[0]>[0];
 
 export type ProfileViewer = {
+  coachId: string;
   coach: PublicCoach;
   viewedAt: Date;
+  blocked: boolean;
 };
 
 export type ParentPlayer = {
@@ -588,6 +591,7 @@ async function loadViewers(playerIds: string[]): Promise<Map<string, ProfileView
   const rows = await db
     .select({
       playerId: profileViews.playerId,
+      parentId: players.parentId,
       coachId: profileViews.coachId,
       viewedAt: profileViews.viewedAt,
       teamName: coaches.teamName,
@@ -597,13 +601,25 @@ async function loadViewers(playerIds: string[]): Promise<Map<string, ProfileView
       status: coaches.status,
     })
     .from(profileViews)
+    .innerJoin(players, eq(players.id, profileViews.playerId))
     .innerJoin(coaches, eq(coaches.userId, profileViews.coachId))
     .where(inArray(profileViews.playerId, playerIds))
     .orderBy(desc(profileViews.viewedAt));
+  const parentIds = [...new Set(rows.map((row) => row.parentId))];
+  const blockRows =
+    parentIds.length === 0
+      ? []
+      : await db
+          .select({ parentId: blocks.parentId, coachId: blocks.coachId })
+          .from(blocks)
+          .where(inArray(blocks.parentId, parentIds));
+  const blockedKeys = new Set(blockRows.map((row) => `${row.parentId}:${row.coachId}`));
   for (const row of rows) {
     const byCoach = grouped.get(row.playerId) ?? new Map<string, ProfileViewer>();
     if (!byCoach.has(row.coachId)) {
       byCoach.set(row.coachId, {
+        coachId: row.coachId,
+        blocked: blockedKeys.has(`${row.parentId}:${row.coachId}`),
         coach: toPublicCoach({
           teamName: row.teamName,
           organization: row.organization,
