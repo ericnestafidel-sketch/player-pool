@@ -3,6 +3,7 @@ import { Outfit, Source_Sans_3 } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { SiteFooter } from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
+import { siteOrigin } from "@/lib/launch";
 import { clerkConfigured } from "@/lib/viewer";
 import "./globals.css";
 
@@ -19,12 +20,22 @@ const sourceSans = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteOrigin()),
   title: {
-    default: "Player Pool",
+    default: "Indiana travel baseball player pool",
     template: "%s · Player Pool",
   },
   description:
-    "Parents list a player by number, state, and county. Hand-approved travel coaches search the private pool.",
+    "Find travel baseball players in Indiana. Parents list a player by number, USSSA level, and county. Hand-approved coaches search for tryouts. Free for coaches.",
+  applicationName: "Player Pool",
+  openGraph: {
+    siteName: "Player Pool",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

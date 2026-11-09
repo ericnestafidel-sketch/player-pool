@@ -18,7 +18,7 @@ export function SiteHeader() {
         <Link href="/#how">How it works</Link>
         <Link href="/#safety">Safety</Link>
         <Link href="/pricing">Pricing</Link>
-        <Link href="/coach/signup">Coaches: request access</Link>
+        <Link href="/coaches">Coaches: request access</Link>
         <Suspense fallback={<Link href="/sign-in">Sign in</Link>}>
           <HeaderSession />
         </Suspense>

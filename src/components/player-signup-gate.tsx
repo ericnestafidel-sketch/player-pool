@@ -16,7 +16,7 @@ export function PlayerSignupSoon() {
         Player Pool is open for coaches right now. Parents will be able to list a player here soon.
       </p>
       <p>
-        <Link className="btn navy" href="/coach/signup">
+        <Link className="btn navy" href="/coaches">
           I&apos;m a coach — request access
         </Link>
       </p>

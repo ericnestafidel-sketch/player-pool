@@ -7,6 +7,14 @@ export function playerSignupOpen(): boolean {
   return value === "1" || value === "true" || value === "yes";
 }
 
+/** Production origin used when APP_URL is unset, so canonicals stay on the live site. */
+export const PRODUCTION_ORIGIN = "https://player-pool.net";
+
+/** Public site origin with no trailing slash. APP_URL when set, otherwise production. */
+export function siteOrigin(): string {
+  return appOriginFromEnv() ?? PRODUCTION_ORIGIN;
+}
+
 /** Public site origin with no trailing slash. Empty when APP_URL is unset. */
 export function appOriginFromEnv(): string | null {
   const configured = process.env["APP_URL"]?.trim();

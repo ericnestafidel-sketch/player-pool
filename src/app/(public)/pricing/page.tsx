@@ -11,11 +11,13 @@ import {
 import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
 import { playerSignupOpen } from "@/lib/launch";
 import { withRedirect } from "@/lib/redirects";
+import { publicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Pricing",
-  description: `Simple, one-time pricing. No auto-renew. One season is ${formatUsd(seasonPlan.amountCents)}. Three seasons in a row are ${formatUsd(yearlyPlan.amountCents)}.`,
-};
+export const metadata: Metadata = publicMetadata({
+  title: "Indiana travel baseball listing prices",
+  description: `One-time prices for an Indiana travel baseball listing. A season is ${formatUsd(seasonPlan.amountCents)} and three seasons are ${formatUsd(yearlyPlan.amountCents)}, with no auto-renew. Coaches search USSSA profiles free.`,
+  path: "/pricing",
+});
 
 export default function PricingPage() {
   return (
@@ -98,7 +100,7 @@ export default function PricingPage() {
           Full refund within 15 days if no coach has viewed your player&apos;s profile.
         </p>
         <p className="pricing-foot">
-          <Link href="/coach/sign-up">Coaches use Player Pool free after approval.</Link>
+          <Link href="/coaches">Coaches use Player Pool free after approval.</Link>
         </p>
         <p className="note pricing-foot">
           Payments are processed securely by Stripe. Player Pool never sees your card number.
