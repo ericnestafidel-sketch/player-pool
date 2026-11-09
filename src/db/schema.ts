@@ -1,7 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
-  check,
   date,
   index,
   integer,
@@ -56,7 +55,6 @@ export const parents = pgTable("parents", {
     .primaryKey()
     .references(() => users.id, { onDelete: "cascade" }),
   displayName: text("display_name").notNull(),
-  founder: boolean("founder").notNull().default(false),
 });
 
 export const coaches = pgTable(
@@ -195,47 +193,18 @@ export const subscriptions = pgTable(
     seasonCode: text("season_code"),
     year: integer("year"),
     amountCents: integer("amount_cents").notNull(),
-    founder: boolean("founder").notNull().default(false),
+    /** True when Checkout total was $0 or a discount was applied. Not a locked price. */
+    promoFreeSeason: boolean("promo_free_season").notNull().default(false),
     stripeSessionId: text("stripe_session_id"),
     stripePaymentIntent: text("stripe_payment_intent"),
     paidAt: timestamp("paid_at", { withTimezone: true }),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
     viewedByCoach: boolean("viewed_by_coach").notNull().default(false),
   },
-  (table) => [index("subscriptions_player_expires_idx").on(table.playerId, table.expiresAt)],
-);
-
-/** Single row (id = 1). claimed_count cannot pass cap (25). */
-export const founderSlots = pgTable(
-  "founder_slots",
-  {
-    id: integer("id").primaryKey(),
-    claimedCount: integer("claimed_count").notNull().default(0),
-    cap: integer("cap").notNull().default(25),
-  },
   (table) => [
-    check("founder_slots_singleton", sql`${table.id} = 1`),
-    check("founder_slots_cap", sql`${table.cap} = 25`),
-    check(
-      "founder_slots_count",
-      sql`${table.claimedCount} >= 0 AND ${table.claimedCount} <= ${table.cap}`,
-    ),
+    index("subscriptions_player_expires_idx").on(table.playerId, table.expiresAt),
+    uniqueIndex("subscriptions_stripe_session_unique").on(table.stripeSessionId),
   ],
-);
-
-export const founderClaims = pgTable(
-  "founder_claims",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    parentId: text("parent_id")
-      .notNull()
-      .references(() => parents.userId),
-    subscriptionId: uuid("subscription_id").references(() => subscriptions.id, {
-      onDelete: "set null",
-    }),
-    claimedAt: timestamp("claimed_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (table) => [uniqueIndex("founder_claims_parent_unique").on(table.parentId)],
 );
 
 export const profileViews = pgTable(

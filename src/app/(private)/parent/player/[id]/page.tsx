@@ -5,10 +5,12 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { DeletePlayerButton } from "@/components/delete-player-button";
 import { PlayerForm } from "@/components/player-form";
+import { ListingStatus } from "@/components/listing-status";
 import { ViewerList } from "@/components/viewer-list";
 import { pausePlayer } from "@/app/(private)/parent/player/actions";
 import { upcomingWeekends, weekendInRange, WEEKENDS_SHOWN } from "@/lib/player-rules";
 import { loadPlayerEditor } from "@/lib/player-store";
+import { listingsForParent } from "@/lib/stripe-billing";
 import { listSports } from "@/lib/sport";
 import { getRequestViewer } from "@/lib/viewer";
 
@@ -32,9 +34,10 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
   if (viewer.role !== "parent") redirect("/parent");
   const { id } = await params;
   const now = new Date();
-  const [editor, sports] = await Promise.all([
+  const [editor, sports, listings] = await Promise.all([
     loadPlayerEditor(viewer.userId, id, now),
     listSports(),
+    listingsForParent(viewer.userId, now),
   ]);
   if (!editor) notFound();
   if (sports.length === 0) {
@@ -60,6 +63,7 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
         Coaches see {editor.label}, plus state and county. This page does not ask for a name, town,
         or address.
       </p>
+      <ListingStatus playerId={editor.id} listing={listings.get(editor.id) ?? null} />
       {editor.highlightFresh ? (
         <p>
           <span className="badge-hl">90-day highlight</span>

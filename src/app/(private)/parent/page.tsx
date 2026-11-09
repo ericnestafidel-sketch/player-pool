@@ -6,7 +6,9 @@ import { DeletePlayerButton } from "@/components/delete-player-button";
 import { PlayerCard } from "@/components/player-card";
 import { ViewerList } from "@/components/viewer-list";
 import { claimParent } from "@/lib/accounts";
+import { ListingStatus } from "@/components/listing-status";
 import { listParentPlayers, type ParentPlayer } from "@/lib/player-store";
+import { listingsForParent, type PlayerListing } from "@/lib/stripe-billing";
 import { getDb } from "@/db";
 import { getRequestViewer } from "@/lib/viewer";
 import { pausePlayer } from "./player/actions";
@@ -66,7 +68,10 @@ async function ParentHome() {
       </main>
     );
   }
-  const roster = await listParentPlayers(viewer.userId);
+  const [roster, listings] = await Promise.all([
+    listParentPlayers(viewer.userId),
+    listingsForParent(viewer.userId),
+  ]);
   return (
     <main className="parent-panel">
       <h1>Your players</h1>
@@ -87,7 +92,11 @@ async function ParentHome() {
       ) : (
         <div className="stack">
           {roster.map((entry) => (
-            <RosterCard key={entry.player.id} entry={entry} />
+            <RosterCard
+              key={entry.player.id}
+              entry={entry}
+              listing={listings.get(entry.player.id) ?? null}
+            />
           ))}
         </div>
       )}
@@ -98,7 +107,7 @@ async function ParentHome() {
   );
 }
 
-function RosterCard({ entry }: { entry: ParentPlayer }) {
+function RosterCard({ entry, listing }: { entry: ParentPlayer; listing: PlayerListing | null }) {
   return (
     <section className="section-card">
       <PlayerCard
@@ -107,6 +116,7 @@ function RosterCard({ entry }: { entry: ParentPlayer }) {
         weekends={entry.weekends}
         href={`/parent/player/${entry.player.id}`}
       />
+      <ListingStatus playerId={entry.player.id} listing={listing} />
       <div className="roster-actions">
         <Link className="btn navy" href={`/parent/player/${entry.player.id}`}>
           Edit
