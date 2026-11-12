@@ -68,7 +68,7 @@ export function CoachSignupForm() {
         <input id="rosterUrl" name="rosterUrl" type="url" placeholder="https://" />
         <label className="check">
           <input id="callRequested" name="callRequested" type="checkbox" />
-          <span>Request a short phone call with Eric instead</span>
+          <span>Request a short call with our staff instead</span>
         </label>
         <FieldError message={state.fieldErrors.proof} />
       </fieldset>

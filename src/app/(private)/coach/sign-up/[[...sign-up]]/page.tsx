@@ -14,13 +14,13 @@ function ApprovalRequirements() {
     <section className="approval-panel" aria-labelledby="approval-heading">
       <h2 id="approval-heading">What it takes to be approved</h2>
       <p>
-        Player Pool lists minors, so every coach is approved by hand before seeing any player
-        profile. Here&apos;s what we check:
+        Player Pool lists minors, so every coach is reviewed and approved by our experienced baseball
+        staff before seeing any player profile. Here&apos;s what we check:
       </p>
       <ol className="approval-steps">
         <li>
           At least one proof: a team website, league listing, social page, tournament roster, or a
-          short phone call with Eric.
+          short call with our staff.
         </li>
         <li>Your name, team, and organization.</li>
         <li>
@@ -34,7 +34,8 @@ function ApprovalRequirements() {
         </li>
       </ol>
       <p className="approval-foot">
-        Coaches use Player Pool free. Approval usually takes 1 to 2 days.
+        Coaches use Player Pool free. Review is usually within 24–48 hours.{" "}
+        <Link href="/coaches/how-approval-works">How approval works</Link>.
       </p>
     </section>
   );
@@ -60,7 +61,7 @@ export default function CoachAccountPage() {
         <h1>Create a coach account</h1>
         <p className="lead">
           This login is only for coaches. After your account exists you will send team details for
-          Eric to review. You will not see players until he approves you.
+          our staff to review. You will not see players until you are approved.
         </p>
         <Suspense fallback={<p className="lead">Loading…</p>}>
           <SignUp

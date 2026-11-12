@@ -31,12 +31,12 @@ export default function PricingPage() {
       </section>
       <div className="launch-banner">
         <p className="launch-lead">
-          Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players to sign up get their first
-          season FREE.
+          Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players get their first season free, then{" "}
+          {formatUsd(seasonPlan.amountCents)} per season or {formatUsd(yearlyPlan.amountCents)} per year.
         </p>
         <p className="launch-sub">
-          At checkout, use code FIRST25. After those {LAUNCH_FREE_SEASON_SPOTS}, regular pricing
-          applies. Yearly is not included.
+          At checkout, use code FIRST25. It covers the first {LAUNCH_FREE_SEASON_SPOTS} season listings
+          only. Yearly is not included.
         </p>
       </div>
       <section className="wrap">
@@ -76,8 +76,8 @@ export default function PricingPage() {
             </p>
             <p className="meta">
               Starts with the season you choose and ends on the last day of the third season. Save{" "}
-              {formatUsd(yearlyPlan.savingsCents)} versus three season payments. Spring is named for
-              the year it ends (Spring 2027 starts November 1, 2026).
+              {formatUsd(yearlyPlan.savingsCents)} versus three season payments. Spring 2027 is Nov 1,
+              2026 to May 31, 2027. Summer is Jun 1–Aug 31. Fall is Sep 1–Oct 31.
             </p>
             <ul>
               {PLAN_FEATURES.map((feature) => (

@@ -40,7 +40,7 @@ Player Pool **is not** a team, league, club, recruiter, agent, or tournament org
 
 ## 4. Coach approval: what it means
 
-We review every Coach request by hand. We look at at least one proof that you coach the team (a website, league listing, social page, tournament roster, or a short phone call) and check at least one reference before approving access. **Approval is not a background check, an identity guarantee, or an endorsement of any Coach or team.** We can't verify everything a Coach tells us, and we can't monitor what happens off the site.
+Our experienced baseball staff reviews every Coach request. We look at at least one proof that you coach the team (a website, league listing, social page, tournament roster, or a short call with our staff) and check at least one reference before approving access. **Approval is not a background check, an identity guarantee, or an endorsement of any Coach or team.** We can't verify everything a Coach tells us, and we can't monitor what happens off the site.
 
 **Parents are responsible for deciding whether to respond to a Coach, for checking a Coach and team themselves** (for example, by confirming the team with its organization and asking about background checks and SafeSport training), and for supervising every contact and meeting involving their child.
 
@@ -90,7 +90,7 @@ Coaches use Player Pool free. Parents pay to list a player. All prices are in U.
 
 - **Season listing: $25**, one-time payment, per player.
 - **Yearly listing: $60**, one-time payment, per player.
-- **Seasons:** Spring (November 1 – May 31, named for the year it ends; Spring 2027 runs November 1, 2026 through May 31, 2027), Summer (June 1 – August 31), and Fall (September 1 – October 31).
+- **Seasons:** Spring 2027 is November 1, 2026 through May 31, 2027. Summer is June 1 through August 31. Fall is September 1 through October 31. Checkout shows the exact dates for the season you choose.
 - **What you get:** your player's profile is shown to approved Coaches during the period you paid for.
   - A **Season listing** covers the one season you choose at checkout (the current season or the next one) and ends on that season's last day, **no matter what day you buy it.** A season bought near its end is short.
   - A **Yearly listing** covers 12 months: the season you choose and the two seasons after it. It ends on the last day of that third season.
@@ -101,9 +101,9 @@ Coaches use Player Pool free. Parents pay to list a player. All prices are in U.
 - **Taxes** will be added if the law requires it and shown before you pay.
 
 ### Launch offer: FIRST25
-- The first 25 players whose Parents redeem code **FIRST25** at checkout get **one Season listing free**.
+- The first 100 players whose Parents redeem code **FIRST25** at checkout get **one Season listing free**. After that, a season is $25 and a year is $60.
 - Limit one per player. It applies to the Season plan only (not Yearly), has no cash value, can't be combined with other offers, and can't be transferred.
-- The offer ends when 25 codes are redeemed (or earlier if we announce an end date on the pricing page).
+- The offer ends when 100 codes are redeemed (or earlier if we announce an end date on the pricing page).
 - After the free season, regular prices apply. Nothing renews automatically.
 
 ---

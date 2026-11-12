@@ -22,8 +22,8 @@ export function CheckoutForm({
   if (!offer) return null;
   const summary =
     plan === "season"
-      ? `${offer.label} only (${offer.startsOn} – ${offer.endsOn}). ${formatUsd(seasonPlan.amountCents)}, one time.`
-      : `12 months: ${offer.yearlyLabels}, through ${offer.yearlyEndsOn}. ${formatUsd(yearlyPlan.amountCents)}, one time (save ${formatUsd(yearlyPlan.savingsCents)} versus three season payments).`;
+      ? `${offer.rangeLabel}. ${formatUsd(seasonPlan.amountCents)}, one time.`
+      : `12 months: ${offer.yearlyLabels}. ${formatUsd(yearlyPlan.amountCents)}, one time (save ${formatUsd(yearlyPlan.savingsCents)} versus three season payments).`;
   return (
     <form action={startCheckout} className="section-card">
       <label htmlFor="playerId">Player</label>
@@ -47,7 +47,7 @@ export function CheckoutForm({
               required
             />
             <span>
-              {index === 0 ? "Current" : "Next"}: {item.label} ({item.startsOn} – {item.endsOn})
+              {index === 0 ? "Current" : "Next"}: {item.rangeLabel}
             </span>
           </label>
         ))}
@@ -81,9 +81,9 @@ export function CheckoutForm({
       <p className="meta">
         {allowPromo ? (
           <>
-            Season only: code {PROMO_CODE} on the Stripe page covers the first {LAUNCH_FREE_SEASON_SPOTS}{" "}
-            free seasons, including the next season. A $0 checkout still turns the listing on. Yearly is
-            not included.{" "}
+            The first {LAUNCH_FREE_SEASON_SPOTS} players get their first season free with code {PROMO_CODE},
+            then {formatUsd(seasonPlan.amountCents)} per season or {formatUsd(yearlyPlan.amountCents)} per
+            year. The free season does not include yearly. A $0 checkout still turns the listing on.{" "}
           </>
         ) : (
           <>Admin test players do not use FIRST25. </>

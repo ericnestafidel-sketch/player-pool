@@ -17,8 +17,8 @@ export default function HomePage() {
   return (
     <>
       <Link className="founders" href="/pricing">
-        Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players to sign up get their first season
-        FREE.
+        Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players get their first season free, then{" "}
+        {formatUsd(seasonPlan.amountCents)} per season or {formatUsd(yearlyPlan.amountCents)} per year.
       </Link>
       <section className="hero">
         <h1>Get your player seen by travel coaches</h1>
@@ -52,7 +52,7 @@ export default function HomePage() {
           <div className="box">
             <h3>For coaches</h3>
             <p>
-              Search is free after Eric approves you by hand. Filter for a pickup weekend or a tryout by
+              Search is free after our experienced baseball staff approves you. Filter for a pickup weekend or a tryout by
               age, USSSA level, state, and county, then message the parent inside Player Pool.{" "}
               <Link href="/coaches">See how coaches request access</Link>.
             </p>
@@ -77,7 +77,7 @@ export default function HomePage() {
             <div className="num">3</div>
             <h3>Coaches search</h3>
             <p>
-              Only coaches Eric has approved by hand can see profiles. They filter by age, position,
+              Only coaches our experienced baseball staff has approved can see profiles. They filter by age, position,
               level, state, county, status, and available weekends — handy when you need a pickup
               player.
             </p>
@@ -123,8 +123,9 @@ export default function HomePage() {
         </p>
         <h3>Who can see a player?</h3>
         <p>
-          Signed-in coaches Eric has approved. A public page, a search engine, and a coach who is still
-          waiting on approval cannot open the profile.
+          Signed-in coaches our experienced baseball staff has approved. A public page, a search engine,
+          and a coach who is still waiting on approval cannot open the profile.{" "}
+          <Link href="/coaches/how-approval-works">How coach approval works</Link>.
         </p>
         <h3>What does it cost coaches?</h3>
         <p>Coach search is free. Parents pay a one-time season or yearly listing when sign-up is open.</p>
@@ -149,9 +150,9 @@ export default function HomePage() {
           </div>
         </div>
         <p className="note" style={{ textAlign: "center", maxWidth: 560, margin: "0 auto 20px" }}>
-          One-time payments, no auto-renewal. Seasons: Spring (Nov 1–May 31, named for the year it
-          ends) · Summer (Jun 1–Aug 31) · Fall (Sep 1–Oct 31). A yearly listing is those three seasons
-          in a row, 12 months. Full refund within 15 days if no coach has viewed the profile.
+          One-time payments, no auto-renewal. Spring is Nov 1–May 31 (Spring 2027 is Nov 1, 2026 to May
+          31, 2027). Summer is Jun 1–Aug 31. Fall is Sep 1–Oct 31. A yearly listing is those three
+          seasons in a row, 12 months. Full refund within 15 days if no coach has viewed the profile.
           Coaches use Player Pool free.
         </p>
         <p style={{ textAlign: "center" }}>

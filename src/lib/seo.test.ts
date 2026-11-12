@@ -22,6 +22,7 @@ test("public SEO routes stay off private player and account paths", () => {
     "https://player-pool.net",
     "https://player-pool.net/pricing",
     "https://player-pool.net/coaches",
+    "https://player-pool.net/coaches/how-approval-works",
     "https://player-pool.net/privacy",
     "https://player-pool.net/terms",
     "https://player-pool.net/conduct",

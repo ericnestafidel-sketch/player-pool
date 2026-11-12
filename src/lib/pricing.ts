@@ -4,7 +4,7 @@ export const PRICING_CURRENCY = "usd" as const;
 export const SEASON_PRICE_CENTS = 2500;
 export const YEARLY_PRICE_CENTS = 6000;
 export const SEASONS_PER_YEAR = 3;
-export const LAUNCH_FREE_SEASON_SPOTS = 25;
+export const LAUNCH_FREE_SEASON_SPOTS = 100;
 export const PROMO_CODE = "FIRST25";
 
 export const YEARLY_SAVINGS_CENTS = SEASON_PRICE_CENTS * SEASONS_PER_YEAR - YEARLY_PRICE_CENTS;

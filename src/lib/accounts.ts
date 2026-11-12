@@ -318,11 +318,11 @@ export async function submitCoachApplication(
     }
   }
   if (!provided.length && !callRequested) {
-    fieldErrors.proof = "Add one link, or request a short phone call with Eric.";
+    fieldErrors.proof = "Add one link, or request a short call with our staff.";
   }
   const proofKind = provided[0]?.[0] ?? (callRequested ? "call" : null);
   const verifyUrl = provided[0]?.[1] || null;
-  if (useNote.length < 8) fieldErrors.useNote = "Tell Eric briefly how you will use the pool.";
+  if (useNote.length < 8) fieldErrors.useNote = "Tell us briefly how you will use the pool.";
   if (refName.length < 2) fieldErrors.refName = "Enter a reference name.";
   if (!(REFERENCE_ROLES as readonly string[]).includes(refRole)) {
     fieldErrors.refRole = "Choose a reference role.";

@@ -51,7 +51,7 @@ async function Pending() {
     <main className="form-wrap">
       <h1>Coach access is {status}</h1>
       <p className="lead">
-        You cannot see player profiles until Eric approves this request. No player data is loaded on
+        You cannot see player profiles until our experienced baseball staff approves this request. No player data is loaded on
         this page.
       </p>
       {team ? <p>{team}</p> : null}
@@ -61,7 +61,10 @@ async function Pending() {
           <p>{reason}</p>
         </div>
       ) : (
-        <p className="meta">Hand review is usually within 2 days. You will get an email when that step is connected.</p>
+        <p className="meta">
+          Review is usually within 24–48 hours.{" "}
+          <Link href="/coaches/how-approval-works">How approval works</Link>.
+        </p>
       )}
       <p>
         <Link href="/coach/profile">Your team card</Link>

@@ -10,7 +10,7 @@ export function ViewerList({ viewers, returnTo }: { viewers: ProfileViewer[]; re
   return (
     <>
       <p className="meta">
-        Team card only. Block hides your players from that coach. Report suspends them until Eric
+        Team card only. Block hides your players from that coach. Report suspends them until our staff
         reviews.
       </p>
       <div className="contact-list">

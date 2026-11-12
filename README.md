@@ -1,6 +1,6 @@
 # Player Pool
 
-Private youth travel baseball pool. Parents list a player. Coaches Eric has approved can search. Players are shown as **Player #NNN**, with **state and county only**.
+Private youth travel baseball pool. Parents list a player. Coaches our staff has approved can search. Players are shown as **Player #NNN**, with **state and county only**.
 
 Parents can create, edit, pause, and delete player profiles. Approved coaches can search, filter, save searches, and keep private notes. Relay email and payments come later.
 
@@ -94,8 +94,8 @@ Next.js 16 calls the request gate `src/proxy.ts` (this used to be `middleware.ts
 
 ## Pricing copy
 
-One-time payments, no auto-renew. Season **$25** for the season you choose. Yearly **$60** is 12 months: that season and the next two. Spring is November 1–May 31 (named for the year it ends), Summer is June 1–August 31, and Fall is September 1–October 31. On a November 22 launch the current season is Spring 2027, which is the FIRST25 default. A refund is available for 15 days if no coach has viewed the profile since payment. Legal pages are version `2026-11-09`.
+One-time payments, no auto-renew. Season **$25** for the season you choose. Yearly **$60** is 12 months: that season and the next two. Spring 2027 is November 1, 2026 through May 31, 2027. Summer is June 1–August 31. Fall is September 1–October 31. The first 100 season listings can use code FIRST25. A refund is available for 15 days if no coach has viewed the profile since payment. Legal pages are version `2026-11-09`. The live Stripe coupon may still be capped at 25 until it is updated in the Dashboard.
 
 Run `npm run stripe:setup` with `STRIPE_SECRET_KEY`, then set `STRIPE_WEBHOOK_SECRET`. Set `REQUIRE_PAID_LISTING=true` at launch. `CRON_SECRET` protects the daily expiry check.
 
-Approved coaches message parents from a player profile. Parents reply in `/parent/inbox`. Neither side sees the other's email or phone. If `RESEND_API_KEY` and `NOTIFY_FROM_EMAIL` are set, each new message also sends a notice with a link and no message body. A parent can block or report a coach from a thread or the viewed list. A report suspends that coach until Eric reinstates them on `/admin`.
+Approved coaches message parents from a player profile. Parents reply in `/parent/inbox`. Neither side sees the other's email or phone. If `RESEND_API_KEY` and `NOTIFY_FROM_EMAIL` are set, each new message also sends a notice with a link and no message body. A parent can block or report a coach from a thread or the viewed list. A report suspends that coach until staff reinstates them on `/admin`.
