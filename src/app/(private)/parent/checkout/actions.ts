@@ -24,7 +24,7 @@ async function parentId(): Promise<string> {
 export async function startCheckout(formData: FormData) {
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (!playerSignupOpen() && viewer.role !== "admin") redirect("/parent/checkout");
+  if (!playerSignupOpen()) redirect("/parent/checkout");
   const id = await parentId();
   if (!stripeConfigured()) redirect("/parent/checkout");
   const playerId = text(formData.get("playerId"));

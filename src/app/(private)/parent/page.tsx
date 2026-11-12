@@ -124,7 +124,7 @@ async function ParentHome() {
               key={entry.player.id}
               entry={entry}
               listing={listings.get(entry.player.id) ?? null}
-              canPay={viewer.role === "admin" || playerSignupOpen()}
+              canPay={playerSignupOpen()}
             />
           ))}
         </div>

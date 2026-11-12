@@ -123,7 +123,7 @@ function inline(text: string, email: string | null): ReactNode[] {
   const parts = text.split(pattern).filter((part) => part.length > 0);
   return parts.map((part, index) => {
     if (part === "{{SUPPORT_EMAIL}}") {
-      if (!email) return <span key={index}>coming soon</span>;
+      if (!email) return <Link key={index} href="/contact">contact us</Link>;
       return (
         <a key={index} href={`mailto:${email}`}>
           {email}

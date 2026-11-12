@@ -39,7 +39,7 @@ async function Checkout({
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (!playerSignupOpen() && viewer.role !== "admin") return <PlayerSignupSoon />;
+  if (!playerSignupOpen()) return <PlayerSignupSoon />;
   if (!usesParentArea(viewer)) redirect("/parent");
   const db = getDb();
   const params = await searchParams;

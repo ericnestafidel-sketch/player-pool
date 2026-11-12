@@ -33,6 +33,7 @@ const isPublic = createRouteMatcher([
   "/conduct(.*)",
   "/code-of-conduct(.*)",
   "/coaches(.*)",
+  "/contact(.*)",
 ]);
 
 function stamp(response: NextResponse, request: NextRequest) {
