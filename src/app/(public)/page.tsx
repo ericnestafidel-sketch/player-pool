@@ -87,7 +87,8 @@ export default function HomePage() {
             <h3>Message in the app</h3>
             <p>
               Coaches and parents message each other inside Player Pool. Neither side ever sees the
-              other&apos;s email or phone.
+              other&apos;s email or phone. Approved coaches can also post what they need. Sign in to see
+              those posts.
             </p>
           </div>
         </div>

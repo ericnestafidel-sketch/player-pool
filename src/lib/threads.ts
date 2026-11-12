@@ -118,6 +118,7 @@ export async function startContact(
         .where(
           and(
             eq(contactRequests.coachId, viewer.userId),
+            eq(contactRequests.openedBy, "coach"),
             sql`(${contactRequests.createdAt} at time zone 'America/Indiana/Indianapolis')::date = (now() at time zone 'America/Indiana/Indianapolis')::date`,
           ),
         );
@@ -132,6 +133,7 @@ export async function startContact(
           coachId: viewer.userId,
           weekend,
           message,
+          openedBy: "coach",
         })
         .returning({ id: contactRequests.id });
       if (!request) return { error: "Could not send the message." };
@@ -146,6 +148,61 @@ export async function startContact(
     const parentEmail = await emailFor(created.parentId);
     if (parentEmail) await sendNotification(parentEmail, `/parent/inbox/${created.requestId}`);
     return { ok: true, requestId: created.requestId };
+  } catch {
+    return { ok: false, error: "Could not send the message." };
+  }
+}
+
+/** A parent opens a thread with an approved coach. Does not use the coach's daily new-message cap. */
+export async function startParentContact(
+  viewer: Viewer,
+  coachId: string,
+  playerId: string,
+  rawMessage: string,
+): Promise<{ ok: true; requestId: string } | { ok: false; error: string }> {
+  if (viewer.role !== "parent" && viewer.role !== "admin") {
+    return { ok: false, error: "Only a parent can message a coach from the board." };
+  }
+  const problem = messageError(rawMessage);
+  if (problem) return { ok: false, error: problem };
+  if (!isPlayerId(playerId) || !coachId) return { ok: false, error: "That coach is not available." };
+  const db = getDb();
+  if (!db) return { ok: false, error: "Database is not configured yet." };
+  const message = rawMessage.trim();
+  try {
+    const [player] = await db
+      .select({ id: players.id, parentId: players.parentId, deletedAt: players.deletedAt })
+      .from(players)
+      .where(eq(players.id, playerId))
+      .limit(1);
+    if (!player || player.deletedAt || player.parentId !== viewer.userId) {
+      return { ok: false, error: "Choose one of your players." };
+    }
+    const [coach] = await db
+      .select({ userId: coaches.userId, status: coaches.status })
+      .from(coaches)
+      .where(eq(coaches.userId, coachId))
+      .limit(1);
+    if (!coach || coach.status !== "approved") return { ok: false, error: "That coach is not available." };
+    const [blocked] = await db
+      .select({ parentId: blocks.parentId })
+      .from(blocks)
+      .where(and(eq(blocks.parentId, viewer.userId), eq(blocks.coachId, coachId)))
+      .limit(1);
+    if (blocked) return { ok: false, error: "That coach is not available." };
+    const [request] = await db
+      .insert(contactRequests)
+      .values({
+        playerId,
+        coachId,
+        message,
+        openedBy: "parent",
+      })
+      .returning({ id: contactRequests.id });
+    if (!request) return { ok: false, error: "Could not send the message." };
+    const coachEmail = await emailFor(coachId);
+    if (coachEmail) await sendNotification(coachEmail, `/coach/messages/${request.id}`);
+    return { ok: true, requestId: request.id };
   } catch {
     return { ok: false, error: "Could not send the message." };
   }

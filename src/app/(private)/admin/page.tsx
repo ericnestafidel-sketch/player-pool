@@ -5,7 +5,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { AdminNav } from "@/components/admin-nav";
-import { askForInfo, reviewReport, toggleFoundingCoach, updateCoachStatus } from "./actions";
+import { askForInfo, moderatePost, reviewReport, toggleFoundingCoach, updateCoachStatus } from "./actions";
+import { listOpenBoardReports } from "@/lib/board";
 import { ensureAdminRecord } from "@/lib/accounts";
 import { coachReferences, coaches, contactRequests, profileViews, reports, users } from "@/db/schema";
 import { DAILY_CONTACT_CAP } from "@/lib/message-text";
@@ -70,7 +71,7 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
     );
   }
 
-  const [coachRows, referenceRows, reportRows, viewRows, contactTotal, todayRows] = await Promise.all([
+  const [coachRows, referenceRows, reportRows, viewRows, contactTotal, boardReportRows, todayRows] = await Promise.all([
     db
       .select({
         userId: coaches.userId,
@@ -129,6 +130,7 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
       .from(profileViews)
       .groupBy(profileViews.coachId),
     countContactRequests(),
+    listOpenBoardReports(),
     db
       .select({ coachId: contactRequests.coachId, total: count() })
       .from(contactRequests)
@@ -203,6 +205,36 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
         {openReports.length > 0 ? (
           <p className="meta">{openReports.length} open. Reinstate restores search and contact.</p>
         ) : null}
+      </div>
+      <div className="reports">
+        <h3>Board reports</h3>
+        {boardReportRows.length === 0 ? (
+          <p className="meta">No open reports on coach needs posts.</p>
+        ) : (
+          boardReportRows.map((report) => (
+            <div key={report.id} className="meta">
+              <p>
+                <b>{report.teamName}</b> — {report.reason}
+              </p>
+              <div className="coach-actions">
+                <form action={moderatePost}>
+                  <input type="hidden" name="postId" value={report.postId} />
+                  <input type="hidden" name="action" value="hide" />
+                  <button className="btn-info" type="submit">
+                    Hide
+                  </button>
+                </form>
+                <form action={moderatePost}>
+                  <input type="hidden" name="postId" value={report.postId} />
+                  <input type="hidden" name="action" value="remove" />
+                  <button className="btn-suspend" type="submit">
+                    Remove
+                  </button>
+                </form>
+              </div>
+            </div>
+          ))
+        )}
       </div>
       <div className="admin-tabs">
         <Link className={tab === "pending" ? "on" : ""} href="/admin?tab=pending">

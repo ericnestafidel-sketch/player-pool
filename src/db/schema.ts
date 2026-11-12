@@ -254,6 +254,8 @@ export const contactRequests = pgTable(
       .references(() => coaches.userId),
     weekend: date("weekend"),
     message: text("message").notNull(),
+    /** coach | parent. Parent-opened threads do not count toward the coach's daily cap. */
+    openedBy: text("opened_by").notNull().default("coach"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     status: contactRequestStatus("status").notNull().default("sent"),
   },
@@ -323,6 +325,49 @@ export const coachNotes = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [primaryKey({ columns: [table.coachId, table.playerId] })],
+);
+
+export const boardPosts = pgTable(
+  "board_posts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    coachId: text("coach_id")
+      .notNull()
+      .references(() => coaches.userId, { onDelete: "cascade" }),
+    teamName: text("team_name").notNull(),
+    ageGroup: text("age_group").notNull(),
+    positions: text("positions").array().notNull(),
+    skillLevels: text("skill_levels").array().notNull(),
+    county: text("county").notNull(),
+    state: text("state").notNull(),
+    seasonCode: text("season_code"),
+    neededThrough: date("needed_through"),
+    notes: text("notes"),
+    closedAt: timestamp("closed_at", { withTimezone: true }),
+    hiddenAt: timestamp("hidden_at", { withTimezone: true }),
+    removedAt: timestamp("removed_at", { withTimezone: true }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("board_posts_open_idx").on(table.expiresAt, table.coachId)],
+);
+
+export const boardReports = pgTable(
+  "board_reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    postId: uuid("post_id")
+      .notNull()
+      .references(() => boardPosts.id, { onDelete: "cascade" }),
+    reporterId: text("reporter_id")
+      .notNull()
+      .references(() => users.id),
+    reason: text("reason").notNull(),
+    status: reportStatus("status").notNull().default("open"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("board_reports_post_idx").on(table.postId, table.createdAt)],
 );
 
 export const savedSearches = pgTable("saved_searches", {
