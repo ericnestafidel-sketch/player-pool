@@ -26,6 +26,7 @@ test("public SEO routes stay off private player and account paths", () => {
     "https://player-pool.net/privacy",
     "https://player-pool.net/terms",
     "https://player-pool.net/conduct",
+    "https://player-pool.net/contact",
   ]);
   assert.equal(urls.some((url) => url.includes("/players") || url.includes("/parent")), false);
   if (previous === undefined) delete process.env.APP_URL;

@@ -19,7 +19,7 @@ export function SiteFooter() {
         {email ? (
           <a href={`mailto:${email}`}>{email}</a>
         ) : (
-          "Contact: coming soon"
+          <Link href="/contact">Contact</Link>
         )}
       </p>
       <p>© 2026 {BUSINESS_COPYRIGHT}</p>
