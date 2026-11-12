@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { saveCoachChecklist, saveInfoRequest, setCoachStatus, setFoundingCoach } from "@/lib/accounts";
 import { moderateBoardPost } from "@/lib/board";
-import { resolveReport } from "@/lib/threads";
+import { resolveReport, resolveThreadReport } from "@/lib/threads";
 import { clerkSaysAdmin, getRequestViewer } from "@/lib/viewer";
 
 async function requireAdminId(): Promise<string> {
@@ -63,6 +63,18 @@ export async function reviewReport(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/coach/search");
   revalidatePath("/coach/messages");
+}
+
+export async function reviewThreadReport(formData: FormData) {
+  await requireAdminId();
+  const decision = formData.get("decision");
+  const reportId = formData.get("reportId");
+  if ((decision !== "hide" && decision !== "suspend") || typeof reportId !== "string") return;
+  await resolveThreadReport({ reportId: reportId.trim(), decision });
+  revalidatePath("/admin");
+  revalidatePath("/coach/search");
+  revalidatePath("/coach/messages");
+  revalidatePath("/parent/inbox");
 }
 
 export async function moderatePost(formData: FormData) {

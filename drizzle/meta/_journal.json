@@ -57,6 +57,13 @@
       "when": 1794497853490,
       "tag": "0007_board_posts",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794499000000,
+      "tag": "0008_thread_reports",
+      "breakpoints": true
     }
   ]
 }

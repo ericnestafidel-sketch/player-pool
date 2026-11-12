@@ -42,8 +42,10 @@ export default function HowApprovalWorksPage() {
       <h2>After approval</h2>
       <p>
         Parents can block or report a coach. A report suspends that coach while we review it. A coach
-        can be removed or suspended for conduct problems. Coach contact information is never shown,
-        and all messaging stays in the app.
+        can block or report a parent thread. Staff can hide a profile or suspend the contact from the
+        admin queue. A coach can also be removed or suspended for conduct problems. Coach contact
+        information is never shown, and all messaging stays in the app. The needs board is only for
+        approved coaches, and those posts can be reported too.
       </p>
       <p>
         <Link className="btn gold" href="/coach/signup">

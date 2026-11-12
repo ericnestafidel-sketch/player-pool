@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, isNull, notExists, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import {
   blocks,
   coaches,
@@ -7,6 +7,7 @@ import {
   players,
   profileViews,
   reports,
+  threadReports,
   users,
 } from "@/db/schema";
 import { getDb } from "@/db";
@@ -48,6 +49,7 @@ export type CoachThreadSummary = {
   preview: string;
   createdAt: Date;
   paused: boolean;
+  blocked: boolean;
 };
 
 export type CoachThread = CoachThreadSummary & {
@@ -319,23 +321,15 @@ export async function listCoachThreads(coachId: string): Promise<CoachThreadSumm
       createdAt: contactRequests.createdAt,
       publicNumber: players.publicNumber,
       paused: players.paused,
+      blockedParentId: blocks.parentId,
     })
     .from(contactRequests)
     .innerJoin(players, eq(players.id, contactRequests.playerId))
-    .where(
-      and(
-        eq(contactRequests.coachId, coachId),
-        isNull(players.deletedAt),
-        notExists(
-          db
-            .select({ parentId: blocks.parentId })
-            .from(blocks)
-            .where(
-              and(eq(blocks.parentId, players.parentId), eq(blocks.coachId, contactRequests.coachId)),
-            ),
-        ),
-      ),
+    .leftJoin(
+      blocks,
+      and(eq(blocks.parentId, players.parentId), eq(blocks.coachId, contactRequests.coachId)),
     )
+    .where(and(eq(contactRequests.coachId, coachId), isNull(players.deletedAt)))
     .orderBy(desc(contactRequests.createdAt));
   const previews = await latestPreviews(rows.map((row) => row.id));
   const threads = rows.map((row) => ({
@@ -344,6 +338,7 @@ export async function listCoachThreads(coachId: string): Promise<CoachThreadSumm
     preview: previews.get(row.id) ?? row.message,
     createdAt: row.createdAt,
     paused: row.paused,
+    blocked: Boolean(row.blockedParentId),
   }));
   assertNoContactFields(threads);
   return threads;
@@ -368,7 +363,7 @@ export async function listCoachPlayerThreads(coachId: string, playerId: string):
 export async function loadCoachThread(coachId: string, requestId: string): Promise<CoachThread | null> {
   if (!isPlayerId(requestId)) return null;
   const request = await loadRequest(requestId);
-  if (!request || request.coachId !== coachId || request.deletedAt || request.blocked) return null;
+  if (!request || request.coachId !== coachId || request.deletedAt) return null;
   const messages = await threadMessages(request);
   const thread: CoachThread = {
     id: request.id,
@@ -376,11 +371,131 @@ export async function loadCoachThread(coachId: string, requestId: string): Promi
     preview: messages.at(-1)?.body ?? request.message,
     createdAt: request.createdAt,
     paused: request.paused,
+    blocked: request.blocked,
     weekend: request.weekend,
     messages,
   };
   assertNoContactFields(thread);
   return thread;
+}
+
+export async function blockParentThread(
+  coachId: string,
+  requestId: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const db = getDb();
+  if (!db) return { ok: false, error: "Database is not configured yet." };
+  const request = await loadRequest(requestId);
+  if (!request || request.coachId !== coachId || request.deletedAt) {
+    return { ok: false, error: "That message is not available." };
+  }
+  await db.insert(blocks).values({ parentId: request.parentId, coachId }).onConflictDoNothing();
+  return { ok: true };
+}
+
+export async function unblockParentThread(
+  coachId: string,
+  requestId: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const db = getDb();
+  if (!db) return { ok: false, error: "Database is not configured yet." };
+  const request = await loadRequest(requestId);
+  if (!request || request.coachId !== coachId) {
+    return { ok: false, error: "That message is not available." };
+  }
+  await db.delete(blocks).where(and(eq(blocks.parentId, request.parentId), eq(blocks.coachId, coachId)));
+  return { ok: true };
+}
+
+export async function reportParentThread(
+  coachId: string,
+  requestId: string,
+  reason: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const text = reason.trim();
+  if (text.length < 4 || text.length > 500) return { ok: false, error: "Write a short reason." };
+  const db = getDb();
+  if (!db) return { ok: false, error: "Database is not configured yet." };
+  const request = await loadRequest(requestId);
+  if (!request || request.coachId !== coachId || request.deletedAt) {
+    return { ok: false, error: "That message is not available." };
+  }
+  await db.insert(threadReports).values({
+    requestId,
+    reporterId: coachId,
+    reason: text,
+  });
+  return { ok: true };
+}
+
+export type ThreadReportRow = {
+  id: string;
+  reason: string;
+  createdAt: Date;
+  playerLabel: string;
+  teamName: string;
+};
+
+export async function listOpenThreadReports(): Promise<ThreadReportRow[]> {
+  const db = getDb();
+  if (!db) return [];
+  const rows = await db
+    .select({
+      id: threadReports.id,
+      reason: threadReports.reason,
+      createdAt: threadReports.createdAt,
+      publicNumber: players.publicNumber,
+      teamName: coaches.teamName,
+    })
+    .from(threadReports)
+    .innerJoin(contactRequests, eq(contactRequests.id, threadReports.requestId))
+    .innerJoin(players, eq(players.id, contactRequests.playerId))
+    .innerJoin(coaches, eq(coaches.userId, contactRequests.coachId))
+    .where(eq(threadReports.status, "open"))
+    .orderBy(desc(threadReports.createdAt));
+  return rows.map((row) => ({
+    id: row.id,
+    reason: row.reason,
+    createdAt: row.createdAt,
+    playerLabel: formatPlayerLabel(row.publicNumber),
+    teamName: row.teamName,
+  }));
+}
+
+export async function resolveThreadReport(input: {
+  reportId: string;
+  decision: "hide" | "suspend";
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  const db = getDb();
+  if (!db) return { ok: false, error: "Database is not configured yet." };
+  const [report] = await db
+    .select({
+      id: threadReports.id,
+      status: threadReports.status,
+      playerId: contactRequests.playerId,
+      parentId: players.parentId,
+      coachId: contactRequests.coachId,
+    })
+    .from(threadReports)
+    .innerJoin(contactRequests, eq(contactRequests.id, threadReports.requestId))
+    .innerJoin(players, eq(players.id, contactRequests.playerId))
+    .where(eq(threadReports.id, input.reportId))
+    .limit(1);
+  if (!report || report.status !== "open") return { ok: false, error: "That report is already closed." };
+  await db.transaction(async (tx) => {
+    await tx
+      .update(players)
+      .set({ paused: true, updatedAt: new Date() })
+      .where(eq(players.id, report.playerId));
+    if (input.decision === "suspend") {
+      await tx
+        .insert(blocks)
+        .values({ parentId: report.parentId, coachId: report.coachId })
+        .onConflictDoNothing();
+    }
+    await tx.update(threadReports).set({ status: "reviewed" }).where(eq(threadReports.id, report.id));
+  });
+  return { ok: true };
 }
 
 export async function blockCoach(

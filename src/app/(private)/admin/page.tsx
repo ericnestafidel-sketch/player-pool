@@ -1,12 +1,14 @@
 import { connection } from "next/server";
 import { count, desc, eq, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { AdminNav } from "@/components/admin-nav";
-import { askForInfo, moderatePost, reviewReport, toggleFoundingCoach, updateCoachStatus } from "./actions";
+import { askForInfo, moderatePost, reviewReport, reviewThreadReport, toggleFoundingCoach, updateCoachStatus } from "./actions";
 import { listOpenBoardReports } from "@/lib/board";
+import { listOpenThreadReports } from "@/lib/threads";
 import { ensureAdminRecord } from "@/lib/accounts";
 import { coachReferences, coaches, contactRequests, profileViews, reports, users } from "@/db/schema";
 import { DAILY_CONTACT_CAP } from "@/lib/message-text";
@@ -71,7 +73,9 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
     );
   }
 
-  const [coachRows, referenceRows, reportRows, viewRows, contactTotal, boardReportRows, todayRows] = await Promise.all([
+  const approver = alias(users, "approver");
+  const [coachRows, referenceRows, reportRows, viewRows, contactTotal, boardReportRows, threadReportRows, todayRows] =
+    await Promise.all([
     db
       .select({
         userId: coaches.userId,
@@ -98,11 +102,14 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
         checklistConduct: coaches.checklistConduct,
         infoRequestNote: coaches.infoRequestNote,
         createdAt: coaches.createdAt,
+        approvedAt: coaches.approvedAt,
+        approverEmail: approver.email,
         email: users.email,
         phone: users.phone,
       })
       .from(coaches)
       .innerJoin(users, eq(users.id, coaches.userId))
+      .leftJoin(approver, eq(approver.id, coaches.approvedBy))
       .orderBy(desc(coaches.createdAt)),
     db
       .select({
@@ -131,6 +138,7 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
       .groupBy(profileViews.coachId),
     countContactRequests(),
     listOpenBoardReports(),
+    listOpenThreadReports(),
     db
       .select({ coachId: contactRequests.coachId, total: count() })
       .from(contactRequests)
@@ -162,8 +170,9 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
       ) : null}
       <h1>Coach approvals</h1>
       <p className="meta">
-        Hand-approve every coach before they can see profiles. Email and phone on this screen are for
-        your review only. They are not shown to parents or on player pages.
+        Hand-approve every coach before they can see profiles. Any verified address in ADMIN_EMAILS, and
+        any account with role admin, can use this queue. Email and phone on this screen are for your
+        review only. They are not shown to parents or on player pages.
       </p>
       <div className="reports">
         <h3>Reports</h3>
@@ -194,7 +203,7 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
                     <input type="hidden" name="reportId" value={report.id} />
                     <input type="hidden" name="decision" value="keep" />
                     <button className="btn-suspend" type="submit">
-                      Keep suspended
+                      Hide and keep suspended
                     </button>
                   </form>
                 </div>
@@ -205,6 +214,39 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
         {openReports.length > 0 ? (
           <p className="meta">{openReports.length} open. Reinstate restores search and contact.</p>
         ) : null}
+      </div>
+      <div className="reports">
+        <h3>Message reports</h3>
+        {threadReportRows.length === 0 ? (
+          <p className="meta">No open reports from coaches about a parent thread.</p>
+        ) : (
+          threadReportRows.map((report) => (
+            <div key={report.id} className="meta">
+              <p>
+                <b>
+                  {report.playerLabel} · {report.teamName} · {formatWhen(report.createdAt)}
+                </b>{" "}
+                — {report.reason}
+              </p>
+              <div className="coach-actions">
+                <form action={reviewThreadReport}>
+                  <input type="hidden" name="reportId" value={report.id} />
+                  <input type="hidden" name="decision" value="hide" />
+                  <button className="btn-info" type="submit">
+                    Hide
+                  </button>
+                </form>
+                <form action={reviewThreadReport}>
+                  <input type="hidden" name="reportId" value={report.id} />
+                  <input type="hidden" name="decision" value="suspend" />
+                  <button className="btn-suspend" type="submit">
+                    Suspend
+                  </button>
+                </form>
+              </div>
+            </div>
+          ))
+        )}
       </div>
       <div className="reports">
         <h3>Board reports</h3>
@@ -265,6 +307,12 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
               <p className="meta">
                 {coach.state} · {coach.county} County · submitted {formatWhen(coach.createdAt)}
               </p>
+              {coach.approvedAt ? (
+                <p className="meta">
+                  Approved {formatWhen(coach.approvedAt)}
+                  {coach.approverEmail ? ` by ${coach.approverEmail}` : ""}
+                </p>
+              ) : null}
               <p className="meta">
                 {coach.email}
                 {coach.phone ? ` · ${coach.phone}` : ""}

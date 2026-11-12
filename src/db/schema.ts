@@ -353,6 +353,27 @@ export const boardPosts = pgTable(
   (table) => [index("board_posts_open_idx").on(table.expiresAt, table.coachId)],
 );
 
+/**
+ * Either side can report a message thread. Admins hide the player or suspend
+ * the contact from /admin. The reason stays off parent and coach screens.
+ */
+export const threadReports = pgTable(
+  "thread_reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    requestId: uuid("request_id")
+      .notNull()
+      .references(() => contactRequests.id, { onDelete: "cascade" }),
+    reporterId: text("reporter_id")
+      .notNull()
+      .references(() => users.id),
+    reason: text("reason").notNull(),
+    status: reportStatus("status").notNull().default("open"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("thread_reports_request_idx").on(table.requestId, table.createdAt)],
+);
+
 export const boardReports = pgTable(
   "board_reports",
   {
