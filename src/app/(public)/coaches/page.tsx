@@ -23,6 +23,11 @@ export default function CoachesPage() {
         staff before any profile opens. Send one proof that you coach the team, plus one reference.
         Approval is not a background check.
       </p>
+      <h2>Coach needs</h2>
+      <p>
+        Approved coaches can post the age, positions, and USSSA level they need, with county and state
+        only. Sign in to read posts. Team details are not shown on this page.
+      </p>
       <h2>What you can search</h2>
       <ul>
         <li>Age group and positions</li>

@@ -9,6 +9,7 @@ const isPlayerRead = createRouteMatcher(["/players(.*)", "/api/players(.*)"]);
 const isPlayerEdit = createRouteMatcher(["/parent/player(.*)"]);
 const isParent = createRouteMatcher(["/parent(.*)"]);
 const isAdmin = createRouteMatcher(["/admin(.*)"]);
+const isBoard = createRouteMatcher(["/board(.*)"]);
 const isCoachArea = createRouteMatcher(["/coach/profile(.*)", "/coach/pending(.*)", "/continue(.*)"]);
 const isPrivate = createRouteMatcher([
   "/parent(.*)",
@@ -22,6 +23,7 @@ const isPrivate = createRouteMatcher([
   "/continue(.*)",
   "/access-denied(.*)",
   "/api(.*)",
+  "/board(.*)",
 ]);
 const isPublic = createRouteMatcher([
   "/",
@@ -87,7 +89,8 @@ async function authorize(request: NextRequest, userId: string | null) {
     isPlayerEdit(request) ||
     isParent(request) ||
     isAdmin(request) ||
-    isCoachArea(request);
+    isCoachArea(request) ||
+    isBoard(request);
   if (!userId) {
     if (needsSession) return redirectTo(request, "/sign-in");
     return stamp(NextResponse.next(), request);
@@ -151,6 +154,15 @@ async function authorize(request: NextRequest, userId: string | null) {
     return redirectTo(request, viewer.coachStatus === "approved" ? "/coach/search" : "/coach/pending");
   }
 
+  if (isBoard(request)) {
+    if (viewer.role === "admin" || viewer.role === "parent") return stamp(NextResponse.next(), request);
+    if (viewer.role === "coach" && viewer.coachStatus === "approved") {
+      return stamp(NextResponse.next(), request);
+    }
+    if (viewer.role === "coach") return redirectTo(request, "/coach/pending");
+    return redirectTo(request, "/access-denied");
+  }
+
   if (isCoachArea(request)) return stamp(NextResponse.next(), request);
   return stamp(NextResponse.next(), request);
 }
@@ -181,7 +193,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
       isPlayerEdit(request) ||
       isParent(request) ||
       isAdmin(request) ||
-      isCoachArea(request);
+      isCoachArea(request) ||
+      isBoard(request);
     if (locked) return redirectTo(request, "/sign-in");
     return stamp(NextResponse.next(), request);
   }

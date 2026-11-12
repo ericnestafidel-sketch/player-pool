@@ -50,6 +50,13 @@
       "when": 1794249621613,
       "tag": "0006_skill_levels",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794497853490,
+      "tag": "0007_board_posts",
+      "breakpoints": true
     }
   ]
 }

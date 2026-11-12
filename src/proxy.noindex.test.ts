@@ -12,7 +12,7 @@ test("public pages stay indexable and private /coach routes stay noindex", async
   for (const path of ["/", "/pricing", "/privacy", "/terms", "/conduct", "/coaches", "/coaches/"]) {
     assert.equal(await robots(path), null, path);
   }
-  for (const path of ["/coach", "/coach/", "/coach/signup", "/coach/search", "/admin", "/parent", "/players/abc", "/api/players", "/sign-in", "/sign-up"]) {
+  for (const path of ["/coach", "/coach/", "/coach/signup", "/coach/search", "/admin", "/parent", "/players/abc", "/api/players", "/sign-in", "/sign-up", "/board"]) {
     assert.equal(await robots(path), "noindex, nofollow", path);
   }
 });

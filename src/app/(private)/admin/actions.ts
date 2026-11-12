@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { saveCoachChecklist, saveInfoRequest, setCoachStatus, setFoundingCoach } from "@/lib/accounts";
+import { moderateBoardPost } from "@/lib/board";
 import { resolveReport } from "@/lib/threads";
 import { clerkSaysAdmin, getRequestViewer } from "@/lib/viewer";
 
@@ -62,6 +63,16 @@ export async function reviewReport(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/coach/search");
   revalidatePath("/coach/messages");
+}
+
+export async function moderatePost(formData: FormData) {
+  await requireAdminId();
+  const action = formData.get("action");
+  const postId = formData.get("postId");
+  if ((action !== "hide" && action !== "remove") || typeof postId !== "string") return;
+  await moderateBoardPost(postId.trim(), action);
+  revalidatePath("/admin");
+  revalidatePath("/board");
 }
 
 export async function askForInfo(formData: FormData) {
