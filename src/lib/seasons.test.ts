@@ -4,6 +4,7 @@ import { paidListingEnforced } from "@/lib/player-access";
 import {
   currentSeason,
   indianaStart,
+  labelForStoredSeason,
   promoFreeSeason,
   promoFreeSeasonForPlayer,
   refundEligible,
@@ -34,6 +35,12 @@ test("seasons cross the year and yearly is the next 12 months", () => {
   assert.equal(yearlyExpiresAt(new Date("2026-11-22T17:00:00.000Z")).toISOString(), "2027-11-01T04:00:00.000Z");
   const [current, next] = seasonOffers(new Date("2026-11-22T17:00:00.000Z"));
   assert.equal(current.rangeLabel, "Spring 2027 (Nov 1, 2026 to May 31, 2027)");
+  assert.equal(labelForStoredSeason("spring-2027"), "Spring 2027 (Nov 1, 2026 to May 31, 2027)");
+  assert.equal(
+    labelForStoredSeason("yearly:summer-2027"),
+    "Summer 2027 (Jun 1, 2027 to Aug 31, 2027); Fall 2027 (Sep 1, 2027 to Oct 31, 2027); Spring 2028 (Nov 1, 2027 to May 31, 2028)",
+  );
+  assert.equal(labelForStoredSeason("nope"), null);
   assert.equal(next.rangeLabel, "Summer 2027 (Jun 1, 2027 to Aug 31, 2027)");
 });
 

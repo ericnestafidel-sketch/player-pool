@@ -1,3 +1,4 @@
+import { labelForStoredSeason } from "./seasons";
 import { isUsState } from "./states";
 
 const BANNED_PUBLIC_KEYS = [
@@ -70,6 +71,7 @@ export type PublicPlayer = {
   note: string | null;
   paused: boolean;
   adminTest: boolean;
+  seasonLabel: string | null;
 };
 
 /** The only player shape that may be rendered. Contact fields throw. */
@@ -88,6 +90,7 @@ export function toPublicPlayer(row: {
   note: string | null;
   paused: boolean;
   adminTest: boolean;
+  season?: string | null;
 }): PublicPlayer {
   const player: PublicPlayer = {
     id: row.id,
@@ -104,6 +107,7 @@ export function toPublicPlayer(row: {
     note: row.note,
     paused: row.paused,
     adminTest: row.adminTest,
+    seasonLabel: labelForStoredSeason(row.season),
   };
   for (const key of BANNED_PUBLIC_KEYS) {
     if (key in player) {

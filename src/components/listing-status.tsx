@@ -32,6 +32,7 @@ export function ListingStatus({
       {active && listing?.expiresAt ? (
         <p className="meta">
           {listing.promoFreeSeason ? "Free first season. " : ""}
+          {listing.seasonLabel ? `${listing.seasonLabel}. ` : ""}
           Listed through {endLabel(listing.expiresAt)}
           {listing.plan === "yearly" ? " (yearly)" : ""}.
         </p>

@@ -4,7 +4,7 @@ import { players, profileViews, subscriptions } from "@/db/schema";
 import { getDb } from "@/db";
 import { isPlayerId } from "@/lib/player-access";
 import { appOriginFromEnv } from "@/lib/launch";
-import { coverageFor, promoFreeSeasonForPlayer, refundEligible } from "@/lib/seasons";
+import { coverageFor, labelForStoredSeason, promoFreeSeasonForPlayer, refundEligible } from "@/lib/seasons";
 
 export const SEASON_PRICE_LOOKUP = "player_pool_season";
 export const YEARLY_PRICE_LOOKUP = "player_pool_yearly";
@@ -149,6 +149,7 @@ export type PlayerListing = {
   amountCents: number | null;
   promoFreeSeason: boolean;
   plan: "season" | "yearly" | null;
+  seasonLabel: string | null;
   refundable: boolean;
 };
 
@@ -163,6 +164,7 @@ export async function listingsForParent(parentId: string, now = new Date()): Pro
       plan: subscriptions.plan,
       amountCents: subscriptions.amountCents,
       promoFreeSeason: subscriptions.promoFreeSeason,
+      seasonCode: subscriptions.seasonCode,
       stripePaymentIntent: subscriptions.stripePaymentIntent,
       paidAt: subscriptions.paidAt,
       expiresAt: subscriptions.expiresAt,
@@ -198,6 +200,9 @@ export async function listingsForParent(parentId: string, now = new Date()): Pro
       amountCents: row.amountCents,
       promoFreeSeason: row.promoFreeSeason,
       plan: row.plan,
+      seasonLabel: labelForStoredSeason(
+        row.seasonCode ? (row.plan === "yearly" ? `yearly:${row.seasonCode}` : row.seasonCode) : null,
+      ),
       refundable: refundEligible({
         paidAt: row.paidAt,
         expiresAt: row.expiresAt,

@@ -13,6 +13,8 @@ export type Viewer = {
   role: Role | null;
   coachStatus: CoachStatus | null;
   signupIntent: SignupIntent | null;
+  /** True when Clerk has verified the primary email. The address itself is not stored here. */
+  emailVerified: boolean;
 };
 
 export function clerkConfigured(): boolean {
@@ -108,6 +110,7 @@ export async function resolveViewer(userId: string): Promise<Viewer> {
     role: null,
     coachStatus: null,
     signupIntent: null,
+    emailVerified: false,
   };
   const db = getDb();
   let dbRole: Role | null = null;
@@ -123,7 +126,7 @@ export async function resolveViewer(userId: string): Promise<Viewer> {
       .where(eq(users.id, userId))
       .limit(1);
     if (row?.role === "admin") {
-      return { userId, role: "admin", coachStatus: null, signupIntent: null };
+      return { userId, role: "admin", coachStatus: null, signupIntent: null, emailVerified: false };
     }
     if (row) {
       dbRole = row.role;
@@ -132,11 +135,12 @@ export async function resolveViewer(userId: string): Promise<Viewer> {
   }
 
   const snap = await readClerkSnapshot(userId);
+  const emailVerified = Boolean(snap?.verifiedEmail);
   if (snap?.allowlisted || snap?.metadataRole === "admin") {
-    return { userId, role: "admin", coachStatus: null, signupIntent: null };
+    return { userId, role: "admin", coachStatus: null, signupIntent: null, emailVerified };
   }
   if (dbRole) {
-    return { userId, role: dbRole, coachStatus: dbCoach, signupIntent: null };
+    return { userId, role: dbRole, coachStatus: dbCoach, signupIntent: null, emailVerified };
   }
   if (!snap) return base;
   return {
@@ -144,6 +148,7 @@ export async function resolveViewer(userId: string): Promise<Viewer> {
     role: null,
     coachStatus: snap.coachStatus,
     signupIntent: snap.signupIntent,
+    emailVerified,
   };
 }
 

@@ -125,6 +125,16 @@ function formatSeasonDay(date: Date): string {
   }).format(date);
 }
 
+/** Turn a stored code such as spring-2027 or yearly:spring-2027 into a date range. */
+export function labelForStoredSeason(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const match = /^(yearly:)?(spring|summer|fall)-(\d{4})$/.exec(value);
+  if (!match) return null;
+  const season = makeSeason(match[2] as SeasonCode, Number(match[3]));
+  if (match[1]) return yearlyFrom(season).seasons.map((item) => seasonRangeLabel(item)).join("; ");
+  return seasonRangeLabel(season);
+}
+
 export function seasonRangeLabel(season: CurrentSeason): string {
   const start = seasonStart(season);
   const end = new Date(season.expiresAt.getTime() - 60_000);
@@ -149,6 +159,13 @@ export function seasonTitle(code: SeasonCode): string {
   if (code === "spring") return "Spring";
   if (code === "summer") return "Summer";
   return "Fall";
+}
+
+export function formatStoredDate(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return value;
+  return formatIndianaDate(indianaStart(Number(match[1]), Number(match[2]), Number(match[3])));
 }
 
 export function formatIndianaDate(date: Date): string {

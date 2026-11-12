@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { canPostBoard, canReadBoard, listBoardPosts } from "@/lib/board";
+import { formatStoredDate } from "@/lib/seasons";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -54,7 +55,7 @@ async function Board() {
               <p className="meta">
                 {post.state} · {post.county} County
                 {post.seasonLabel ? ` · ${post.seasonLabel}` : ""}
-                {post.neededThrough ? ` · needed through ${post.neededThrough}` : ""}
+                {post.neededThrough ? ` · needed through ${formatStoredDate(post.neededThrough)}` : ""}
               </p>
               {post.notes ? <p>{post.notes}</p> : null}
               {post.mine ? <p className="meta">Your post</p> : null}

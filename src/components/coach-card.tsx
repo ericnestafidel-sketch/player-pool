@@ -7,9 +7,7 @@ export function CoachCard({ coach }: { coach: PublicCoach }) {
   return (
     <article className="card coach-card">
       <h3>{coach.teamName}</h3>
-      {coach.approved ? (
-        <span className="status-badge badge-ok">Approved by Player Pool</span>
-      ) : null}
+      {coach.approved ? <span className="status-badge badge-ok">Verified coach</span> : null}
       {coach.foundingCoach ? (
         <span className="status-badge badge-founding">
           Founding Coach{coach.foundingNumber ? ` #${coach.foundingNumber}` : ""}
