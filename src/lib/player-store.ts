@@ -98,6 +98,7 @@ const playerColumns = {
   note: players.note,
   paused: players.paused,
   adminTest: players.adminTest,
+  season: players.season,
 };
 
 export async function purgeDeletedPlayers(now = new Date()): Promise<void> {

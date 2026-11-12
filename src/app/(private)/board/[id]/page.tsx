@@ -10,7 +10,7 @@ import { players } from "@/db/schema";
 import { getDb } from "@/db";
 import { canPostBoard, canReadBoard, loadBoardPost } from "@/lib/board";
 import { formatPlayerLabel } from "@/lib/safety";
-import { seasonOffers } from "@/lib/seasons";
+import { formatStoredDate, seasonOffers } from "@/lib/seasons";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -70,7 +70,7 @@ async function Post({
       <p className="meta">
         {post.state} · {post.county} County
         {post.seasonLabel ? ` · ${post.seasonLabel}` : ""}
-        {post.neededThrough ? ` · needed through ${post.neededThrough}` : ""}
+        {post.neededThrough ? ` · needed through ${formatStoredDate(post.neededThrough)}` : ""}
       </p>
       <p className="meta">Open until {post.expiresAt.toLocaleDateString("en-US", { timeZone: "America/Indiana/Indianapolis" })}.</p>
       {post.notes ? <p>{post.notes}</p> : null}

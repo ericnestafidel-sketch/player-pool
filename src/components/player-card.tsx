@@ -37,6 +37,7 @@ export function PlayerCard({
         {player.state} · {player.county} County
         {player.birthYear ? ` · born ${player.birthYear}` : ""}
       </p>
+      {player.seasonLabel ? <p className="meta">Season: {player.seasonLabel}</p> : null}
       <div className="tags">
         {player.positions.map((position) => (
           <span className="tag" key={position}>

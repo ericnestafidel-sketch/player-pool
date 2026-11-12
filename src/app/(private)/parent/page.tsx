@@ -93,6 +93,9 @@ async function ParentHome() {
     <main className="parent-panel">
       {viewer.role === "admin" ? <AdminNav /> : null}
       <h1>{viewer.role === "admin" ? "Parent view" : "Your players"}</h1>
+      {viewer.role === "parent" && viewer.emailVerified ? (
+        <p className="status-badge badge-ok">Verified parent</p>
+      ) : null}
       <p className="lead">
         Each player is shown to approved coaches as a number, plus state and county. Pause hides a
         profile. Delete removes it and Player Pool purges the record within 30 days.

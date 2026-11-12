@@ -111,6 +111,7 @@ async function loadPlayer(id: string) {
       paused: players.paused,
       deletedAt: players.deletedAt,
       adminTest: players.adminTest,
+      season: players.season,
     })
     .from(players)
     .where(eq(players.id, id))

@@ -6,7 +6,7 @@ import { isLaunchState, launchStateMessage } from "@/lib/launch";
 import { boardExpiresAt, boardFieldError, boardNoteError } from "@/lib/board-rules";
 import { toPublicCoach, type PublicCoach } from "@/lib/coach-profile";
 import { isPlayerId } from "@/lib/player-access";
-import { currentSeason, followingSeason, seasonOffers } from "@/lib/seasons";
+import { currentSeason, followingSeason, labelForStoredSeason } from "@/lib/seasons";
 import type { Viewer } from "@/lib/viewer";
 
 export type BoardPostView = {
@@ -106,7 +106,7 @@ export async function listBoardPosts(viewer: Viewer, now = new Date()): Promise<
     .innerJoin(coaches, eq(coaches.userId, boardPosts.coachId))
     .where(openConditions(now))
     .orderBy(desc(boardPosts.createdAt));
-  return rows.map((row) => toView(row, viewer.userId, now));
+  return rows.map((row) => toView(row, viewer.userId));
 }
 
 export async function loadBoardPost(viewer: Viewer, id: string, now = new Date()): Promise<BoardPostView | null> {
@@ -127,11 +127,10 @@ export async function loadBoardPost(viewer: Viewer, id: string, now = new Date()
   const owner = row.coachId === viewer.userId;
   const visible = !row.hiddenAt && !row.closedAt && row.expiresAt > now && row.status === "approved";
   if (!visible && !owner && viewer.role !== "admin") return null;
-  return toView(row, viewer.userId, now);
+  return toView(row, viewer.userId);
 }
 
-function toView(row: PostRow, viewerId: string, now: Date): BoardPostView {
-  const offer = seasonOffers(now).find((item) => item.seasonCode === row.seasonCode);
+function toView(row: PostRow, viewerId: string): BoardPostView {
   return {
     id: row.id,
     coachId: row.coachId,
@@ -142,7 +141,7 @@ function toView(row: PostRow, viewerId: string, now: Date): BoardPostView {
     county: row.county,
     state: row.state,
     seasonCode: row.seasonCode,
-    seasonLabel: offer?.rangeLabel ?? null,
+    seasonLabel: labelForStoredSeason(row.seasonCode),
     neededThrough: row.neededThrough,
     notes: row.notes,
     expiresAt: row.expiresAt,
