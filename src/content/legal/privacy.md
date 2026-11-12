@@ -53,7 +53,7 @@ Profile fields and messages are automatically checked so they can't contain an e
 ### From Coaches (you give us this)
 - Full name, email, and phone number
 - Team name, organization, age group coached, years of experience, and county and state
-- At least one proof that you coach the team (a website, league listing, social page, tournament roster, or a request for a short phone call) and how you plan to use Player Pool
+- At least one proof that you coach the team (a website, league listing, social page, tournament roster, or a request for a short call with our staff) and how you plan to use Player Pool
 - At least one reference (name, role, team or organization, and email or phone). **We may contact your references.**
 - Your agreement to the Coach Code of Conduct and your answers to our safety questions, with the date
 - Messages you send, private notes you write about players (visible only to you), and searches you save

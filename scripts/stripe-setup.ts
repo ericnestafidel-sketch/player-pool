@@ -2,7 +2,7 @@
  * Idempotent Stripe catalog setup. Run with STRIPE_SECRET_KEY set:
  *   npm run stripe:setup
  * Creates the season and yearly one-time prices, a 100% coupon limited to the
- * season product, and promotion code FIRST25 (max 25 redemptions).
+ * season product, and promotion code FIRST25 (max 100 redemptions).
  */
 import Stripe from "stripe";
 
@@ -10,6 +10,7 @@ const SEASON_LOOKUP = "player_pool_season";
 const YEARLY_LOOKUP = "player_pool_yearly";
 const COUPON_ID = "player_pool_first25";
 const PROMO_CODE = "FIRST25";
+const FREE_SEASON_CAP = 100;
 
 async function upsertProduct(stripe: Stripe, plan: "season" | "yearly", name: string) {
   const existing = await stripe.products.list({ active: true, limit: 100 });
@@ -48,14 +49,19 @@ async function upsertCoupon(stripe: Stripe, seasonProductId: string) {
   try {
     const existing = await stripe.coupons.retrieve(COUPON_ID);
     console.log(`coupon: ${existing.id}`);
+    if (existing.max_redemptions != null && existing.max_redemptions < FREE_SEASON_CAP) {
+      console.log(
+        `Coupon ${existing.id} is still capped at ${existing.max_redemptions}. This script does not change a live coupon. Raise it to ${FREE_SEASON_CAP} in the Dashboard, or deactivate it and the FIRST25 promotion code and run setup again.`,
+      );
+    }
     return existing;
   } catch {
     const created = await stripe.coupons.create({
       id: COUPON_ID,
-      name: "First 25 seasons free",
+      name: "First 100 seasons free",
       percent_off: 100,
       duration: "once",
-      max_redemptions: 25,
+      max_redemptions: FREE_SEASON_CAP,
       applies_to: { products: [seasonProductId] },
     });
     console.log(`created coupon: ${created.id}`);
@@ -68,6 +74,11 @@ async function upsertPromo(stripe: Stripe, couponId: string) {
   const found = existing.data[0];
   if (found) {
     console.log(`promotion code ${PROMO_CODE}: ${found.id}`);
+    if ((found.max_redemptions ?? 0) < FREE_SEASON_CAP) {
+      console.log(
+        `FIRST25 is still capped at ${found.max_redemptions ?? "unset"} redemptions. This script does not change a live Stripe code. Raise the cap to ${FREE_SEASON_CAP} in the Dashboard, or deactivate the coupon and promotion code and run setup again.`,
+      );
+    }
     if (!found.restrictions?.first_time_transaction) {
       console.log(
         "FIRST25 already exists without the first-time-customer limit. Stripe cannot add that limit later. Deactivate this code in the Dashboard, then run setup again.",
@@ -77,12 +88,12 @@ async function upsertPromo(stripe: Stripe, couponId: string) {
   }
   const created = await stripe.promotionCodes.create({
     code: PROMO_CODE,
-    max_redemptions: 25,
+    max_redemptions: FREE_SEASON_CAP,
     promotion: { type: "coupon", coupon: couponId },
     restrictions: { first_time_transaction: true },
     metadata: { player_pool_plan: "season" },
   });
-  console.log(`created promotion code ${PROMO_CODE}: ${created.id} (season coupon only, 25 uses, first-time customers)`);
+  console.log(`created promotion code ${PROMO_CODE}: ${created.id} (season coupon only, ${FREE_SEASON_CAP} uses, first-time customers)`);
   return created;
 }
 

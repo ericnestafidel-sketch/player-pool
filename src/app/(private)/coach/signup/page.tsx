@@ -27,13 +27,16 @@ function Requirements() {
       <ul>
         <li>
           At least one of: a team website, USSSA or other league listing, team social page, tournament
-          roster link, or a request for a short phone call with Eric
+          roster link, or a request for a short call with our staff
         </li>
         <li>At least one reference (another coach, director, or parent from your current or recent team)</li>
         <li>
           Agreement to the <Link href="/conduct">Coach Code of Conduct</Link> and Terms
         </li>
-        <li>Hand review — usually within 2 days</li>
+        <li>
+          Review by our experienced baseball staff, usually within 24–48 hours.{" "}
+          <Link href="/coaches/how-approval-works">How approval works</Link>
+        </li>
       </ul>
     </div>
   );
@@ -46,8 +49,8 @@ async function CoachSignup() {
       <main className="form-wrap">
         <h1>Coaches: request access</h1>
         <p className="lead">
-          Player Pool is free for coaches. Every request is reviewed by hand. Profiles stay hidden
-          until then.
+          Player Pool is free for coaches. Every coach is reviewed and approved by our experienced
+          baseball staff. Profiles stay hidden until then.
         </p>
         <Requirements />
         <p>Create-account is waiting on Clerk keys. Nothing is stored yet.</p>
@@ -101,8 +104,8 @@ async function CoachSignup() {
     <main className="form-wrap">
       <h1>Coaches: request access</h1>
       <p className="lead">
-        Player Pool is free for coaches. Every request is reviewed by hand — usually within 2 days.
-        Profiles stay hidden until Eric approves you.
+        Player Pool is free for coaches. Every coach is reviewed and approved by our experienced
+        baseball staff, usually within 24–48 hours. Profiles stay hidden until you are approved.
       </p>
       <Requirements />
       <CoachSignupForm />

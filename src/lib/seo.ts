@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import { siteOrigin } from "@/lib/launch";
 
 /** Indexable marketing and legal pages. Signed-in app routes are not in this list. */
-export const PUBLIC_PATHS = ["/", "/pricing", "/coaches", "/privacy", "/terms", "/conduct"] as const;
+export const PUBLIC_PATHS = [
+  "/",
+  "/pricing",
+  "/coaches",
+  "/coaches/how-approval-works",
+  "/privacy",
+  "/terms",
+  "/conduct",
+] as const;
 
 export type PublicPath = (typeof PUBLIC_PATHS)[number];
 

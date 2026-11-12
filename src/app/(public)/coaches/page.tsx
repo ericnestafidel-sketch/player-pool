@@ -19,8 +19,9 @@ export default function CoachesPage() {
         a child&apos;s name, town, address, email, or phone.
       </p>
       <p>
-        Coaches use Player Pool free. Every coach is approved by hand before any profile opens. Send one
-        proof that you coach the team, plus one reference. Approval is not a background check.
+        Coaches use Player Pool free. Every coach is reviewed and approved by our experienced baseball
+        staff before any profile opens. Send one proof that you coach the team, plus one reference.
+        Approval is not a background check.
       </p>
       <h2>What you can search</h2>
       <ul>
@@ -35,8 +36,9 @@ export default function CoachesPage() {
         </Link>
       </p>
       <p className="meta">
-        Read the <Link href="/conduct">Coach Code of Conduct</Link> before you apply. Parents see pricing
-        on the <Link href="/pricing">pricing page</Link>.
+        Read <Link href="/coaches/how-approval-works">how approval works</Link> and the{" "}
+        <Link href="/conduct">Coach Code of Conduct</Link> before you apply. Parents see pricing on the{" "}
+        <Link href="/pricing">pricing page</Link>.
       </p>
     </main>
   );

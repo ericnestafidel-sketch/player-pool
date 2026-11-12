@@ -7,6 +7,7 @@ import {
   promoFreeSeason,
   promoFreeSeasonForPlayer,
   refundEligible,
+  seasonOffers,
   yearlyExpiresAt,
 } from "@/lib/seasons";
 
@@ -31,6 +32,9 @@ test("seasons cross the year and yearly is the next 12 months", () => {
   assert.equal(launch.seasonCode, "spring-2027");
   assert.equal(launch.expiresAt.toISOString(), "2027-06-01T04:00:00.000Z");
   assert.equal(yearlyExpiresAt(new Date("2026-11-22T17:00:00.000Z")).toISOString(), "2027-11-01T04:00:00.000Z");
+  const [current, next] = seasonOffers(new Date("2026-11-22T17:00:00.000Z"));
+  assert.equal(current.rangeLabel, "Spring 2027 (Nov 1, 2026 to May 31, 2027)");
+  assert.equal(next.rangeLabel, "Summer 2027 (Jun 1, 2027 to Aug 31, 2027)");
 });
 
 test("a zero total or a discount is the free-season promo", () => {

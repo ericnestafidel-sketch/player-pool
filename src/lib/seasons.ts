@@ -70,9 +70,8 @@ function makeSeason(code: SeasonCode, year: number): CurrentSeason {
 }
 
 /**
- * Spring is November 1 through May 31 and is named for the year it ends
- * (Spring 2027 = Nov 1, 2026 – May 31, 2027). Summer is June 1 – August 31.
- * Fall is September 1 – October 31.
+ * Spring is November 1 through May 31 (Spring 2027 is Nov 1, 2026 to May 31, 2027).
+ * Summer is June 1 through August 31. Fall is September 1 through October 31.
  */
 export function currentSeason(now: Date): CurrentSeason {
   const { year, month } = indianaCalendar(now);
@@ -103,6 +102,8 @@ export function yearlyExpiresAt(now: Date): Date {
 export type SeasonOffer = {
   seasonCode: string;
   label: string;
+  /** Example: Spring 2027 (Nov 1, 2026 to May 31, 2027). */
+  rangeLabel: string;
   startsOn: string;
   endsOn: string;
   yearlyLabels: string;
@@ -115,15 +116,31 @@ export function seasonStart(season: CurrentSeason): Date {
   return indianaStart(season.year, 9, 1);
 }
 
+function formatSeasonDay(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ,
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+export function seasonRangeLabel(season: CurrentSeason): string {
+  const start = seasonStart(season);
+  const end = new Date(season.expiresAt.getTime() - 60_000);
+  return `${seasonTitle(season.code)} ${season.year} (${formatSeasonDay(start)} to ${formatSeasonDay(end)})`;
+}
+
 function offerFrom(season: CurrentSeason): SeasonOffer {
   const yearly = yearlyFrom(season);
   const label = `${seasonTitle(season.code)} ${season.year}`;
   return {
     seasonCode: season.seasonCode,
     label,
+    rangeLabel: seasonRangeLabel(season),
     startsOn: formatIndianaDate(seasonStart(season)),
     endsOn: formatIndianaDate(new Date(season.expiresAt.getTime() - 60_000)),
-    yearlyLabels: yearly.seasons.map((item) => `${seasonTitle(item.code)} ${item.year}`).join(", "),
+    yearlyLabels: yearly.seasons.map((item) => seasonRangeLabel(item)).join("; "),
     yearlyEndsOn: formatIndianaDate(new Date(yearly.expiresAt.getTime() - 60_000)),
   };
 }
