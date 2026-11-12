@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ThreadReplyForm } from "@/components/thread-reply-form";
-import { replyAsCoach } from "@/app/(private)/coach/messages/actions";
+import { blockThisThread, replyAsCoach, reportThisThread, unblockThisThread } from "@/app/(private)/coach/messages/actions";
 import { formatViewedDate, formatWeekend } from "@/lib/player-rules";
 import { loadCoachThread } from "@/lib/threads";
 import { getRequestViewer } from "@/lib/viewer";
@@ -14,15 +14,27 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function CoachThreadPage({ params }: { params: Promise<{ id: string }> }) {
+export default function CoachThreadPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
+}) {
   return (
     <Suspense fallback={<main className="form-wrap">Loading…</main>}>
-      <Thread params={params} />
+      <Thread params={params} searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function Thread({ params }: { params: Promise<{ id: string }> }) {
+async function Thread({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
+}) {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
@@ -30,6 +42,7 @@ async function Thread({ params }: { params: Promise<{ id: string }> }) {
     redirect(viewer.role === "coach" ? "/coach/pending" : "/access-denied");
   }
   const { id } = await params;
+  const query = await searchParams;
   const thread = await loadCoachThread(viewer.userId, id);
   if (!thread) notFound();
   return (
@@ -51,11 +64,46 @@ async function Thread({ params }: { params: Promise<{ id: string }> }) {
           </article>
         ))}
       </div>
-      {thread.paused ? (
+      {thread.blocked ? (
+        <p className="meta">This thread is blocked. Unblock it before you reply.</p>
+      ) : thread.paused ? (
         <p className="meta">This profile is paused, so you cannot send another message.</p>
       ) : (
         <ThreadReplyForm requestId={thread.id} action={replyAsCoach} />
       )}
+      <div className="coach-actions">
+        {thread.blocked ? (
+          <form action={unblockThisThread}>
+            <input type="hidden" name="requestId" value={thread.id} />
+            <button className="btn btn-outline btn-sm" type="submit">
+              Unblock thread
+            </button>
+          </form>
+        ) : (
+          <form action={blockThisThread}>
+            <input type="hidden" name="requestId" value={thread.id} />
+            <button className="btn btn-outline btn-sm" type="submit">
+              Block thread
+            </button>
+          </form>
+        )}
+        <form action={reportThisThread}>
+          <input type="hidden" name="requestId" value={thread.id} />
+          <input
+            className="reason-input"
+            name="reason"
+            required
+            minLength={4}
+            maxLength={500}
+            placeholder="What happened?"
+            aria-label="Report reason"
+          />
+          <button className="btn btn-danger btn-sm" type="submit">
+            Report
+          </button>
+        </form>
+      </div>
+      {query.error === "1" ? <p className="field-error">Write a short reason before reporting.</p> : null}
     </main>
   );
 }

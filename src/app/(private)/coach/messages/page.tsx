@@ -46,6 +46,7 @@ async function Messages() {
               <p className="meta">
                 {thread.playerLabel} · {formatViewedDate(thread.createdAt)}
                 {thread.paused ? " · Profile paused" : ""}
+                {thread.blocked ? " · Blocked" : ""}
               </p>
               <p>{thread.preview}</p>
               <Link className="btn navy btn-sm" href={`/coach/messages/${thread.id}`}>
