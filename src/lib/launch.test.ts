@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { absoluteUrl, fallbackOrigin, playerSignupOpen } from "@/lib/launch";
+import { absoluteUrl, fallbackOrigin, isLaunchState, launchStateMessage, playerSignupOpen } from "@/lib/launch";
 
 function withEnv(name: string, value: string | undefined, run: () => void) {
   const previous = process.env[name];
@@ -29,6 +29,18 @@ test("player sign-up stays closed until the flag is set", () => {
   });
   withEnv("PLAYER_SIGNUP_OPEN", "1", () => {
     assert.equal(playerSignupOpen(), true);
+  });
+});
+
+test("launch states default to Indiana, Illinois, and Ohio", () => {
+  withEnv("LAUNCH_STATES", undefined, () => {
+    assert.equal(isLaunchState("in"), true);
+    assert.equal(isLaunchState("OH"), true);
+    assert.equal(isLaunchState("TX"), false);
+    assert.equal(
+      launchStateMessage(),
+      "Player Pool is launching in Indiana, Illinois, and Ohio first. Your state is coming soon.",
+    );
   });
 });
 

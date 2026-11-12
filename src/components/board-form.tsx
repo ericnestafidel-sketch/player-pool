@@ -63,6 +63,7 @@ export function BoardForm({
           </label>
         ))}
       </fieldset>
+      <p className="meta">Launching in Indiana, Illinois, and Ohio.</p>
       <label htmlFor="state">State</label>
       <select id="state" name="state" required defaultValue={post?.state ?? ""}>
         <option value="">Choose</option>

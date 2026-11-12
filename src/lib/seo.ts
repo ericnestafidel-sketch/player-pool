@@ -58,7 +58,7 @@ export function siteJsonLd(origin = siteOrigin()) {
         alternateName: "Player Pool",
         url: origin,
         description:
-          "Coach Eric LLC doing business as Player Pool, a private nationwide travel baseball player pool.",
+          "Coach Eric LLC doing business as Player Pool, launching in Indiana, Illinois, and Ohio.",
       },
       {
         "@type": "WebSite",

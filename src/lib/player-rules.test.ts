@@ -133,8 +133,23 @@ test("a player form accepts state and county and rejects a name-shaped stat", ()
   }
 });
 
-test("a player form accepts any U.S. state and a free-text county", () => {
+test("a player form accepts launch states and rejects the rest", () => {
   const parsed = parsePlayerForm(
+    form({
+      sport: "baseball",
+      birthYear: "2015",
+      ageGroup: "12U",
+      positions: ["Pitcher"],
+      skillLevel: "AA",
+      state: "IN",
+      county: "Marion County",
+      status: "full",
+    }),
+    [baseball],
+    now,
+  );
+  assert.equal(parsed.ok, true);
+  const outside = parsePlayerForm(
     form({
       sport: "baseball",
       birthYear: "2015",
@@ -148,11 +163,8 @@ test("a player form accepts any U.S. state and a free-text county", () => {
     [baseball],
     now,
   );
-  assert.equal(parsed.ok, true);
-  if (parsed.ok) {
-    assert.equal(parsed.value.state, "TX");
-    assert.equal(parsed.value.county, "Travis");
-  }
+  assert.equal(outside.ok, false);
+  if (!outside.ok) assert.match(outside.fieldErrors.state ?? "", /coming soon/);
 });
 
 test("search filters keep only known labels", () => {
