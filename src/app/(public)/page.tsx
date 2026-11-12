@@ -9,7 +9,7 @@ import { publicMetadata } from "@/lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Find travel baseball players",
   description:
-    "Find players for a travel team and travel baseball tryouts anywhere in the U.S. Parents list a player by number, USSSA level, county, and state. Hand-approved coaches search. Free for coaches.",
+    "Find players for a travel team. Player Pool is launching in Indiana, Illinois, and Ohio first. Parents list a player by number, USSSA level, county, and state. Free for coaches.",
   path: "/",
 });
 
@@ -23,9 +23,9 @@ export default function HomePage() {
       <section className="hero">
         <h1>Get your player seen by travel coaches</h1>
         <p>
-          Parents list their son in a private, nationwide pool that hand-approved travel coaches search
-          by age, position, USSSA level, state, and county. No names, no addresses, no phone numbers
-          shown.
+          Parents list their son in a private pool that approved travel coaches search by age, position,
+          USSSA level, state, and county. Player Pool is launching in Indiana, Illinois, and Ohio
+          first. No names, no addresses, no phone numbers shown.
         </p>
         {playerSignupOpen() ? (
           <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
@@ -44,7 +44,7 @@ export default function HomePage() {
           <div className="box">
             <h3>For parents</h3>
             <p>
-              List your travel baseball player for tryouts anywhere in the U.S. The profile uses a
+              List your travel baseball player for tryouts in Indiana, Illinois, or Ohio. The profile uses a
               player number, age group, positions, one or two USSSA levels, and the county and state you
               play in. No name, town, address, email, or phone goes on the card coaches see.
             </p>

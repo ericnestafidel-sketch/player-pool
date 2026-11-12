@@ -12,7 +12,7 @@ import {
 import { httpUrlError, locationError } from "@/lib/safety";
 import { isUsState } from "@/lib/states";
 import { planAdminClaim } from "@/lib/admin-record";
-import { playerSignupOpen } from "@/lib/launch";
+import { isLaunchState, launchStateMessage, playerSignupOpen } from "@/lib/launch";
 import { adminAccess, mergePublicMetadata, type Viewer } from "@/lib/viewer";
 
 function text(value: FormDataEntryValue | null): string {
@@ -306,6 +306,8 @@ export async function submitCoachApplication(
   }
   if (!isUsState(state)) {
     fieldErrors.state = "Choose a state.";
+  } else if (!isLaunchState(state)) {
+    fieldErrors.state = launchStateMessage();
   } else {
     const countyProblem = locationError(state, county);
     if (countyProblem) fieldErrors.county = countyProblem;

@@ -7,6 +7,37 @@ export function playerSignupOpen(): boolean {
   return value === "1" || value === "true" || value === "yes";
 }
 
+const LAUNCH_STATE_NAMES: Record<string, string> = {
+  IN: "Indiana",
+  IL: "Illinois",
+  OH: "Ohio",
+};
+
+/** Comma-separated state codes. Defaults to Indiana, Illinois, and Ohio. */
+export function launchStates(): string[] {
+  const raw = process.env["LAUNCH_STATES"]?.trim();
+  const codes = (raw && raw.length > 0 ? raw : "IN,IL,OH")
+    .split(",")
+    .map((code) => code.trim().toUpperCase())
+    .filter(Boolean);
+  return codes.length > 0 ? codes : ["IN", "IL", "OH"];
+}
+
+export function isLaunchState(state: string): boolean {
+  return launchStates().includes(state.trim().toUpperCase());
+}
+
+export function launchStateMessage(): string {
+  const names = launchStates().map((code) => LAUNCH_STATE_NAMES[code] ?? code);
+  const list =
+    names.length === 1
+      ? names[0]
+      : names.length === 2
+        ? `${names[0]} and ${names[1]}`
+        : `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
+  return `Player Pool is launching in ${list} first. Your state is coming soon.`;
+}
+
 /** Production origin used when APP_URL is unset, so canonicals stay on the live site. */
 export const PRODUCTION_ORIGIN = "https://player-pool.net";
 

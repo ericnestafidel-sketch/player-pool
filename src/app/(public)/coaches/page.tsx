@@ -14,7 +14,7 @@ export default function CoachesPage() {
     <main className="wrap">
       <h1>Find players for a travel team</h1>
       <p className="lead">
-        Player Pool is a private, nationwide list for travel baseball tryouts and pickup weekends.
+        Player Pool is launching in Indiana, Illinois, and Ohio first. It is a private list for travel baseball tryouts and pickup weekends.
         Parents list a player as a number, with USSSA level, age group, state, and county. You never see
         a child&apos;s name, town, address, email, or phone.
       </p>

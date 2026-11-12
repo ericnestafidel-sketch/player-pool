@@ -1,3 +1,4 @@
+import { isLaunchState, launchStateMessage } from "@/lib/launch";
 import { locationError, PLAYER_STATUS_LABEL } from "@/lib/safety";
 import { isUsState } from "@/lib/states";
 
@@ -380,6 +381,8 @@ export function parsePlayerForm(
   const county = normalizeCounty(formText(formData.get("county")));
   if (!isUsState(state)) {
     fieldErrors.state = "Choose a state.";
+  } else if (!isLaunchState(state)) {
+    fieldErrors.state = launchStateMessage();
   } else {
     const countyProblem = locationError(state, county);
     if (countyProblem) fieldErrors.county = countyProblem;

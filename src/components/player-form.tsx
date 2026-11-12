@@ -205,7 +205,7 @@ export function PlayerForm({
 
       <section className="section-card">
         <h3>Location</h3>
-        <p className="meta">Any U.S. state. Enter the county name only — not a town or street.</p>
+        <p className="meta">Launching in Indiana, Illinois, and Ohio. Enter the county name only — not a town or street.</p>
         <label htmlFor="state">State</label>
         <select id="state" name="state" required defaultValue={draft.state}>
           <option value="">Choose a state</option>

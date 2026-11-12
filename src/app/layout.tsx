@@ -23,11 +23,11 @@ const sourceSans = Source_Sans_3({
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin()),
   title: {
-    default: "Find travel baseball players",
+    default: "Travel baseball in Indiana, Illinois, and Ohio",
     template: "%s · Player Pool",
   },
   description:
-    "Find players for a travel team anywhere in the U.S. Parents list a player by number, USSSA level, county, and state. Hand-approved coaches search for travel baseball tryouts. Free for coaches.",
+    "Player Pool is launching in Indiana, Illinois, and Ohio. Parents list a player by number, USSSA level, county, and state. Approved coaches search for travel baseball tryouts. Free for coaches.",
   applicationName: "Player Pool",
   openGraph: {
     siteName: "Player Pool",

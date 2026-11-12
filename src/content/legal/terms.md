@@ -12,7 +12,7 @@ By creating an account, checking the agreement box, or using Player Pool, you ag
 
 ## 1. What Player Pool is (and isn't)
 
-Player Pool is an online listing and search tool. Parents list their youth baseball player anonymously, and travel coaches we've approved by hand search those listings and message Parents through the site.
+Player Pool is an online listing and search tool launching in Indiana, Illinois, and Ohio. Parents list their youth baseball player anonymously, and travel coaches our staff has approved search those listings and message Parents through the site.
 
 Player Pool **is not** a team, league, club, recruiter, agent, or tournament organizer. We don't run tryouts, games, practices, or travel. We aren't a party to any arrangement between a Parent and a Coach or team.
 

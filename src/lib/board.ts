@@ -2,6 +2,7 @@ import { and, desc, eq, gt, isNull } from "drizzle-orm";
 import { boardPosts, boardReports, coaches } from "@/db/schema";
 import { getDb } from "@/db";
 import { AGE_GROUPS, BASEBALL_LEVELS, BASEBALL_POSITIONS } from "@/lib/coach-options";
+import { isLaunchState, launchStateMessage } from "@/lib/launch";
 import { boardExpiresAt, boardFieldError, boardNoteError } from "@/lib/board-rules";
 import { toPublicCoach, type PublicCoach } from "@/lib/coach-profile";
 import { isPlayerId } from "@/lib/player-access";
@@ -193,6 +194,7 @@ export async function saveBoardPost(
     levelLabels: [...BASEBALL_LEVELS],
     positionLabels: [...BASEBALL_POSITIONS],
   });
+  if (!isLaunchState(input.state)) errors.state = launchStateMessage();
   if (!input.seasonCode && !input.neededThrough) errors.seasonCode = "Choose a season or a last date needed.";
   const seasonEnd = input.seasonCode ? seasonExpiry(input.seasonCode, now) : null;
   if (input.seasonCode && !seasonEnd) errors.seasonCode = "Choose a current or next season.";
