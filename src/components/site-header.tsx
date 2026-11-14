@@ -19,7 +19,14 @@ export function SiteHeader() {
         <Link href="/#safety">Safety</Link>
         <Link href="/pricing">Pricing</Link>
         <Link href="/coaches">Coaches: request access</Link>
-        <Suspense fallback={<Link href="/sign-in">Sign in</Link>}>
+        <Suspense
+          fallback={
+            <>
+              <BoardNavLink signedIn={false} />
+              <Link href="/sign-in">Sign in</Link>
+            </>
+          }
+        >
           <HeaderSession />
         </Suspense>
       </nav>
@@ -27,15 +34,27 @@ export function SiteHeader() {
   );
 }
 
+function BoardNavLink({ signedIn }: { signedIn: boolean }) {
+  return (
+    <Link href={signedIn ? "/board" : withRedirect("/sign-in", "/board")}>Coach Needs Board</Link>
+  );
+}
+
 async function HeaderSession() {
   await connection();
   if (!clerkConfigured()) {
-    return <Link href="/sign-in">Sign in</Link>;
+    return (
+      <>
+        <BoardNavLink signedIn={false} />
+        <Link href="/sign-in">Sign in</Link>
+      </>
+    );
   }
   const viewer = await getRequestViewer();
   if (!viewer) {
     return (
       <>
+        <BoardNavLink signedIn={false} />
         <Link href="/sign-in">Sign in</Link>
         {playerSignupOpen() ? (
           <Link href={withRedirect("/sign-up", "/parent")}>List a player</Link>
@@ -47,18 +66,17 @@ async function HeaderSession() {
   }
   return (
     <>
+      <BoardNavLink signedIn />
       {viewer.role === "parent" ? (
         <>
           <Link href="/parent">Your players</Link>
           <Link href="/parent/inbox">Messages</Link>
-          <Link href="/board">Coach Needs Board</Link>
         </>
       ) : null}
       {viewer.role === "coach" && viewer.coachStatus === "approved" ? (
         <>
           <Link href="/coach/search">Search</Link>
           <Link href="/coach/messages">Messages</Link>
-          <Link href="/board">Coach Needs Board</Link>
           <Link href="/coach/profile">Team card</Link>
         </>
       ) : null}

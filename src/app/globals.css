@@ -232,6 +232,7 @@ ul.checklist{list-style:none}
   .pricing-hero h1{font-size:1.85rem}
   .pricing-plans .price-card{padding:22px 18px}
   .site-header{flex-direction:column;gap:10px;align-items:flex-start}
+  .site-header nav{width:100%;justify-content:flex-start}
   .site-header nav a{margin:4px 10px 4px 0}
 }
 
