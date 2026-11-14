@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { withRedirect } from "@/lib/redirects";
 import { publicMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
@@ -23,10 +24,16 @@ export default function CoachesPage() {
         staff before any profile opens. Send one proof that you coach the team, plus one reference.
         Approval is not a background check.
       </p>
-      <h2>Coach needs</h2>
+      <h2>Coach Needs Board</h2>
       <p>
-        Approved coaches can post the age, positions, and USSSA level they need, with county and state
-        only. Sign in to read posts. Team details are not shown on this page.
+        Approved coaches post the age group, positions, and USSSA level they need, plus county and
+        state. Parents and approved coaches read those posts after they sign in. This page does not
+        list teams.
+      </p>
+      <p>
+        <Link className="btn navy" href={withRedirect("/sign-in", "/board")}>
+          Sign in to view the board
+        </Link>
       </p>
       <h2>What you can search</h2>
       <ul>

@@ -110,6 +110,19 @@ export default function HomePage() {
           </ul>
         </div>
       </section>
+      <section className="wrap" id="board">
+        <h2>Coach Needs Board</h2>
+        <p>
+          Approved coaches post the age group, positions, and USSSA level they need, plus county and
+          state. Parents and approved coaches read those posts after they sign in. This page does not
+          list teams.
+        </p>
+        <p>
+          <Link className="btn navy" href={withRedirect("/sign-in", "/board")}>
+            Sign in to view the board
+          </Link>
+        </p>
+      </section>
       <section className="wrap faq" id="faq">
         <h2>FAQ</h2>
         <h3>Is Player Pool safe for youth players?</h3>

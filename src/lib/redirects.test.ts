@@ -11,5 +11,6 @@ test("sign-up redirects stay on known app paths", () => {
   assert.equal(safeRedirectPath("//evil.example"), null);
   assert.equal(safeRedirectPath("/parent?next=https://evil.example"), null);
   assert.equal(safeRedirectPath("/coach/messages"), null);
+  assert.equal(safeRedirectPath("/board"), "/board");
   assert.equal(withRedirect("/sign-up", "/parent"), "/sign-up?redirect_url=%2Fparent");
 });
