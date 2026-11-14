@@ -42,6 +42,10 @@ async function SignInGate({
   }
   const viewer = await getRequestViewer();
   if (viewer) {
+    const canOpenBoard =
+      destination === "/board" &&
+      (usesParentArea(viewer) || (viewer.role === "coach" && viewer.coachStatus === "approved"));
+    if (canOpenBoard) redirect("/board");
     if (destination && (usesParentArea(viewer) || viewer.role === null)) redirect(destination);
     redirect(homeFor(viewer));
   }

@@ -219,11 +219,15 @@ async function Search({
             ))}
           </div>
         )}
-        {preview ? null : (
-          <p>
-            <Link href="/coach/profile">Your team card</Link>
-          </p>
-        )}
+        <p>
+          <Link href="/board">Coach Needs Board</Link>
+          {preview ? null : (
+            <>
+              {" · "}
+              <Link href="/coach/profile">Your team card</Link>
+            </>
+          )}
+        </p>
       </section>
     </main>
   );

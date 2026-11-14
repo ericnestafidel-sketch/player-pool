@@ -133,6 +133,9 @@ async function ParentHome() {
         </div>
       )}
       <p>
+        <Link href="/board">Coach Needs Board</Link>
+      </p>
+      <p>
         <Link href="/parent/inbox">Messages from coaches</Link>
       </p>
     </main>

@@ -5,6 +5,7 @@ const ALLOWED = new Set([
   "/parent/player/new",
   "/parent/inbox",
   "/coach/search",
+  "/board",
 ]);
 
 export function safeRedirectPath(value: unknown): string | null {
