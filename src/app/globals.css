@@ -255,6 +255,10 @@ ul.checklist{list-style:none}
 .saved-chip .x:hover{color:var(--danger)}
 .saved-empty{font-size:12px;color:var(--muted-soft)}
 .setup-banner{background:var(--gold-soft);border-bottom:1px solid var(--gold);padding:8px 24px;font-size:13px;text-align:center}
+.setup-steps{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:6px}
+.setup-steps li{padding:8px 12px;border-radius:8px;background:#eef3f9;color:var(--navy);font-weight:700}
+.setup-steps li.done{color:var(--muted);font-weight:600}
+.setup-steps li.current{background:var(--navy);color:var(--white)}
 .auth-wrap{max-width:440px;margin:0 auto;padding:40px 24px 60px}
 .auth-wrap h1{color:var(--navy)}
 .coach-signup{

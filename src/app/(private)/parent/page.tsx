@@ -71,7 +71,7 @@ async function ParentHome() {
   if (viewer.role === null && viewer.signupIntent !== "parent") {
     return (
       <main className="parent-panel">
-        <h1>Finish your account</h1>
+        <h1>Finish parent setup</h1>
         <p className="lead">
           This login is not a parent account yet. Only a parent or legal guardian can list a player.
           Children cannot create accounts.
