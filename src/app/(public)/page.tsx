@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { OpenNeedsCount } from "@/components/open-needs-count";
 import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
 import { playerSignupOpen } from "@/lib/launch";
 import { formatUsd, LAUNCH_FREE_SEASON_SPOTS, seasonPlan, yearlyPlan } from "@/lib/pricing";
@@ -122,6 +123,7 @@ export default function HomePage() {
             Sign in to view the board
           </Link>
         </p>
+        <OpenNeedsCount />
       </section>
       <section className="wrap faq" id="faq">
         <h2>FAQ</h2>

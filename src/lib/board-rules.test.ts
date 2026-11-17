@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { canReadBoard } from "@/lib/board";
-import { boardExpiresAt, boardNeedLine, boardNoteError, boardSchedule, needStillOpen } from "@/lib/board-rules";
+import {
+  boardExpiresAt,
+  boardNeedLine,
+  boardNoteError,
+  boardSchedule,
+  needStillOpen,
+  openNeedsCopy,
+} from "@/lib/board-rules";
 import type { Viewer } from "@/lib/viewer";
 
 function viewer(partial: Partial<Viewer>): Viewer {
@@ -14,6 +21,12 @@ function viewer(partial: Partial<Viewer>): Viewer {
     ...partial,
   };
 }
+
+test("the public need count has no post details", () => {
+  assert.equal(openNeedsCopy(0, ["IN", "IL", "OH"]), "No open needs right now — check back soon.");
+  assert.equal(openNeedsCopy(3, ["IN", "IL", "OH"]), "3 open needs in IN/IL/OH right now.");
+  assert.equal(openNeedsCopy(1, ["IN", "IL", "OH"]), "1 open need in IN/IL/OH right now.");
+});
 
 test("only approved coaches and verified parents can read needs", () => {
   assert.equal(canReadBoard(viewer({ role: "parent", emailVerified: true })), true);
