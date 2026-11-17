@@ -4,7 +4,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { canPostBoard, canReadBoard, listBoardPosts } from "@/lib/board";
-import { formatStoredDate } from "@/lib/seasons";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -41,23 +40,14 @@ async function Board() {
         </p>
       ) : null}
       {posts.length === 0 ? (
-        <p className="hint">No open posts. Posts close at season end or after 60 days.</p>
+        <p className="hint">No open needs. A need leaves the board after its close date or its end date.</p>
       ) : (
         <div className="stack">
           {posts.map((post) => (
             <article className="section-card" key={post.id}>
               <h2>
-                <Link href={`/board/${post.id}`}>{post.teamName}</Link>
+                <Link href={`/board/${post.id}`}>{post.summary}</Link>
               </h2>
-              <p className="meta">
-                {post.ageGroup} · {post.positions.join(", ")} · {post.skillLevels.join(" / ")}
-              </p>
-              <p className="meta">
-                {post.state} · {post.county} County
-                {post.seasonLabel ? ` · ${post.seasonLabel}` : ""}
-                {post.neededThrough ? ` · needed through ${formatStoredDate(post.neededThrough)}` : ""}
-              </p>
-              {post.notes ? <p>{post.notes}</p> : null}
               {post.mine ? <p className="meta">Your post</p> : null}
             </article>
           ))}

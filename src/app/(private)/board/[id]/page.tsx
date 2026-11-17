@@ -10,7 +10,6 @@ import { players } from "@/db/schema";
 import { getDb } from "@/db";
 import { canPostBoard, canReadBoard, loadBoardPost } from "@/lib/board";
 import { formatPlayerLabel } from "@/lib/safety";
-import { formatStoredDate, seasonOffers } from "@/lib/seasons";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -61,22 +60,14 @@ async function Post({
       <p className="meta">
         <Link href="/board">Coach needs</Link>
       </p>
-      <h1>{post.teamName}</h1>
+      <h1>{post.summary}</h1>
+      {mine ? <p className="meta">Team on your post: {post.teamName}</p> : null}
       {query.reported ? <p className="meta">Report sent. Our staff can hide or remove this post.</p> : null}
       {query.error ? <p className="field-error">That could not be saved. Check the fields and try again.</p> : null}
-      <p className="meta">
-        {post.ageGroup} · {post.positions.join(", ")} · {post.skillLevels.join(" / ")}
-      </p>
-      <p className="meta">
-        {post.state} · {post.county} County
-        {post.seasonLabel ? ` · ${post.seasonLabel}` : ""}
-        {post.neededThrough ? ` · needed through ${formatStoredDate(post.neededThrough)}` : ""}
-      </p>
-      <p className="meta">Open until {post.expiresAt.toLocaleDateString("en-US", { timeZone: "America/Indiana/Indianapolis" })}.</p>
       {post.notes ? <p>{post.notes}</p> : null}
       <p className="meta">Coach contact details are not shown. Messages stay in Player Pool.</p>
       {mine && query.edit === "1" ? (
-        <BoardForm action="edit" offers={seasonOffers(new Date())} post={post} />
+        <BoardForm action="edit" post={post} />
       ) : null}
       {mine ? (
         <div className="roster-actions">

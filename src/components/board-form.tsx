@@ -1,15 +1,12 @@
 import { createBoardPost, updateBoardPost } from "@/app/(private)/board/actions";
 import { AGE_GROUPS, BASEBALL_LEVELS, BASEBALL_POSITIONS } from "@/lib/coach-options";
-import type { SeasonOffer } from "@/lib/seasons";
 import { US_STATES } from "@/lib/states";
 
 export function BoardForm({
   action,
-  offers,
   post,
 }: {
   action: "create" | "edit";
-  offers: SeasonOffer[];
   post?: {
     id: string;
     teamName: string;
@@ -18,8 +15,11 @@ export function BoardForm({
     skillLevels: string[];
     state: string;
     county: string;
-    seasonCode: string | null;
-    neededThrough: string | null;
+    eventName: string | null;
+    startsOn: string;
+    endsOn: string;
+    playersNeeded: number;
+    closesOn: string;
     notes: string | null;
   };
 }) {
@@ -73,18 +73,29 @@ export function BoardForm({
       </select>
       <label htmlFor="county">County</label>
       <input id="county" name="county" required defaultValue={post?.county ?? ""} placeholder="County name" />
-      <label htmlFor="seasonCode">Season needed</label>
-      <select id="seasonCode" name="seasonCode" defaultValue={post?.seasonCode ?? ""}>
-        <option value="">No season selected</option>
-        {offers.map((offer) => (
-          <option key={offer.seasonCode} value={offer.seasonCode}>
-            {offer.rangeLabel}
-          </option>
-        ))}
-      </select>
-      <label htmlFor="neededThrough">Last date needed</label>
-      <input id="neededThrough" name="neededThrough" type="date" defaultValue={post?.neededThrough ?? ""} />
-      <p className="meta">The post closes at season end or after 60 days, whichever comes first.</p>
+      <label htmlFor="eventName">Tournament or tryout name (optional)</label>
+      <input id="eventName" name="eventName" maxLength={80} defaultValue={post?.eventName ?? ""} />
+      <label htmlFor="startsOn">Event start</label>
+      <input id="startsOn" name="startsOn" type="date" required defaultValue={post?.startsOn ?? ""} />
+      <label htmlFor="endsOn">Event end</label>
+      <input id="endsOn" name="endsOn" type="date" required defaultValue={post?.endsOn ?? ""} />
+      <label htmlFor="playersNeeded">Players needed</label>
+      <input
+        id="playersNeeded"
+        name="playersNeeded"
+        type="number"
+        required
+        min={1}
+        max={99}
+        step={1}
+        defaultValue={post?.playersNeeded ?? 1}
+      />
+      <label htmlFor="closesOn">Close date</label>
+      <input id="closesOn" name="closesOn" type="date" defaultValue={post?.closesOn ?? ""} />
+      <p className="meta">
+        Leave the close date blank to use the day before the event starts. It cannot be after the end date.
+        The need drops off the board after the close date or the end date.
+      </p>
       <label htmlFor="notes">Notes</label>
       <textarea id="notes" name="notes" rows={4} maxLength={500} defaultValue={post?.notes ?? ""} />
       <p className="meta">No email, phone number, or link. Parents message you in Player Pool.</p>

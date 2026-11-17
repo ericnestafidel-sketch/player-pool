@@ -18,8 +18,11 @@ function inputFrom(formData: FormData): BoardInput {
     skillLevels: formData.getAll("skillLevels").filter((value): value is string => typeof value === "string"),
     state: text(formData.get("state")),
     county: text(formData.get("county")),
-    seasonCode: text(formData.get("seasonCode")),
-    neededThrough: text(formData.get("neededThrough")),
+    eventName: text(formData.get("eventName")),
+    startsOn: text(formData.get("startsOn")),
+    endsOn: text(formData.get("endsOn")),
+    closesOn: text(formData.get("closesOn")),
+    playersNeeded: text(formData.get("playersNeeded")),
     notes: text(formData.get("notes")),
   };
 }
