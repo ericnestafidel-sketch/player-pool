@@ -1,7 +1,6 @@
 import { connection } from "next/server";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import {
   formatUsd,
   LAUNCH_FREE_SEASON_SPOTS,
@@ -22,17 +21,12 @@ export const metadata: Metadata = publicMetadata({
   path: "/pricing",
 });
 
-async function FreeSpots() {
-  await connection();
-  const left = await freeSeasonSpotsRemaining();
-  return (
-    <p className="launch-sub">
-      {left} of {LAUNCH_FREE_SEASON_SPOTS} free spots left
-    </p>
-  );
-}
+/** Request-time render so the free-spot count is not frozen during the build. */
+export const instant = false;
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  await connection();
+  const spotsLeft = await freeSeasonSpotsRemaining();
   return (
     <main>
       <section className="pricing-hero">
@@ -51,9 +45,9 @@ export default function PricingPage() {
           At checkout, use code FIRST25. It covers the first {LAUNCH_FREE_SEASON_SPOTS} season listings
           only. Yearly is not included.
         </p>
-        <Suspense fallback={<p className="launch-sub">Checking free spots…</p>}>
-          <FreeSpots />
-        </Suspense>
+        <p className="launch-sub">
+          {spotsLeft} of {LAUNCH_FREE_SEASON_SPOTS} free spots left
+        </p>
       </div>
       <section className="wrap">
         <div className="price-grid pricing-plans">

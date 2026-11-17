@@ -158,12 +158,17 @@ export type PlayerListing = {
 export async function freeSeasonSpotsRemaining(): Promise<number> {
   const db = getDb();
   if (!db) return freeSpotsLeft(0);
-  const [row] = await db
-    .select({ total: sql<number>`count(distinct ${subscriptions.playerId})::int` })
-    .from(subscriptions)
-    .innerJoin(players, eq(players.id, subscriptions.playerId))
-    .where(and(eq(subscriptions.promoFreeSeason, true), eq(players.adminTest, false)));
-  return freeSpotsLeft(Number(row?.total ?? 0));
+  try {
+    const [row] = await db
+      .select({ total: sql<number>`count(distinct ${subscriptions.playerId})::int` })
+      .from(subscriptions)
+      .innerJoin(players, eq(players.id, subscriptions.playerId))
+      .where(and(eq(subscriptions.promoFreeSeason, true), eq(players.adminTest, false)));
+    return freeSpotsLeft(Number(row?.total ?? 0));
+  } catch (error) {
+    console.error("Could not count free spots", error instanceof Error ? error.name : "");
+    return freeSpotsLeft(0);
+  }
 }
 
 export async function listingsForParent(parentId: string, now = new Date()): Promise<Map<string, PlayerListing>> {
