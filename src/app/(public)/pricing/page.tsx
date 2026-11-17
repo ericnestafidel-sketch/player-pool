@@ -6,11 +6,12 @@ import {
   LAUNCH_FREE_SEASON_SPOTS,
   PLAN_FEATURES,
   SEASONS,
+  PROMO_CODE,
   seasonPlan,
   yearlyPlan,
 } from "@/lib/pricing";
 import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
-import { playerSignupOpen } from "@/lib/launch";
+import { launchStateNames, playerSignupOpen } from "@/lib/launch";
 import { withRedirect } from "@/lib/redirects";
 import { freeSeasonSpotsRemaining } from "@/lib/stripe-billing";
 import { publicMetadata } from "@/lib/seo";
@@ -38,16 +39,18 @@ export default async function PricingPage() {
       </section>
       <div className="launch-banner">
         <p className="launch-lead">
-          Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players get their first season free, then{" "}
-          {formatUsd(seasonPlan.amountCents)} per season or {formatUsd(yearlyPlan.amountCents)} per year.
+          Launching in {launchStateNames()}: players in those states can list now.
         </p>
-        <p className="launch-sub">
-          At checkout, use code FIRST25. It covers the first {LAUNCH_FREE_SEASON_SPOTS} season listings
-          only. Yearly is not included.
-        </p>
-        <p className="launch-sub">
-          {spotsLeft} of {LAUNCH_FREE_SEASON_SPOTS} free spots left
-        </p>
+        <div className="spot-callout">
+          <p className="code">{PROMO_CODE}</p>
+          <p className="spot-count">
+            {spotsLeft} of {LAUNCH_FREE_SEASON_SPOTS} free spots left
+          </p>
+          <p className="launch-sub">
+            First {LAUNCH_FREE_SEASON_SPOTS} season listings only. Then {formatUsd(seasonPlan.amountCents)}
+            /season or {formatUsd(yearlyPlan.amountCents)}/year. Yearly is not included.
+          </p>
+        </div>
       </div>
       <section className="wrap">
         <div className="price-grid pricing-plans">

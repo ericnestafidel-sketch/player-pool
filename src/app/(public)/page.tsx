@@ -1,11 +1,14 @@
+import { connection } from "next/server";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { OpenNeedsCount } from "@/components/open-needs-count";
+import { countOpenNeeds } from "@/lib/board";
+import { openNeedsCopy } from "@/lib/board-rules";
 import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
-import { launchStateNames, playerSignupOpen } from "@/lib/launch";
-import { formatUsd, LAUNCH_FREE_SEASON_SPOTS, seasonPlan, yearlyPlan } from "@/lib/pricing";
+import { launchStateNames, launchStates, playerSignupOpen } from "@/lib/launch";
+import { formatUsd, LAUNCH_FREE_SEASON_SPOTS, PROMO_CODE, seasonPlan, yearlyPlan } from "@/lib/pricing";
 import { withRedirect } from "@/lib/redirects";
 import { publicMetadata } from "@/lib/seo";
+import { freeSeasonSpotsRemaining } from "@/lib/stripe-billing";
 
 export const metadata: Metadata = publicMetadata({
   title: "Find travel baseball players",
@@ -14,12 +17,18 @@ export const metadata: Metadata = publicMetadata({
   path: "/",
 });
 
-export default function HomePage() {
+/** Request-time render so the free-spot count is not frozen during the build. */
+export const instant = false;
+
+export default async function HomePage() {
+  await connection();
+  const [spotsLeft, openNeeds] = await Promise.all([freeSeasonSpotsRemaining(), countOpenNeeds()]);
   return (
     <>
       <Link className="founders" href="/pricing">
-        Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players get their first season free, then{" "}
-        {formatUsd(seasonPlan.amountCents)} per season or {formatUsd(yearlyPlan.amountCents)} per year.
+        Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players in {launchStates().join("/")} get
+        their first season free with code {PROMO_CODE} — {spotsLeft} of {LAUNCH_FREE_SEASON_SPOTS} spots
+        left. Then {formatUsd(seasonPlan.amountCents)}/season or {formatUsd(yearlyPlan.amountCents)}/year.
       </Link>
       <section className="hero">
         <h1>Get your player seen by travel coaches</h1>
@@ -114,16 +123,16 @@ export default function HomePage() {
       <section className="wrap" id="board">
         <h2>Coach Needs Board</h2>
         <p>
-          Approved coaches post the age group, positions, and USSSA level they need, plus county and
-          state. Parents and approved coaches read those posts after they sign in. This page does not
-          list teams.
+          Approved coaches post the age group, positions, USSSA level, county and state, weekend or
+          tournament dates, how many players they need, and when the post closes. Parents and approved
+          coaches read those posts after they sign in. This page does not list teams.
         </p>
         <p>
           <Link className="btn navy" href={withRedirect("/sign-in", "/board")}>
             Sign in to view the board
           </Link>
         </p>
-        <OpenNeedsCount />
+        <p>{openNeedsCopy(openNeeds, launchStates())}</p>
       </section>
       <section className="wrap faq" id="faq">
         <h2>FAQ</h2>
