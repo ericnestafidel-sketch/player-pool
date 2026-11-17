@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { BoardForm } from "@/components/board-form";
+import { BoardStatus } from "@/components/board-status";
 import { canPostBoard } from "@/lib/board";
 import { getRequestViewer } from "@/lib/viewer";
 
@@ -24,7 +25,7 @@ async function NewPost() {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (!canPostBoard(viewer)) redirect(viewer.role === "coach" ? "/coach/pending" : "/access-denied");
+  if (!canPostBoard(viewer)) return <BoardStatus viewer={viewer} />;
   return (
     <main className="form-wrap">
       <p className="meta">

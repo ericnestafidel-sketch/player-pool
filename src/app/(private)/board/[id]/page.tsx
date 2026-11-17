@@ -5,10 +5,11 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { BoardForm } from "@/components/board-form";
+import { BoardStatus } from "@/components/board-status";
 import { closePost, messageCoach, reportPost } from "@/app/(private)/board/actions";
 import { players } from "@/db/schema";
 import { getDb } from "@/db";
-import { canPostBoard, canReadBoard, loadBoardPost } from "@/lib/board";
+import { boardGate, canPostBoard, loadBoardPost } from "@/lib/board";
 import { formatPlayerLabel } from "@/lib/safety";
 import { getRequestViewer } from "@/lib/viewer";
 
@@ -41,8 +42,7 @@ async function Post({
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role === "parent" && !viewer.emailVerified) redirect("/board");
-  if (!canReadBoard(viewer)) redirect("/access-denied");
+  if (boardGate(viewer) !== "ok") return <BoardStatus viewer={viewer} />;
   const { id } = await params;
   const query = await searchParams;
   const post = await loadBoardPost(viewer, id);

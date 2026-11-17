@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { canReadBoard } from "@/lib/board";
+import { boardGate, canPostBoard, canReadBoard } from "@/lib/board";
 import {
   boardExpiresAt,
   boardNeedLine,
@@ -29,11 +29,20 @@ test("the public need count has no post details", () => {
 });
 
 test("only approved coaches and verified parents can read needs", () => {
+  const approved = viewer({ role: "coach", coachStatus: "approved", emailVerified: true });
   assert.equal(canReadBoard(viewer({ role: "parent", emailVerified: true })), true);
   assert.equal(canReadBoard(viewer({ role: "parent", emailVerified: false })), false);
-  assert.equal(canReadBoard(viewer({ role: "coach", coachStatus: "approved" })), true);
-  assert.equal(canReadBoard(viewer({ role: "coach", coachStatus: "pending" })), false);
+  assert.equal(canReadBoard(approved), true);
+  assert.equal(canPostBoard(approved), true);
+  assert.equal(canReadBoard(viewer({ role: "coach", coachStatus: "approved" })), false);
+  assert.equal(canReadBoard(viewer({ role: "coach", coachStatus: "pending", emailVerified: true })), false);
   assert.equal(canReadBoard(viewer({ role: "admin" })), true);
+  assert.equal(boardGate(viewer({ emailVerified: false })), "verify-email");
+  assert.equal(boardGate(viewer({ emailVerified: true })), "finish-setup");
+  assert.equal(
+    boardGate(viewer({ role: "coach", coachStatus: "pending", emailVerified: true })),
+    "pending",
+  );
 });
 
 test("board notes reject contact details and links", () => {
