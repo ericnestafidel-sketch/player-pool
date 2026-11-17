@@ -69,11 +69,12 @@ export async function reportPost(formData: FormData) {
 export async function messageCoach(formData: FormData) {
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
+  const note = text(formData.get("message"));
   const result = await startParentContact(
     viewer,
     text(formData.get("coachId")),
     text(formData.get("playerId")),
-    text(formData.get("message")),
+    note.length >= 8 ? note : "Applying with this player profile.",
   );
   if (!result.ok) redirect(`/board/${text(formData.get("postId"))}?error=1`);
   revalidatePath("/parent/inbox");

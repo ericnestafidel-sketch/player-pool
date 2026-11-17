@@ -51,6 +51,9 @@ async function Thread({
         <Link href="/coach/messages">All messages</Link>
       </p>
       <h1>{thread.playerLabel}</h1>
+      <p>
+        <Link href={`/players/${thread.playerId}`}>View player profile</Link>
+      </p>
       <p className="meta">
         {thread.weekend ? `Weekend of ${formatWeekend(thread.weekend)}` : "No weekend chosen"}
       </p>

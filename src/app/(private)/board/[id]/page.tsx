@@ -84,11 +84,15 @@ async function Post({
       ) : null}
       {!mine && viewer.role === "parent" ? (
         <form action={messageCoach} className="section-card">
-          <h2>Message coach</h2>
+          <h2>Apply</h2>
+          <p className="meta">
+            Apply with a Player # profile. The team name is not on this page. It appears in your
+            message thread after you apply.
+          </p>
           <input type="hidden" name="postId" value={post.id} />
           <input type="hidden" name="coachId" value={post.coachId} />
           {parentPlayers.length === 0 ? (
-            <p>Add a player before you can message.</p>
+            <p>Add a player before you can apply.</p>
           ) : (
             <>
               <label htmlFor="playerId">Your player</label>
@@ -99,10 +103,10 @@ async function Post({
                   </option>
                 ))}
               </select>
-              <label htmlFor="message">Message</label>
-              <textarea id="message" name="message" required minLength={8} rows={4} />
+              <label htmlFor="message">Note (optional)</label>
+              <textarea id="message" name="message" maxLength={2000} rows={4} />
               <button className="btn gold" type="submit">
-                Message coach
+                Apply
               </button>
             </>
           )}
