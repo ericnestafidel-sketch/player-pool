@@ -383,6 +383,26 @@ export const threadReports = pgTable(
   (table) => [index("thread_reports_request_idx").on(table.requestId, table.createdAt)],
 );
 
+/** A parent is told when a new Need matches their player's state, county, age group, and position. */
+export const needAlerts = pgTable(
+  "need_alerts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    parentId: text("parent_id")
+      .notNull()
+      .references(() => parents.userId, { onDelete: "cascade" }),
+    postId: uuid("post_id")
+      .notNull()
+      .references(() => boardPosts.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    readAt: timestamp("read_at", { withTimezone: true }),
+  },
+  (table) => [
+    uniqueIndex("need_alerts_parent_post_unique").on(table.parentId, table.postId),
+    index("need_alerts_parent_idx").on(table.parentId, table.createdAt),
+  ],
+);
+
 export const boardReports = pgTable(
   "board_reports",
   {

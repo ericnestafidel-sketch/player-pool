@@ -11,6 +11,7 @@ import { playerSignupOpen } from "@/lib/launch";
 import { claimParent, ensureParentProfile } from "@/lib/accounts";
 import { ListingStatus } from "@/components/listing-status";
 import { listParentPlayers, type ParentPlayer } from "@/lib/player-store";
+import { unreadNeedAlertCount } from "@/lib/board";
 import { listingsForParent, type PlayerListing } from "@/lib/stripe-billing";
 import { getDb } from "@/db";
 import { getRequestViewer } from "@/lib/viewer";
@@ -85,9 +86,10 @@ async function ParentHome() {
       </main>
     );
   }
-  const [roster, listings] = await Promise.all([
+  const [roster, listings, needAlerts] = await Promise.all([
     listParentPlayers(viewer.userId),
     listingsForParent(viewer.userId),
+    viewer.role === "parent" ? unreadNeedAlertCount(viewer.userId) : Promise.resolve(0),
   ]);
   return (
     <main className="parent-panel">
@@ -95,6 +97,11 @@ async function ParentHome() {
       <h1>{viewer.role === "admin" ? "Parent view" : "Your players"}</h1>
       {viewer.role === "parent" && viewer.emailVerified ? (
         <p className="status-badge badge-ok">Verified parent</p>
+      ) : null}
+      {needAlerts > 0 ? (
+        <p>
+          <Link href="/board">You have a new matching Need on Player Pool</Link>
+        </p>
       ) : null}
       <p className="lead">
         Each player is shown to approved coaches as a number, plus state and county. Pause hides a

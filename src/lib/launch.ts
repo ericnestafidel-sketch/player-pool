@@ -27,15 +27,15 @@ export function isLaunchState(state: string): boolean {
   return launchStates().includes(state.trim().toUpperCase());
 }
 
-export function launchStateMessage(): string {
+export function launchStateNames(): string {
   const names = launchStates().map((code) => LAUNCH_STATE_NAMES[code] ?? code);
-  const list =
-    names.length === 1
-      ? names[0]
-      : names.length === 2
-        ? `${names[0]} and ${names[1]}`
-        : `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
-  return `Player Pool is launching in ${list} first. Your state is coming soon.`;
+  if (names.length <= 1) return names[0] ?? "Indiana, Illinois, and Ohio";
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  return `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
+}
+
+export function launchStateMessage(): string {
+  return `Player Pool is launching in ${launchStateNames()} first. Your state is coming soon.`;
 }
 
 /** Production origin used when APP_URL is unset, so canonicals stay on the live site. */

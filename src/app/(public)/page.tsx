@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { OpenNeedsCount } from "@/components/open-needs-count";
 import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
-import { playerSignupOpen } from "@/lib/launch";
+import { launchStateNames, playerSignupOpen } from "@/lib/launch";
 import { formatUsd, LAUNCH_FREE_SEASON_SPOTS, seasonPlan, yearlyPlan } from "@/lib/pricing";
 import { withRedirect } from "@/lib/redirects";
 import { publicMetadata } from "@/lib/seo";
@@ -134,8 +134,8 @@ export default function HomePage() {
         </p>
         <h3>What location do coaches see?</h3>
         <p>
-          Any U.S. state and county only. A town, street, school, and home address are not collected
-          on the player card.
+          {launchStateNames()} only, plus county. A town, street, school, and home address are not
+          collected on the player card.
         </p>
         <h3>Who can see a player?</h3>
         <p>

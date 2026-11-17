@@ -120,7 +120,7 @@ We delete a Need **90 days** after it leaves the board. It leaves the board when
 
 ## 7. Emails we send
 
-We send only account and service emails, such as sign-in codes, payment receipts (sent by Stripe), approval decisions, and new-message alerts. A new-message alert says only "You have a new message on Player Pool" with a link. It never includes the message, a name, or anyone's contact information. We don't send marketing emails. If we ever do, we'll update this policy first, and every marketing email will include an unsubscribe link.
+We send only account and service emails, such as sign-in codes, payment receipts (sent by Stripe), approval decisions, and new-message alerts. A new-message alert says only "You have a new message on Player Pool" with a link. A matching-Need alert says only "You have a new matching Need on Player Pool" with a link to the board. Neither email includes a name or anyone's contact information. We don't send marketing emails. If we ever do, we'll update this policy first, and every marketing email will include an unsubscribe link.
 
 ---
 

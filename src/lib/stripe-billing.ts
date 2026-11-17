@@ -1,9 +1,10 @@
-import { and, desc, eq, gte, inArray } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import Stripe from "stripe";
 import { players, profileViews, subscriptions } from "@/db/schema";
 import { getDb } from "@/db";
 import { isPlayerId } from "@/lib/player-access";
 import { appOriginFromEnv } from "@/lib/launch";
+import { freeSpotsLeft } from "@/lib/pricing";
 import { coverageFor, labelForStoredSeason, promoFreeSeasonForPlayer, refundEligible } from "@/lib/seasons";
 
 export const SEASON_PRICE_LOOKUP = "player_pool_season";
@@ -152,6 +153,18 @@ export type PlayerListing = {
   seasonLabel: string | null;
   refundable: boolean;
 };
+
+/** Distinct non-test players who redeemed the free first season. */
+export async function freeSeasonSpotsRemaining(): Promise<number> {
+  const db = getDb();
+  if (!db) return freeSpotsLeft(0);
+  const [row] = await db
+    .select({ total: sql<number>`count(distinct ${subscriptions.playerId})::int` })
+    .from(subscriptions)
+    .innerJoin(players, eq(players.id, subscriptions.playerId))
+    .where(and(eq(subscriptions.promoFreeSeason, true), eq(players.adminTest, false)));
+  return freeSpotsLeft(Number(row?.total ?? 0));
+}
 
 export async function listingsForParent(parentId: string, now = new Date()): Promise<Map<string, PlayerListing>> {
   const result = new Map<string, PlayerListing>();
