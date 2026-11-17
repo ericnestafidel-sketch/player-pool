@@ -4,7 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { HowApplyingWorks } from "@/components/how-applying-works";
-import { canPostBoard, canReadBoard, listBoardPosts } from "@/lib/board";
+import { canPostBoard, canReadBoard, listBoardPosts, markNeedAlertsRead } from "@/lib/board";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -36,6 +36,7 @@ async function Board() {
     );
   }
   if (!canReadBoard(viewer)) redirect(viewer.role === "coach" ? "/coach/pending" : "/access-denied");
+  if (viewer.role === "parent") await markNeedAlertsRead(viewer.userId);
   const posts = await listBoardPosts(viewer);
   return (
     <main className="form-wrap">

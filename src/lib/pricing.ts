@@ -7,6 +7,12 @@ export const SEASONS_PER_YEAR = 3;
 export const LAUNCH_FREE_SEASON_SPOTS = 100;
 export const PROMO_CODE = "FIRST25";
 
+/** Remaining free-season spots. Never below zero. */
+export function freeSpotsLeft(used: number, cap = LAUNCH_FREE_SEASON_SPOTS): number {
+  const redeemed = Number.isFinite(used) ? Math.max(0, Math.floor(used)) : 0;
+  return Math.max(0, cap - redeemed);
+}
+
 export const YEARLY_SAVINGS_CENTS = SEASON_PRICE_CENTS * SEASONS_PER_YEAR - YEARLY_PRICE_CENTS;
 
 export const SEASONS = [

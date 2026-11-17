@@ -5,9 +5,9 @@ import { notificationCopy } from "@/lib/message-text";
  * Email is a pointer back to the site. It never includes the message body,
  * a name, or either person's email or phone. Without Resend config it logs and returns.
  */
-export async function sendNotification(to: string, linkPath: string): Promise<void> {
+export async function sendNotification(to: string, linkPath: string, subject?: string): Promise<void> {
   const link = appLink(linkPath);
-  const { subject, text } = notificationCopy(link);
+  const note = notificationCopy(link, subject);
   const key = process.env["RESEND_API_KEY"];
   const from = process.env["NOTIFY_FROM_EMAIL"];
   if (!key || !from) {
@@ -28,8 +28,8 @@ export async function sendNotification(to: string, linkPath: string): Promise<vo
       body: JSON.stringify({
         from,
         to: [to],
-        subject,
-        text,
+        subject: note.subject,
+        text: note.text,
       }),
     });
     if (!response.ok) console.error("Player Pool notification failed", response.status);
@@ -39,6 +39,8 @@ export async function sendNotification(to: string, linkPath: string): Promise<vo
 }
 
 function appLink(path: string): string | null {
-  if (!path.startsWith("/parent/inbox/") && !path.startsWith("/coach/messages/")) return null;
+  if (path !== "/board" && !path.startsWith("/parent/inbox/") && !path.startsWith("/coach/messages/")) {
+    return null;
+  }
   return absoluteUrl(path, fallbackOrigin());
 }

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DAILY_CONTACT_CAP, messageError, notificationCopy } from "@/lib/message-text";
+import { DAILY_CONTACT_CAP, MATCHING_NEED_SUBJECT, messageError, notificationCopy } from "@/lib/message-text";
+import { freeSpotsLeft, LAUNCH_FREE_SEASON_SPOTS } from "@/lib/pricing";
 
 test("notification email is only a notice and a link", () => {
   const note = notificationCopy("https://playerpool.example/parent/inbox/abc");
@@ -10,6 +11,17 @@ test("notification email is only a notice and a link", () => {
   assert.equal(note.text.includes("Can you pitch Saturday"), false);
   assert.match(note.text, /https:\/\/playerpool\.example\/parent\/inbox\/abc/);
   assert.equal(notificationCopy(null).text, "You have a new message on Player Pool");
+  const match = notificationCopy("https://player-pool.net/board", MATCHING_NEED_SUBJECT);
+  assert.equal(match.subject, MATCHING_NEED_SUBJECT);
+  assert.equal(match.text.includes("Storm"), false);
+  assert.match(match.text, /https:\/\/player-pool\.net\/board/);
+});
+
+test("free season spots never go below zero", () => {
+  assert.equal(freeSpotsLeft(0), LAUNCH_FREE_SEASON_SPOTS);
+  assert.equal(freeSpotsLeft(3), 97);
+  assert.equal(freeSpotsLeft(100), 0);
+  assert.equal(freeSpotsLeft(140), 0);
 });
 
 test("thread messages cannot carry contact details", () => {

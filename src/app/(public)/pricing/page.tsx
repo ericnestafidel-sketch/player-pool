@@ -1,5 +1,7 @@
+import { connection } from "next/server";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import {
   formatUsd,
   LAUNCH_FREE_SEASON_SPOTS,
@@ -11,6 +13,7 @@ import {
 import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
 import { playerSignupOpen } from "@/lib/launch";
 import { withRedirect } from "@/lib/redirects";
+import { freeSeasonSpotsRemaining } from "@/lib/stripe-billing";
 import { publicMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
@@ -18,6 +21,16 @@ export const metadata: Metadata = publicMetadata({
   description: `One-time prices to list a player for travel baseball tryouts. A season is ${formatUsd(seasonPlan.amountCents)} and three seasons are ${formatUsd(yearlyPlan.amountCents)}, with no auto-renew. Coaches search USSSA profiles free.`,
   path: "/pricing",
 });
+
+async function FreeSpots() {
+  await connection();
+  const left = await freeSeasonSpotsRemaining();
+  return (
+    <p className="launch-sub">
+      {left} of {LAUNCH_FREE_SEASON_SPOTS} free spots left
+    </p>
+  );
+}
 
 export default function PricingPage() {
   return (
@@ -38,6 +51,9 @@ export default function PricingPage() {
           At checkout, use code FIRST25. It covers the first {LAUNCH_FREE_SEASON_SPOTS} season listings
           only. Yearly is not included.
         </p>
+        <Suspense fallback={<p className="launch-sub">Checking free spots…</p>}>
+          <FreeSpots />
+        </Suspense>
       </div>
       <section className="wrap">
         <div className="price-grid pricing-plans">

@@ -1,5 +1,5 @@
-import { and, count, desc, eq, gte, inArray, isNotNull, isNull, lt, or } from "drizzle-orm";
-import { boardPosts, boardReports, coaches } from "@/db/schema";
+import { and, arrayOverlaps, count, desc, eq, gte, inArray, isNotNull, isNull, lt, or, sql } from "drizzle-orm";
+import { boardPosts, boardReports, coaches, needAlerts, players, users } from "@/db/schema";
 import { getDb } from "@/db";
 import { AGE_GROUPS, BASEBALL_LEVELS, BASEBALL_POSITIONS } from "@/lib/coach-options";
 import { isLaunchState, launchStateMessage, launchStates } from "@/lib/launch";
@@ -14,6 +14,8 @@ import {
   shiftIsoDate,
 } from "@/lib/board-rules";
 import { toPublicCoach, type PublicCoach } from "@/lib/coach-profile";
+import { MATCHING_NEED_SUBJECT } from "@/lib/message-text";
+import { sendNotification } from "@/lib/notify";
 import { isPlayerId } from "@/lib/player-access";
 import type { Viewer } from "@/lib/viewer";
 
@@ -281,7 +283,74 @@ export async function saveBoardPost(
     .values({ ...values, coachId: viewer.userId })
     .returning({ id: boardPosts.id });
   if (!created) return { ok: false, error: "Could not save the post.", fieldErrors: {} };
+  try {
+    await notifyMatchingParents({
+      id: created.id,
+      coachId: viewer.userId,
+      state: values.state,
+      county: values.county,
+      ageGroup: values.ageGroup,
+      positions: values.positions,
+    });
+  } catch (error) {
+    console.error("Could not notify parents about a Need", error instanceof Error ? error.name : "");
+  }
   return { ok: true, id: created.id };
+}
+
+async function notifyMatchingParents(post: {
+  id: string;
+  coachId: string;
+  state: string;
+  county: string;
+  ageGroup: string;
+  positions: string[];
+}): Promise<void> {
+  const db = getDb();
+  if (!db || post.positions.length === 0) return;
+  const matches = await db
+    .select({ parentId: players.parentId, email: users.email })
+    .from(players)
+    .innerJoin(users, eq(users.id, players.parentId))
+    .where(
+      and(
+        isNull(players.deletedAt),
+        eq(players.adminTest, false),
+        eq(players.state, post.state),
+        sql`lower(${players.county}) = ${post.county.toLowerCase()}`,
+        eq(players.ageGroup, post.ageGroup),
+        arrayOverlaps(players.positions, post.positions),
+      ),
+    );
+  const seen = new Set<string>();
+  for (const match of matches) {
+    if (!match.parentId || match.parentId === post.coachId || seen.has(match.parentId)) continue;
+    seen.add(match.parentId);
+    await db
+      .insert(needAlerts)
+      .values({ parentId: match.parentId, postId: post.id })
+      .onConflictDoNothing();
+    if (match.email) await sendNotification(match.email, "/board", MATCHING_NEED_SUBJECT);
+  }
+}
+
+export async function unreadNeedAlertCount(parentId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ total: count() })
+    .from(needAlerts)
+    .where(and(eq(needAlerts.parentId, parentId), isNull(needAlerts.readAt)));
+  return Number(row?.total ?? 0);
+}
+
+export async function markNeedAlertsRead(parentId: string): Promise<void> {
+  const db = getDb();
+  if (!db) return;
+  await db
+    .update(needAlerts)
+    .set({ readAt: new Date() })
+    .where(and(eq(needAlerts.parentId, parentId), isNull(needAlerts.readAt)));
 }
 
 export async function closeBoardPost(viewer: Viewer, postId: string): Promise<{ ok: true } | { ok: false; error: string }> {
