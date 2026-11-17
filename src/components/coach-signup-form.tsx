@@ -13,6 +13,11 @@ export function CoachSignupForm() {
   return (
     <form action={action}>
       {state.error ? <p className="field-error">{state.error}</p> : null}
+      <h2>2. Coach details and verification links</h2>
+      <p className="meta">
+        Required: full name, phone, team name, organization, age group, state, and county. Years are
+        optional. Also required: at least one proof link, or a request for a short call.
+      </p>
       <label htmlFor="fullName">Full name</label>
       <input id="fullName" name="fullName" required autoComplete="name" />
       <FieldError message={state.fieldErrors.fullName} />
@@ -56,8 +61,8 @@ export function CoachSignupForm() {
       <input id="county" name="county" required />
       <FieldError message={state.fieldErrors.county} />
       <fieldset className="field">
-        <legend>Proof you coach this team</legend>
-        <p className="meta">Provide at least one. A link or a call is enough.</p>
+        <legend>Proof you coach this team (required)</legend>
+        <p className="meta">Required: at least one link, or the call request. More than one is fine.</p>
         <label htmlFor="websiteUrl">Team website</label>
         <input id="websiteUrl" name="websiteUrl" type="url" placeholder="https://" />
         <label htmlFor="leagueUrl">USSSA or other league listing</label>
@@ -76,9 +81,10 @@ export function CoachSignupForm() {
       <textarea id="useNote" name="useNote" required rows={4} />
       <FieldError message={state.fieldErrors.useNote} />
       <div className="section-card">
-        <h3>Reference</h3>
+        <h2>3. Reference and conduct checkboxes</h2>
         <p className="meta" style={{ marginTop: 0 }}>
-          At least one. Kept on file. Contact details are not shown to parents.
+          Required: reference name, role, team or organization, and an email or phone. Both checkboxes
+          below are required. The reference stays on file and is not shown to parents.
         </p>
         <label htmlFor="refName">Reference name</label>
         <input id="refName" name="refName" required />
@@ -117,6 +123,10 @@ export function CoachSignupForm() {
         </span>
       </label>
       <FieldError message={state.fieldErrors.safetyRules} />
+      <h2>4. Submit, then wait for review</h2>
+      <p className="meta">
+        After you submit, the application is in review. Board posting unlocks when it is approved.
+      </p>
       <button className="btn gold" type="submit" disabled={pending}>
         {pending ? "Sending…" : "Submit request"}
       </button>

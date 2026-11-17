@@ -6,6 +6,7 @@ import { AdminNav } from "@/components/admin-nav";
 import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
 import { playerSignupOpen } from "@/lib/launch";
 import { withRedirect } from "@/lib/redirects";
+import { unfinishedSetupNav } from "@/lib/setup-nav";
 import { clerkConfigured, getRequestViewer } from "@/lib/viewer";
 
 export function SiteHeader() {
@@ -64,6 +65,7 @@ async function HeaderSession() {
       </>
     );
   }
+  const setup = unfinishedSetupNav(viewer);
   return (
     <>
       <BoardNavLink signedIn />
@@ -84,7 +86,7 @@ async function HeaderSession() {
         <Link href="/coach/pending">Request status</Link>
       ) : null}
       {viewer.role === "admin" ? <AdminNav tone="header" /> : null}
-      {viewer.role === null ? <Link href="/continue">Finish setup</Link> : null}
+      {setup ? <Link href={setup.href}>{setup.label}</Link> : null}
       <span className="nav-user">
         <UserButton />
       </span>

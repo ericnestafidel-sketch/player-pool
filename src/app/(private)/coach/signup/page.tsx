@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { CoachSetupChecklist } from "@/components/coach-setup-checklist";
 import { CoachSignupForm } from "@/components/coach-signup-form";
 import { getDb } from "@/db";
 import { clerkConfigured, getRequestViewer } from "@/lib/viewer";
@@ -62,6 +63,7 @@ async function CoachSignup() {
     return (
       <main className="form-wrap">
         <h1>Coaches: request access</h1>
+        <CoachSetupChecklist step={1} />
         <p className="lead">
           Player Pool is free for coaches. Create a coach account, then send one proof of coaching and
           one reference. You cannot see players while the request is pending.
@@ -102,12 +104,12 @@ async function CoachSignup() {
   }
   return (
     <main className="form-wrap">
-      <h1>Coaches: request access</h1>
+      <h1>Finish coach application</h1>
+      <CoachSetupChecklist step={2} />
       <p className="lead">
-        Player Pool is free for coaches. Every coach is reviewed and approved by our experienced
-        baseball staff, usually within 24–48 hours. Profiles stay hidden until you are approved.
+        You already chose a coach account. Fill in the details, a reference, and the conduct boxes,
+        then submit. Review is usually within 24–48 hours. The Coach Needs Board unlocks after approval.
       </p>
-      <Requirements />
       <CoachSignupForm />
     </main>
   );

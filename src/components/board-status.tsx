@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { boardGate } from "@/lib/board";
-import { homeFor, type Viewer } from "@/lib/viewer";
+import { unfinishedSetupNav } from "@/lib/setup-nav";
+import type { Viewer } from "@/lib/viewer";
 
 /** Board-only explanations. Do not send these people to the player-profile access page. */
 export function BoardStatus({ viewer }: { viewer: Viewer }) {
@@ -33,15 +34,19 @@ export function BoardStatus({ viewer }: { viewer: Viewer }) {
       </main>
     );
   }
+  const setup = unfinishedSetupNav(viewer) ?? {
+    href: "/continue",
+    label: "Choose account type",
+  };
   return (
     <main className="form-wrap">
-      <h1>Finish setup</h1>
+      <h1>{setup.label}</h1>
       <p className="lead">
-        Finish your account before you use the Coach Needs Board. A coach application has to be saved
-        before you can post a Need.
+        Save a coach application before you post a Need. Choose coach if you have not picked an account
+        type yet.
       </p>
-      <Link className="btn navy" href={homeFor(viewer)}>
-        Finish setup
+      <Link className="btn navy" href={setup.href}>
+        {setup.label}
       </Link>
     </main>
   );

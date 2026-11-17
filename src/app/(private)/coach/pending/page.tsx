@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { CoachSetupChecklist } from "@/components/coach-setup-checklist";
 import { coaches } from "@/db/schema";
 import { getDb } from "@/db";
 import { getRequestViewer } from "@/lib/viewer";
@@ -47,12 +48,15 @@ async function Pending() {
     }
   }
   const status = viewer.coachStatus ?? "pending";
+  const inReview = status === "pending";
   return (
     <main className="form-wrap">
-      <h1>Coach access is {status}</h1>
+      <h1>{inReview ? "Application in review" : `Coach access is ${status}`}</h1>
+      <CoachSetupChecklist step="review" />
       <p className="lead">
-        You cannot see player profiles until our experienced baseball staff approves this request. No player data is loaded on
-        this page.
+        {inReview
+          ? "We review the application, usually within 24–48 hours. You cannot see player profiles until it is approved. Posting on the Coach Needs Board unlocks once you are approved."
+          : "You cannot see player profiles or post a Need until this coach account is approved. No player data is loaded on this page."}
       </p>
       {team ? <p>{team}</p> : null}
       {reason ? (
