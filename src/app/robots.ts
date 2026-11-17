@@ -17,6 +17,7 @@ export default function robots(): MetadataRoute.Robots {
         "/players",
         "/continue",
         "/access-denied",
+        "/board",
       ],
     },
     sitemap: `${siteOrigin()}/sitemap.xml`,

@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, isNull } from "drizzle-orm";
+import { and, desc, eq, gte, isNotNull, isNull, lt, or } from "drizzle-orm";
 import { boardPosts, boardReports, coaches } from "@/db/schema";
 import { getDb } from "@/db";
 import { AGE_GROUPS, BASEBALL_LEVELS, BASEBALL_POSITIONS } from "@/lib/coach-options";
@@ -11,6 +11,7 @@ import {
   closeInstant,
   indianaToday,
   needStillOpen,
+  shiftIsoDate,
 } from "@/lib/board-rules";
 import { toPublicCoach, type PublicCoach } from "@/lib/coach-profile";
 import { isPlayerId } from "@/lib/player-access";
@@ -94,7 +95,8 @@ const columns = {
 };
 
 export function canReadBoard(viewer: Viewer): boolean {
-  if (viewer.role === "admin" || viewer.role === "parent") return true;
+  if (viewer.role === "admin") return true;
+  if (viewer.role === "parent") return viewer.emailVerified;
   return viewer.role === "coach" && viewer.coachStatus === "approved";
 }
 
@@ -114,10 +116,27 @@ function openConditions(now: Date) {
   );
 }
 
+/** A Need is deleted 90 days after a coach closes it, or 90 days after its close date. */
+export const NEED_RETENTION_DAYS = 90;
+
+export async function purgeExpiredNeeds(now = new Date()): Promise<void> {
+  const db = getDb();
+  if (!db) return;
+  const cutoffDate = shiftIsoDate(indianaToday(now), -NEED_RETENTION_DAYS);
+  const cutoffInstant = new Date(now.getTime() - NEED_RETENTION_DAYS * 24 * 60 * 60 * 1000);
+  await db.delete(boardPosts).where(
+    or(
+      and(isNotNull(boardPosts.closedAt), lt(boardPosts.closedAt, cutoffInstant)),
+      lt(boardPosts.closesOn, cutoffDate),
+    ),
+  );
+}
+
 export async function listBoardPosts(viewer: Viewer, now = new Date()): Promise<BoardPostView[]> {
   if (!canReadBoard(viewer)) return [];
   const db = getDb();
   if (!db) return [];
+  await purgeExpiredNeeds(now);
   const rows = await db
     .select(columns)
     .from(boardPosts)

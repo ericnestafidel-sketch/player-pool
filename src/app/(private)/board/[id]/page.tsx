@@ -41,6 +41,7 @@ async function Post({
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
+  if (viewer.role === "parent" && !viewer.emailVerified) redirect("/board");
   if (!canReadBoard(viewer)) redirect("/access-denied");
   const { id } = await params;
   const query = await searchParams;

@@ -102,10 +102,19 @@ We don't use player information for anything else, and we don't use it to train 
 | Coach's team name, organization, age group coached, years of experience | Parents (for example in the "who viewed" list and in messages), and Player Pool. |
 | Coach's email, phone, references, and safety answers | Only Player Pool. Never Parents. |
 | Messages | The Parent and Coach in that conversation. Player Pool may review messages connected to a report, a safety concern, or a legal requirement. |
+| Coach Need (age group, positions, level, county and state, dates, players needed, optional event name and note) | Signed-in approved Coaches and signed-in Parents who have verified their email. Never the public or search engines. The team name is not on the board. |
 | Coach's private notes and saved searches | Only that Coach (and Player Pool when needed for safety or legal reasons). |
 | Profile view log | The Parent (as a list of which Coach teams viewed the profile) and Player Pool. |
 
 **What "approved" means:** Player Pool reviews each Coach request by hand (one proof of coaching, organization, and at least one reference) before granting access. **Approval is not a background check or an identity guarantee.** See our Terms of Use and Coach Code of Conduct.
+
+### Coach Needs Board
+
+An approved Coach can post a Need. We store the team name, age group, positions, skill level, county, state, optional tournament or tryout name, start and end dates, how many players are needed, the close date, and an optional note. The note and event name are checked so they cannot contain an email address, a phone number, or a link. We do not ask for a school, a town, or a player's name on a Need.
+
+Who can see it: signed-in approved Coaches and signed-in Parents who have verified their email. A Need is never on a public page, never in our sitemap, and is marked so search engines should not index it. The team name stays off the board. After a Parent applies, that Parent sees the team name inside the in-app thread, and the Coach can open the Player # profile. Replies stay in the app. Email addresses and phone numbers are not shared.
+
+We delete a Need **90 days** after it leaves the board. It leaves the board when the Coach closes it, or when the close date or the end date passes, whichever comes first. A report about a Need is kept with our other safety records (see Section 9).
 
 ---
 
@@ -152,6 +161,7 @@ We keep information only as long as we need it for the purposes above. We never 
 | Coach's private notes and saved searches | Deleted when the player profile or Coach account is deleted | Coach's own use |
 | Parent or Coach account (email, name) | Until you ask us to close your account (see Section 10), or 24 months of inactivity | To let you sign in |
 | Coach applications that are denied | **12 months** after denial | So we can spot repeat applications |
+| Coach Need after it leaves the board | **90 days**, then deleted. It leaves the board when the Coach closes it, or when the close date or end date passes, whichever comes first. | The short keep lets us review a report or a mistake |
 | Safety reports, suspensions, and related records | **5 years** | To protect children and keep removed Coaches off the site |
 | Payment records | Stripe keeps payment records as financial law requires. Our own copy is deleted with the player profile. | Taxes, refunds, and disputes |
 | Technical and security logs | Generally less than 30 days (kept by our hosting and sign-in providers) | Security and fixing errors |

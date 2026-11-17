@@ -12,7 +12,7 @@ test("public SEO routes stay off private player and account paths", () => {
   assert.deepEqual(rule?.allow, [...PUBLIC_PATHS]);
   const blocked = rule?.disallow;
   assert.ok(Array.isArray(blocked));
-  for (const path of ["/admin", "/parent", "/coach", "/api", "/sign-in", "/players"]) {
+  for (const path of ["/admin", "/parent", "/coach", "/api", "/sign-in", "/players", "/board"]) {
     assert.ok(blocked.includes(path));
   }
   assert.equal(rules.sitemap, "https://player-pool.net/sitemap.xml");
@@ -28,7 +28,7 @@ test("public SEO routes stay off private player and account paths", () => {
     "https://player-pool.net/conduct",
     "https://player-pool.net/contact",
   ]);
-  assert.equal(urls.some((url) => url.includes("/players") || url.includes("/parent")), false);
+  assert.equal(urls.some((url) => url.includes("/players") || url.includes("/parent") || url.includes("/board")), false);
   if (previous === undefined) delete process.env.APP_URL;
   else process.env.APP_URL = previous;
 });
