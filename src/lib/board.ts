@@ -1,12 +1,19 @@
-import { and, desc, eq, gt, isNull } from "drizzle-orm";
+import { and, desc, eq, gte, isNull } from "drizzle-orm";
 import { boardPosts, boardReports, coaches } from "@/db/schema";
 import { getDb } from "@/db";
 import { AGE_GROUPS, BASEBALL_LEVELS, BASEBALL_POSITIONS } from "@/lib/coach-options";
 import { isLaunchState, launchStateMessage } from "@/lib/launch";
-import { boardExpiresAt, boardFieldError, boardNoteError } from "@/lib/board-rules";
+import {
+  boardFieldError,
+  boardNeedLine,
+  boardNoteError,
+  boardSchedule,
+  closeInstant,
+  indianaToday,
+  needStillOpen,
+} from "@/lib/board-rules";
 import { toPublicCoach, type PublicCoach } from "@/lib/coach-profile";
 import { isPlayerId } from "@/lib/player-access";
-import { currentSeason, followingSeason, labelForStoredSeason } from "@/lib/seasons";
 import type { Viewer } from "@/lib/viewer";
 
 export type BoardPostView = {
@@ -18,9 +25,12 @@ export type BoardPostView = {
   skillLevels: string[];
   county: string;
   state: string;
-  seasonCode: string | null;
-  seasonLabel: string | null;
-  neededThrough: string | null;
+  eventName: string | null;
+  startsOn: string;
+  endsOn: string;
+  playersNeeded: number;
+  closesOn: string;
+  summary: string;
   notes: string | null;
   expiresAt: Date;
   createdAt: Date;
@@ -38,8 +48,11 @@ type PostRow = {
   skillLevels: string[];
   county: string;
   state: string;
-  seasonCode: string | null;
-  neededThrough: string | null;
+  eventName: string | null;
+  startsOn: string;
+  endsOn: string;
+  playersNeeded: number;
+  closesOn: string;
   notes: string | null;
   expiresAt: Date;
   createdAt: Date;
@@ -62,8 +75,11 @@ const columns = {
   skillLevels: boardPosts.skillLevels,
   county: boardPosts.county,
   state: boardPosts.state,
-  seasonCode: boardPosts.seasonCode,
-  neededThrough: boardPosts.neededThrough,
+  eventName: boardPosts.eventName,
+  startsOn: boardPosts.startsOn,
+  endsOn: boardPosts.endsOn,
+  playersNeeded: boardPosts.playersNeeded,
+  closesOn: boardPosts.closesOn,
   notes: boardPosts.notes,
   expiresAt: boardPosts.expiresAt,
   createdAt: boardPosts.createdAt,
@@ -87,11 +103,13 @@ export function canPostBoard(viewer: Viewer): boolean {
 }
 
 function openConditions(now: Date) {
+  const today = indianaToday(now);
   return and(
     isNull(boardPosts.closedAt),
     isNull(boardPosts.hiddenAt),
     isNull(boardPosts.removedAt),
-    gt(boardPosts.expiresAt, now),
+    gte(boardPosts.closesOn, today),
+    gte(boardPosts.endsOn, today),
     eq(coaches.status, "approved"),
   );
 }
@@ -125,7 +143,8 @@ export async function loadBoardPost(viewer: Viewer, id: string, now = new Date()
     .limit(1);
   if (!row || row.removedAt) return null;
   const owner = row.coachId === viewer.userId;
-  const visible = !row.hiddenAt && !row.closedAt && row.expiresAt > now && row.status === "approved";
+  const visible =
+    !row.hiddenAt && !row.closedAt && needStillOpen(row.closesOn, row.endsOn, now) && row.status === "approved";
   if (!visible && !owner && viewer.role !== "admin") return null;
   return toView(row, viewer.userId);
 }
@@ -140,9 +159,12 @@ function toView(row: PostRow, viewerId: string): BoardPostView {
     skillLevels: row.skillLevels,
     county: row.county,
     state: row.state,
-    seasonCode: row.seasonCode,
-    seasonLabel: labelForStoredSeason(row.seasonCode),
-    neededThrough: row.neededThrough,
+    eventName: row.eventName,
+    startsOn: row.startsOn,
+    endsOn: row.endsOn,
+    playersNeeded: row.playersNeeded,
+    closesOn: row.closesOn,
+    summary: boardNeedLine(row),
     notes: row.notes,
     expiresAt: row.expiresAt,
     createdAt: row.createdAt,
@@ -167,18 +189,13 @@ export type BoardInput = {
   skillLevels: string[];
   state: string;
   county: string;
-  seasonCode: string;
-  neededThrough: string;
+  eventName: string;
+  startsOn: string;
+  endsOn: string;
+  closesOn: string;
+  playersNeeded: string;
   notes: string;
 };
-
-function seasonExpiry(code: string, now: Date): Date | null {
-  const current = currentSeason(now);
-  const next = followingSeason(current);
-  if (code === current.seasonCode) return current.expiresAt;
-  if (code === next.seasonCode) return next.expiresAt;
-  return null;
-}
 
 export async function saveBoardPost(
   viewer: Viewer,
@@ -194,14 +211,11 @@ export async function saveBoardPost(
     positionLabels: [...BASEBALL_POSITIONS],
   });
   if (!isLaunchState(input.state)) errors.state = launchStateMessage();
-  if (!input.seasonCode && !input.neededThrough) errors.seasonCode = "Choose a season or a last date needed.";
-  const seasonEnd = input.seasonCode ? seasonExpiry(input.seasonCode, now) : null;
-  if (input.seasonCode && !seasonEnd) errors.seasonCode = "Choose a current or next season.";
+  const schedule = boardSchedule(input);
+  Object.assign(errors, schedule.errors);
   if (Object.keys(errors).length) return { ok: false, fieldErrors: errors };
   const db = getDb();
   if (!db) return { ok: false, error: "Database is not configured yet.", fieldErrors: {} };
-  const needed = input.neededThrough ? new Date(`${input.neededThrough}T23:59:59.000Z`) : null;
-  const expiresAt = boardExpiresAt(now, seasonEnd, needed);
   const values = {
     teamName: input.teamName.trim(),
     ageGroup: input.ageGroup,
@@ -209,10 +223,14 @@ export async function saveBoardPost(
     skillLevels: input.skillLevels,
     state: input.state.toUpperCase(),
     county: input.county.trim(),
-    seasonCode: input.seasonCode || null,
-    neededThrough: input.neededThrough || null,
+    eventName: input.eventName.trim() || null,
+    startsOn: input.startsOn.trim(),
+    endsOn: input.endsOn.trim(),
+    playersNeeded: schedule.playersNeeded,
+    closesOn: schedule.closesOn,
+    neededThrough: input.endsOn.trim(),
     notes: input.notes.trim() || null,
-    expiresAt,
+    expiresAt: closeInstant(schedule.closesOn),
     updatedAt: now,
   };
   if (postId) {

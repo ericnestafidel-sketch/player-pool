@@ -342,6 +342,15 @@ export const boardPosts = pgTable(
     state: text("state").notNull(),
     seasonCode: text("season_code"),
     neededThrough: date("needed_through"),
+    /** First day of the weekend, tryout, or tournament. */
+    startsOn: date("starts_on").notNull(),
+    /** Last day of the weekend, tryout, or tournament. */
+    endsOn: date("ends_on").notNull(),
+    /** Optional tournament or tryout name. Never a school, town, or contact detail. */
+    eventName: text("event_name"),
+    playersNeeded: integer("players_needed").notNull(),
+    /** Hidden after this date. Defaults to the day before the start, and cannot be after the end. */
+    closesOn: date("closes_on").notNull(),
     notes: text("notes"),
     closedAt: timestamp("closed_at", { withTimezone: true }),
     hiddenAt: timestamp("hidden_at", { withTimezone: true }),

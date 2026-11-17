@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { BoardForm } from "@/components/board-form";
 import { canPostBoard } from "@/lib/board";
-import { seasonOffers } from "@/lib/seasons";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -36,7 +35,7 @@ async function NewPost() {
         County and state only. Notes cannot include an email, phone number, or link. Parents message you
         in the app.
       </p>
-      <BoardForm action="create" offers={seasonOffers(new Date())} />
+      <BoardForm action="create" />
     </main>
   );
 }
