@@ -1,6 +1,27 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { canReadBoard } from "@/lib/board";
 import { boardExpiresAt, boardNeedLine, boardNoteError, boardSchedule, needStillOpen } from "@/lib/board-rules";
+import type { Viewer } from "@/lib/viewer";
+
+function viewer(partial: Partial<Viewer>): Viewer {
+  return {
+    userId: "user",
+    role: null,
+    coachStatus: null,
+    signupIntent: null,
+    emailVerified: false,
+    ...partial,
+  };
+}
+
+test("only approved coaches and verified parents can read needs", () => {
+  assert.equal(canReadBoard(viewer({ role: "parent", emailVerified: true })), true);
+  assert.equal(canReadBoard(viewer({ role: "parent", emailVerified: false })), false);
+  assert.equal(canReadBoard(viewer({ role: "coach", coachStatus: "approved" })), true);
+  assert.equal(canReadBoard(viewer({ role: "coach", coachStatus: "pending" })), false);
+  assert.equal(canReadBoard(viewer({ role: "admin" })), true);
+});
 
 test("board notes reject contact details and links", () => {
   assert.equal(boardNoteError(""), null);

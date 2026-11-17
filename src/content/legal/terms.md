@@ -69,6 +69,18 @@ What you choose to share outside Player Pool (for example, if you decide to give
 
 ---
 
+## Coach Needs Board
+
+Only a Coach we have approved may post a Need. A Need describes players wanted for a weekend, tryout, or tournament: age group, positions, USSSA level, county and state, start and end dates, how many players are needed, and a close date. A tournament or tryout name is optional.
+
+A Need may not contain a player's name, a coach's or parent's name, a school, a town, an email address, a phone number, a link, or a promise of payment or a scholarship.
+
+A Need stays on the board until the Coach closes it, or until its close date or end date, whichever comes first. If the Coach leaves the close date blank, it is the day before the event starts. The close date cannot be after the end date. The Coach who posted the Need can edit it or close it early. A Parent or approved Coach can report a Need. We can hide or remove a Need that is spam, misleading, or breaks these rules.
+
+Needs are visible only to signed-in approved Coaches and signed-in Parents who have verified their email. They are not a public page and search engines are told not to index them. The team name is not shown on the board. A Parent sees that team name only after applying, and only inside the in-app thread.
+
+---
+
 ## 7. Things you may not do
 
 You may not:

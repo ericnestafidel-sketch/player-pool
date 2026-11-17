@@ -24,6 +24,17 @@ async function Board() {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
+  if (viewer.role === "parent" && !viewer.emailVerified) {
+    return (
+      <main className="form-wrap">
+        <h1>Coach needs</h1>
+        <p className="lead">
+          Verify your email to view the board. Player Pool uses the verification status on your sign-in
+          account. Needs stay hidden until then.
+        </p>
+      </main>
+    );
+  }
   if (!canReadBoard(viewer)) redirect(viewer.role === "coach" ? "/coach/pending" : "/access-denied");
   const posts = await listBoardPosts(viewer);
   return (
