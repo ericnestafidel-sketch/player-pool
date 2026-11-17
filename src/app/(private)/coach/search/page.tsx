@@ -21,7 +21,7 @@ import { getDb } from "@/db";
 import { listSavedSearches, searchPlayers } from "@/lib/player-store";
 import { listSports, preferredSport } from "@/lib/sport";
 import { PLAYER_STATUS_LABEL } from "@/lib/safety";
-import { US_STATES } from "@/lib/states";
+import { isLaunchState, launchStateNames, launchStates } from "@/lib/launch";
 import { AdminNav } from "@/components/admin-nav";
 import { getRequestViewer } from "@/lib/viewer";
 
@@ -58,6 +58,8 @@ async function Search({
   const [raw, sports] = await Promise.all([searchParams, listSports()]);
   const sport = preferredSport(sports);
   const filters = filtersFromParams(raw, sport, now);
+  if (filters.state && !isLaunchState(filters.state)) filters.state = "";
+  const stateChoices = launchStates();
   const db = getDb();
   const [saved, results, badgeRows] = await Promise.all([
     preview ? Promise.resolve([]) : listSavedSearches(viewer.userId, sport, now),
@@ -107,7 +109,7 @@ async function Search({
           <label htmlFor="state">State</label>
           <select id="state" name="state" defaultValue={filters.state}>
             <option value="">Any</option>
-            {US_STATES.map((code) => (
+            {stateChoices.map((code) => (
               <option key={code} value={code}>
                 {code}
               </option>
@@ -121,7 +123,7 @@ async function Search({
             autoComplete="off"
             placeholder="Any county"
           />
-          <p className="meta">Any U.S. state, plus a county name.</p>
+          <p className="meta">Players are listed in {launchStateNames("or")}, by county and state only.</p>
           <label htmlFor="weekend">Available this weekend</label>
           <select id="weekend" name="weekend" defaultValue={filters.weekend}>
             <option value="">Any</option>

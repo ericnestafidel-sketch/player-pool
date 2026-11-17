@@ -134,8 +134,8 @@ export default function HomePage() {
         </p>
         <h3>What location do coaches see?</h3>
         <p>
-          {launchStateNames()} only, plus county. A town, street, school, and home address are not
-          collected on the player card.
+          Players are listed in {launchStateNames("or")}, by county and state only. A town, street,
+          school, and home address are not collected on the player card.
         </p>
         <h3>Who can see a player?</h3>
         <p>

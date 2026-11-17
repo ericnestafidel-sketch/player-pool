@@ -27,11 +27,13 @@ export function isLaunchState(state: string): boolean {
   return launchStates().includes(state.trim().toUpperCase());
 }
 
-export function launchStateNames(): string {
+export function launchStateNames(conjunction: "and" | "or" = "and"): string {
   const names = launchStates().map((code) => LAUNCH_STATE_NAMES[code] ?? code);
-  if (names.length <= 1) return names[0] ?? "Indiana, Illinois, and Ohio";
-  if (names.length === 2) return `${names[0]} and ${names[1]}`;
-  return `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
+  const fallback = conjunction === "or" ? "Indiana, Illinois, or Ohio" : "Indiana, Illinois, and Ohio";
+  if (names.length === 0) return fallback;
+  if (names.length === 1) return names[0] ?? fallback;
+  if (names.length === 2) return `${names[0]} ${conjunction} ${names[1]}`;
+  return `${names.slice(0, -1).join(", ")}, ${conjunction} ${names.at(-1)}`;
 }
 
 export function launchStateMessage(): string {
