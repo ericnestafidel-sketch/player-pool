@@ -1,7 +1,10 @@
+import { connection } from "next/server";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { countOpenNeeds } from "@/lib/board";
+import { openNeedsCopy } from "@/lib/board-rules";
 import { HowApplyingWorks } from "@/components/how-applying-works";
-import { OpenNeedsCount } from "@/components/open-needs-count";
+import { launchStates } from "@/lib/launch";
 import { withRedirect } from "@/lib/redirects";
 import { publicMetadata } from "@/lib/seo";
 
@@ -12,7 +15,12 @@ export const metadata: Metadata = publicMetadata({
   path: "/coaches",
 });
 
-export default function CoachesPage() {
+/** Request-time render so the open-need count is not frozen during the build. */
+export const instant = false;
+
+export default async function CoachesPage() {
+  await connection();
+  const openNeeds = await countOpenNeeds();
   return (
     <main className="wrap">
       <h1>Find players for a travel team</h1>
@@ -28,16 +36,16 @@ export default function CoachesPage() {
       </p>
       <h2>Coach Needs Board</h2>
       <p>
-        Approved coaches post the age group, positions, and USSSA level they need, plus county and
-        state. Parents and approved coaches read those posts after they sign in. This page does not
-        list teams.
+        Approved coaches post the age group, positions, USSSA level, county and state, weekend or
+        tournament dates, how many players they need, and when the post closes. Parents and approved
+        coaches read those posts after they sign in. This page does not list teams.
       </p>
       <p>
         <Link className="btn navy" href={withRedirect("/sign-in", "/board")}>
           Sign in to view the board
         </Link>
       </p>
-      <OpenNeedsCount />
+      <p>{openNeedsCopy(openNeeds, launchStates())}</p>
       <HowApplyingWorks />
       <h2>What you can search</h2>
       <ul>
