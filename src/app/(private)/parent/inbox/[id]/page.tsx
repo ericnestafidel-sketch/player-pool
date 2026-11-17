@@ -43,6 +43,10 @@ async function Thread({ params }: { params: Promise<{ id: string }> }) {
         {thread.weekend ? `Weekend of ${formatWeekend(thread.weekend)}` : "No weekend chosen"}
       </p>
       <CoachCard coach={thread.coach} />
+      <p className="meta">
+        This team name is visible because you applied. It stays in this thread. Email and phone are
+        not shared.
+      </p>
       <div className="thread">
         {thread.messages.map((message) => (
           <article className={`bubble ${message.author}`} key={message.id}>

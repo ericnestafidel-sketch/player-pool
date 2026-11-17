@@ -53,6 +53,7 @@ export type CoachThreadSummary = {
 };
 
 export type CoachThread = CoachThreadSummary & {
+  playerId: string;
   weekend: string | null;
   messages: ThreadMessage[];
 };
@@ -192,6 +193,21 @@ export async function startParentContact(
       .where(and(eq(blocks.parentId, viewer.userId), eq(blocks.coachId, coachId)))
       .limit(1);
     if (blocked) return { ok: false, error: "That coach is not available." };
+    const [existing] = await db
+      .select({ id: contactRequests.id })
+      .from(contactRequests)
+      .where(and(eq(contactRequests.playerId, playerId), eq(contactRequests.coachId, coachId)))
+      .limit(1);
+    if (existing) {
+      await db.insert(contactMessages).values({
+        requestId: existing.id,
+        authorRole: "parent",
+        body: message,
+      });
+      const coachEmail = await emailFor(coachId);
+      if (coachEmail) await sendNotification(coachEmail, `/coach/messages/${existing.id}`);
+      return { ok: true, requestId: existing.id };
+    }
     const [request] = await db
       .insert(contactRequests)
       .values({
@@ -367,6 +383,7 @@ export async function loadCoachThread(coachId: string, requestId: string): Promi
   const messages = await threadMessages(request);
   const thread: CoachThread = {
     id: request.id,
+    playerId: request.playerId,
     playerLabel: formatPlayerLabel(request.publicNumber),
     preview: messages.at(-1)?.body ?? request.message,
     createdAt: request.createdAt,
@@ -618,6 +635,7 @@ type RequestRecord = {
   parentId: string;
   coachId: string;
   message: string;
+  openedBy: string;
   weekend: string | null;
   createdAt: Date;
   publicNumber: number;
@@ -638,6 +656,7 @@ async function loadRequest(requestId: string): Promise<RequestRecord | null> {
       parentId: players.parentId,
       coachId: contactRequests.coachId,
       message: contactRequests.message,
+      openedBy: contactRequests.openedBy,
       weekend: contactRequests.weekend,
       createdAt: contactRequests.createdAt,
       publicNumber: players.publicNumber,
@@ -662,6 +681,7 @@ async function loadRequest(requestId: string): Promise<RequestRecord | null> {
     parentId: row.parentId,
     coachId: row.coachId,
     message: row.message,
+    openedBy: row.openedBy,
     weekend: row.weekend,
     createdAt: row.createdAt,
     publicNumber: row.publicNumber,
@@ -687,7 +707,12 @@ async function threadMessages(request: RequestRecord): Promise<ThreadMessage[]> 
     .where(eq(contactMessages.requestId, request.id))
     .orderBy(contactMessages.createdAt);
   return [
-    { id: request.id, author: "coach", body: request.message, createdAt: request.createdAt },
+    {
+      id: request.id,
+      author: request.openedBy === "parent" ? "parent" : "coach",
+      body: request.message,
+      createdAt: request.createdAt,
+    },
     ...replies.map((reply) => ({
       id: reply.id,
       author: reply.authorRole,

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { HowApplyingWorks } from "@/components/how-applying-works";
 import { canPostBoard, canReadBoard, listBoardPosts } from "@/lib/board";
 import { getRequestViewer } from "@/lib/viewer";
 
@@ -32,6 +33,7 @@ async function Board() {
         Approved coaches post the players they need. County and state only. No email, phone, or links.
         Message inside Player Pool.
       </p>
+      <HowApplyingWorks />
       {canPostBoard(viewer) ? (
         <p>
           <Link className="btn gold" href="/board/new">
