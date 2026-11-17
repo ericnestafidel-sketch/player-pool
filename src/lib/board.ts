@@ -1,8 +1,8 @@
-import { and, desc, eq, gte, isNotNull, isNull, lt, or } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, isNotNull, isNull, lt, or } from "drizzle-orm";
 import { boardPosts, boardReports, coaches } from "@/db/schema";
 import { getDb } from "@/db";
 import { AGE_GROUPS, BASEBALL_LEVELS, BASEBALL_POSITIONS } from "@/lib/coach-options";
-import { isLaunchState, launchStateMessage } from "@/lib/launch";
+import { isLaunchState, launchStateMessage, launchStates } from "@/lib/launch";
 import {
   boardFieldError,
   boardNeedLine,
@@ -130,6 +130,20 @@ export async function purgeExpiredNeeds(now = new Date()): Promise<void> {
       lt(boardPosts.closesOn, cutoffDate),
     ),
   );
+}
+
+export async function countOpenNeeds(now = new Date()): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  await purgeExpiredNeeds(now);
+  const states = launchStates();
+  if (states.length === 0) return 0;
+  const [row] = await db
+    .select({ total: count() })
+    .from(boardPosts)
+    .innerJoin(coaches, eq(coaches.userId, boardPosts.coachId))
+    .where(and(openConditions(now), inArray(boardPosts.state, states)));
+  return Number(row?.total ?? 0);
 }
 
 export async function listBoardPosts(viewer: Viewer, now = new Date()): Promise<BoardPostView[]> {

@@ -162,6 +162,12 @@ export function boardNeedLine(input: {
   ].join(" · ");
 }
 
+export function openNeedsCopy(total: number, states: string[]): string {
+  if (total <= 0) return "No open needs right now — check back soon.";
+  const noun = total === 1 ? "need" : "needs";
+  return `${total} open ${noun} in ${states.join("/")} right now.`;
+}
+
 export function needStillOpen(closesOn: string, endsOn: string, now: Date): boolean {
   const today = indianaToday(now);
   return closesOn >= today && endsOn >= today;

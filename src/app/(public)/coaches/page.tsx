@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { HowApplyingWorks } from "@/components/how-applying-works";
+import { OpenNeedsCount } from "@/components/open-needs-count";
 import { withRedirect } from "@/lib/redirects";
 import { publicMetadata } from "@/lib/seo";
 
@@ -36,6 +37,7 @@ export default function CoachesPage() {
           Sign in to view the board
         </Link>
       </p>
+      <OpenNeedsCount />
       <HowApplyingWorks />
       <h2>What you can search</h2>
       <ul>
