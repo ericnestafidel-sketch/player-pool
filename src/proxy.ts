@@ -156,12 +156,7 @@ async function authorize(request: NextRequest, userId: string | null) {
   }
 
   if (isBoard(request)) {
-    if (viewer.role === "admin" || viewer.role === "parent") return stamp(NextResponse.next(), request);
-    if (viewer.role === "coach" && viewer.coachStatus === "approved") {
-      return stamp(NextResponse.next(), request);
-    }
-    if (viewer.role === "coach") return redirectTo(request, "/coach/pending");
-    return redirectTo(request, "/access-denied");
+    return stamp(NextResponse.next(), request);
   }
 
   if (isCoachArea(request)) return stamp(NextResponse.next(), request);

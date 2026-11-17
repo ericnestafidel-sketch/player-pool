@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { BoardStatus } from "@/components/board-status";
 import { HowApplyingWorks } from "@/components/how-applying-works";
-import { canPostBoard, canReadBoard, listBoardPosts, markNeedAlertsRead } from "@/lib/board";
+import { boardGate, canPostBoard, listBoardPosts, markNeedAlertsRead } from "@/lib/board";
 import { getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -24,18 +25,7 @@ async function Board() {
   await connection();
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
-  if (viewer.role === "parent" && !viewer.emailVerified) {
-    return (
-      <main className="form-wrap">
-        <h1>Coach needs</h1>
-        <p className="lead">
-          Verify your email to view the board. Player Pool uses the verification status on your sign-in
-          account. Needs stay hidden until then.
-        </p>
-      </main>
-    );
-  }
-  if (!canReadBoard(viewer)) redirect(viewer.role === "coach" ? "/coach/pending" : "/access-denied");
+  if (boardGate(viewer) !== "ok") return <BoardStatus viewer={viewer} />;
   if (viewer.role === "parent") await markNeedAlertsRead(viewer.userId);
   const posts = await listBoardPosts(viewer);
   return (

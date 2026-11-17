@@ -96,14 +96,25 @@ const columns = {
   foundingNumber: coaches.foundingNumber,
 };
 
+export type BoardGate = "ok" | "verify-email" | "finish-setup" | "pending";
+
+/** Why this signed-in person cannot open the board. Approved coaches and verified parents are ok. */
+export function boardGate(viewer: Viewer): BoardGate {
+  if (viewer.role === "admin") return "ok";
+  if (!viewer.emailVerified) return "verify-email";
+  if (viewer.role === null) return "finish-setup";
+  if (viewer.role === "parent") return "ok";
+  if (viewer.role === "coach" && viewer.coachStatus === "approved") return "ok";
+  if (viewer.role === "coach") return "pending";
+  return "finish-setup";
+}
+
 export function canReadBoard(viewer: Viewer): boolean {
-  if (viewer.role === "admin") return true;
-  if (viewer.role === "parent") return viewer.emailVerified;
-  return viewer.role === "coach" && viewer.coachStatus === "approved";
+  return boardGate(viewer) === "ok";
 }
 
 export function canPostBoard(viewer: Viewer): boolean {
-  return viewer.role === "coach" && viewer.coachStatus === "approved";
+  return viewer.role === "coach" && viewer.coachStatus === "approved" && viewer.emailVerified;
 }
 
 function openConditions(now: Date) {
