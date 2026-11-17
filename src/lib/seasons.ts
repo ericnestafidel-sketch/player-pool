@@ -208,7 +208,7 @@ export function coverageFor(
   };
 }
 
-/** Admin test listings never consume a FIRST25 spot, even at a $0 total. */
+/** Admin test listings never consume a FIRST100 spot, even at a $0 total. */
 export function promoFreeSeasonForPlayer(
   adminTest: boolean,
   amountTotal: number,

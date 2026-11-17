@@ -150,7 +150,7 @@ export const players = pgTable(
     season: text("season"),
     note: text("note"),
     paused: boolean("paused").notNull().default(false),
-    /** Profiles Eric creates while testing. Hidden from real coaches and excluded from FIRST25. */
+    /** Profiles Eric creates while testing. Hidden from real coaches and excluded from FIRST100. */
     adminTest: boolean("admin_test").notNull().default(false),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     highlightUploadedAt: timestamp("highlight_uploaded_at", { withTimezone: true }),

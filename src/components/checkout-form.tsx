@@ -86,7 +86,7 @@ export function CheckoutForm({
             year. The free season does not include yearly. A $0 checkout still turns the listing on.{" "}
           </>
         ) : (
-          <>Admin test players do not use FIRST25. </>
+          <>Admin test players do not use {PROMO_CODE}. </>
         )}
         Card numbers are entered on Stripe, not here.
       </p>

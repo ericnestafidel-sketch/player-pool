@@ -94,7 +94,7 @@ Next.js 16 calls the request gate `src/proxy.ts` (this used to be `middleware.ts
 
 ## Pricing copy
 
-One-time payments, no auto-renew. Season **$25** for the season you choose. Yearly **$60** is 12 months: that season and the next two. Spring 2027 is November 1, 2026 through May 31, 2027. Summer is June 1–August 31. Fall is September 1–October 31. The first 100 season listings can use code FIRST25. A refund is available for 15 days if no coach has viewed the profile since payment. Legal pages are version `2026-11-09`. The live Stripe coupon may still be capped at 25 until it is updated in the Dashboard.
+One-time payments, no auto-renew. Season **$25** for the season you choose. Yearly **$60** is 12 months: that season and the next two. Spring 2027 is November 1, 2026 through May 31, 2027. Summer is June 1–August 31. Fall is September 1–October 31. The first 100 season listings can use code FIRST100. A refund is available for 15 days if no coach has viewed the profile since payment. Legal pages are version `2026-11-09`. The live Stripe coupon may still be capped at 25 until it is updated in the Dashboard.
 
 Run `npm run stripe:setup` with `STRIPE_SECRET_KEY`, then set `STRIPE_WEBHOOK_SECRET`. Set `REQUIRE_PAID_LISTING=true` at launch. `CRON_SECRET` protects the daily expiry check.
 

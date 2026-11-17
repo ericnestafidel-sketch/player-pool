@@ -112,8 +112,8 @@ Coaches use Player Pool free. Parents pay to list a player. All prices are in U.
 - **Price changes** apply only to future purchases, never to a listing you've already paid for.
 - **Taxes** will be added if the law requires it and shown before you pay.
 
-### Launch offer: FIRST25
-- The first 100 players whose Parents redeem code **FIRST25** at checkout get **one Season listing free**. After that, a season is $25 and a year is $60.
+### Launch offer: FIRST100
+- The first 100 players whose Parents redeem code **FIRST100** at checkout get **one Season listing free**. After that, a season is $25 and a year is $60.
 - Limit one per player. It applies to the Season plan only (not Yearly), has no cash value, can't be combined with other offers, and can't be transferred.
 - The offer ends when 100 codes are redeemed (or earlier if we announce an end date on the pricing page).
 - After the free season, regular prices apply. Nothing renews automatically.
@@ -129,7 +129,7 @@ Coaches use Player Pool free. Parents pay to list a player. All prices are in U.
 Otherwise, payments are **non-refundable**, including if you pause or delete the profile, or the listing ends. Also:
 - A "view" means an approved Coach opened the player's profile page. Showing up in search results does not count as a view. You can see every view on your Parent page.
 - The refund window also ends if the listing period ends before day 15.
-- Free listings (FIRST25) have no payment to refund.
+- Free listings (FIRST100) have no payment to refund.
 - **To get a refund, use the Refund button on your Parent page** (it appears only when you're eligible), or email {{SUPPORT_EMAIL}}. Refunds go back to your original payment method through Stripe, usually within 5–10 business days. Your listing ends when the refund is issued.
 - **Ask for your refund before deleting the profile.** Deleting the profile also deletes the record we use to confirm eligibility.
 

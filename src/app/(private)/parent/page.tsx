@@ -8,6 +8,7 @@ import { ViewerList } from "@/components/viewer-list";
 import { AdminNav } from "@/components/admin-nav";
 import { PlayerSignupClosedButton, PlayerSignupSoon } from "@/components/player-signup-gate";
 import { playerSignupOpen } from "@/lib/launch";
+import { PROMO_CODE } from "@/lib/pricing";
 import { claimParent, ensureParentProfile } from "@/lib/accounts";
 import { ListingStatus } from "@/components/listing-status";
 import { listParentPlayers, type ParentPlayer } from "@/lib/player-store";
@@ -110,7 +111,7 @@ async function ParentHome() {
       {viewer.role === "admin" ? (
         <p className="hint">
           You are still an admin. Players you add here are marked Admin test, stay out of real coach
-          search, and do not use FIRST25. Delete them when you are done testing.
+          search, and do not use {PROMO_CODE}. Delete them when you are done testing.
         </p>
       ) : null}
       <p>
