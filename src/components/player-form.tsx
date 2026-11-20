@@ -278,9 +278,12 @@ export function PlayerForm({
       <section className="section-card">
         <h3>Highlights</h3>
         <div className="hint">
-          Paste an unlisted YouTube or Hudl link. Leave the player&apos;s name, jersey number, and
-          school out of the title and out of the video. A link added in the last 90 days shows coaches
-          a 90-day highlight badge.
+          Paste an unlisted YouTube or Hudl link. We recommend unlisted links; a public link can be
+          opened by anyone who has the URL. A highlight video can show your child&apos;s face and is
+          visible to approved coaches. Leave the player&apos;s name, jersey number, and school out of
+          the title and out of the video. By adding a link, you confirm you have the right to share
+          the recording, including the player&apos;s likeness. A link added in the last 90 days shows
+          coaches a 90-day highlight badge.
         </div>
         {highlights.map((highlight, index) => (
           <div className="highlight-row" key={`highlight-${index}`}>
@@ -387,7 +390,10 @@ export function PlayerForm({
           <label className="check">
             <input name="guardian" type="checkbox" required />
             <span>
-              I am 18 or older and this player&apos;s parent or guardian, and I agree to the{" "}
+              I am 18 or older and this player&apos;s parent or legal guardian. I consent to Player
+              Pool collecting, storing, and showing approved coaches the player information listed in
+              the Privacy Policy (including birth year, county and state, stats, notes, and
+              highlight-video links), and I agree to the{" "}
               <Link href="/terms">Terms</Link> and <Link href="/privacy">Privacy Policy</Link>.
             </span>
           </label>

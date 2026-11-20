@@ -32,13 +32,16 @@ export default async function CoachesPage() {
       <p>
         Coaches use Player Pool free. Every coach is reviewed and approved by our experienced baseball
         staff before any profile opens. Send one proof that you coach the team, plus one reference.
-        Approval is not a background check.
+        Approval is a manual review of what the coach submits, plus a self-attestation. Player Pool
+        does not run a criminal background check or a SafeSport check, and approval is not a safety
+        certification.
       </p>
       <h2>Coach Needs Board</h2>
       <p>
         Approved coaches post the age group, positions, USSSA level, county and state, weekend or
         tournament dates, how many players they need, and when the post closes. Parents and approved
-        coaches read those posts after they sign in. This page does not list teams.
+        coaches read those posts after they sign in. Need details are never public; we only show a
+        count. This page does not list teams.
       </p>
       <p>
         <Link className="btn navy" href={withRedirect("/sign-in", "/board")}>

@@ -18,8 +18,10 @@ export default function HowApprovalWorksPage() {
       <h1>How coach approval works</h1>
       <p className="lead">
         Every coach is reviewed and approved by our experienced baseball staff before any player
-        profile opens. Approval is not a background check, an identity guarantee, or an endorsement
-        of a coach or team.
+        profile opens. Player Pool does not run a criminal background check, identity verification,
+        or SafeSport (or equivalent) training check. We review the materials the coach submits and
+        may call a reference. Approval is a manual review with the coach&apos;s self-attestation; it
+        is not a safety certification, an identity guarantee, or an endorsement of a coach or team.
       </p>
       <h2>What you submit</h2>
       <ul>
