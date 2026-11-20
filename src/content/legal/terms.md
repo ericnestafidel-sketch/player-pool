@@ -1,8 +1,8 @@
 # Terms of Use
 
-**Last updated November 2026**
+**Last updated November 20, 2026**
 
-**Effective November 9, 2026**
+**Effective November 20, 2026**
 
 These Terms of Use ("Terms") are an agreement between you and **Coach Eric LLC**, an Indiana limited liability company doing business as **Player Pool** ("Player Pool," "we," "us"). They cover your use of the Player Pool website and services. Please read them. **Section 9 (refunds), Section 14 (limits on our liability), and Section 16 (disputes) are especially important.**
 
@@ -12,7 +12,7 @@ By creating an account, checking the agreement box, or using Player Pool, you ag
 
 ## 1. What Player Pool is (and isn't)
 
-Player Pool is an online listing and search tool launching in Indiana, Illinois, and Ohio. Parents list their youth baseball player anonymously, and travel coaches our staff has approved search those listings and message Parents through the site.
+Player Pool is an online listing and search tool launching in Indiana, Illinois, and Ohio. Parents list their youth baseball player without showing a name, contact information, or address, and travel coaches our staff has approved search those listings and message Parents through the site. A highlight video can show the player's face and may make the player identifiable.
 
 Player Pool **is not** a team, league, club, recruiter, agent, or tournament organizer. We don't run tryouts, games, practices, or travel. We aren't a party to any arrangement between a Parent and a Coach or team.
 
@@ -26,6 +26,7 @@ Player Pool **is not** a team, league, club, recruiter, agent, or tournament org
 - **Parents** must be the parent or legal guardian of every player they list and have the legal right to make decisions about sharing the player's information. If a listed player is **18 or older**, the Parent must have the player's permission, and we'll remove the profile if the player asks.
 - **Coaches** must be an active coach or official of a youth baseball team or organization, must be approved by us, and must follow the Coach Code of Conduct at all times.
 - You must live in the United States.
+- **During this launch, a player may be listed only if the county and state on the profile are in Indiana, Illinois, or Ohio.** We may approve a Coach who lives in the United States and coaches a team that plays in or near those states. We may expand or close this area later; if we do, we will update these Terms and the pricing page.
 - You can't use Player Pool if we've previously removed you, or if you're barred from working with minors by law, a court, SafeSport, or any sports organization.
 
 ---
@@ -40,7 +41,9 @@ Player Pool **is not** a team, league, club, recruiter, agent, or tournament org
 
 ## 4. Coach approval: what it means
 
-Our experienced baseball staff reviews every Coach request. We look at at least one proof that you coach the team (a website, league listing, social page, tournament roster, or a short call with our staff) and check at least one reference before approving access. **Approval is not a background check, an identity guarantee, or an endorsement of any Coach or team.** We can't verify everything a Coach tells us, and we can't monitor what happens off the site.
+Our experienced baseball staff reviews every Coach request. We look at at least one proof that you coach the team (a website, league listing, social page, tournament roster, or a short call with our staff) and check at least one reference before approving access. The Coach also signs a self-attestation in the Coach Code of Conduct.
+
+**Player Pool does not run a criminal background check, identity verification, or SafeSport (or equivalent) training check.** We review the materials the Coach submits and may call a reference. We do not independently verify a Coach's criminal history, and approval is not a safety certification, an identity guarantee, or an endorsement of any Coach or team. We can't verify everything a Coach tells us, and we can't monitor what happens off the site.
 
 **Parents are responsible for deciding whether to respond to a Coach, for checking a Coach and team themselves** (for example, by confirming the team with its organization and asking about background checks and SafeSport training), and for supervising every contact and meeting involving their child.
 
@@ -55,7 +58,7 @@ Player profiles are visible only to signed-in Coaches we've approved, only while
 - the player's school, town, street address, or exact location;
 - any email, phone number, or social media handle.
 
-Highlight videos must be **YouTube or Hudl links set to "unlisted" or public**, with no name, jersey number, or school in the title, description, or on screen where you can avoid it.
+A profile does not show a player's name, contact information, or address, but a highlight video can show the player's face and may make the player identifiable. Only approved Coaches can open the links inside Player Pool, but a "public" YouTube or Hudl link can also be opened by anyone who has the URL. **We recommend "unlisted" YouTube or Hudl links**, with no name, jersey number, or school in the title, description, or on screen. By adding a video link, you grant Player Pool permission to show that link to approved Coaches and confirm you have the right to share the recording, including the player's likeness and any other children who appear.
 
 You're responsible for the accuracy of everything you post. Stats and descriptions must be honest.
 
@@ -69,7 +72,7 @@ What you choose to share outside Player Pool (for example, if you decide to give
 
 ---
 
-## Coach Needs Board
+## 6A. Coach Needs Board
 
 Only a Coach we have approved may post a Need. A Need describes players wanted for a weekend, tryout, or tournament: age group, positions, USSSA level, county and state, start and end dates, how many players are needed, and a close date. A tournament or tryout name is optional.
 
@@ -77,7 +80,7 @@ A Need may not contain a player's name, a coach's or parent's name, a school, a 
 
 A Need stays on the board until the Coach closes it, or until its close date or end date, whichever comes first. If the Coach leaves the close date blank, it is the day before the event starts. The close date cannot be after the end date. The Coach who posted the Need can edit it or close it early. A Parent or approved Coach can report a Need. We can hide or remove a Need that is spam, misleading, or breaks these rules.
 
-Needs are visible only to signed-in approved Coaches and signed-in Parents who have verified their email. They are not a public page and search engines are told not to index them. The team name is not shown on the board. A Parent sees that team name only after applying, and only inside the in-app thread.
+Need details are never public; we only show a count of open needs on our public pages. The Need itself is visible only to signed-in approved Coaches and signed-in Parents who have verified their email. Needs are not a public page and search engines are told not to index them. The team name is not shown on the board. A Parent sees that team name only after applying, and only inside the in-app thread.
 
 ---
 
@@ -164,7 +167,7 @@ We'll remove or disable the material if appropriate and may notify the person wh
 
 - Parents can report any Coach with the Report button. **A report immediately suspends the Coach's access** while we review it.
 - We may remove content, suspend, or close any account that breaks these Terms or the Coach Code of Conduct, or that we believe in good faith puts a child at risk. We may do this without notice where safety requires it.
-- **We report suspected child abuse, exploitation, or grooming** to the family's state child-protection agency, the National Center for Missing & Exploited Children, and/or law enforcement, and we cooperate with investigations. Call your state's child abuse hotline or 1-800-422-4453 Childhelp; in Indiana, DCS 1-800-800-5556. Call **911** in an emergency.
+- **If we have reason to believe a child is being abused, neglected, exploited, or groomed, we will report it** to the appropriate state child-protection agency, the National Center for Missing & Exploited Children, and/or law enforcement, whether or not we are classified as mandatory reporters, and we cooperate with investigations. Parents and Coaches should also report directly. Call your state's child abuse hotline or 1-800-422-4453 Childhelp. In Indiana, DCS 1-800-800-5556. In Illinois, DCFS 1-800-25-ABUSE (1-800-252-2873). In Ohio, 1-855-OH-CHILD (1-855-642-4453). Call **911** in an emergency.
 
 ---
 

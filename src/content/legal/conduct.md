@@ -1,14 +1,14 @@
 # Coach Code of Conduct
 
-**Last updated November 2026**
+**Last updated November 20, 2026**
 
-**Effective November 9, 2026**
+**Effective November 20, 2026**
 
 Player Pool exists to help families find the right travel team, and to keep their kids safe while they do. Every Coach must agree to this Code before we approve access, and must follow it the whole time they use Player Pool. It is part of our [Terms of Use](/terms).
 
 **Breaking this Code can mean immediate suspension or permanent removal.** Where a child's safety may be at risk, it can also mean a report to the authorities. A report from a Parent suspends your access automatically while we review it.
 
-This Code follows the same principles as the U.S. Center for SafeSport's Minor Athlete Abuse Prevention Policies (MAAPP). If your organization, league, or governing body has stricter rules, follow those too.
+This Code is modeled on the principles of the U.S. Center for SafeSport's Minor Athlete Abuse Prevention Policies (MAAPP). It is not a SafeSport certification, and it does not replace your organization's rules. If your organization, league, or governing body has stricter rules, follow those too.
 
 ---
 
@@ -37,7 +37,7 @@ This Code follows the same principles as the U.S. Center for SafeSport's Minor A
 14. **No alcohol, drugs, or tobacco** around players in anything connected to Player Pool, and no inappropriate conduct of any kind toward a minor.
 
 ### Reporting
-15. **I'll report concerns right away.** If I see or suspect anything unsafe for a child, I'll report it to Player Pool. **If I have reason to believe a child is being abused or neglected, I'll report it to the authorities.** Call your state's child abuse hotline or 1-800-422-4453 Childhelp; in Indiana, DCS 1-800-800-5556. Call **911** in an emergency. I'll also report sexual misconduct to the U.S. Center for SafeSport where it applies (uscenterforsafesport.org).
+15. **I'll report concerns right away.** If I see or suspect anything unsafe for a child, I'll report it to Player Pool. **If I have reason to believe a child is being abused or neglected, I'll report it to the authorities.** Call your state's child abuse hotline or 1-800-422-4453 Childhelp. In Indiana, DCS 1-800-800-5556. In Illinois, DCFS 1-800-25-ABUSE (1-800-252-2873). In Ohio, 1-855-OH-CHILD (1-855-642-4453). Call **911** in an emergency. I'll also report sexual misconduct to the U.S. Center for SafeSport where it applies (uscenterforsafesport.org).
 16. **I'll cooperate** with any Player Pool review and with law enforcement or child-protection investigations.
 
 ### Enforcement

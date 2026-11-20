@@ -33,7 +33,7 @@ export default async function HomePage() {
       <section className="hero">
         <h1>Get your player seen by travel coaches</h1>
         <p>
-          Parents list their son in a private pool that approved travel coaches search by age, position,
+          Parents list their player in a private pool that approved travel coaches search by age, position,
           USSSA level, state, and county. Player Pool is launching in Indiana, Illinois, and Ohio
           first. No names, no addresses, no phone numbers shown.
         </p>
@@ -125,7 +125,8 @@ export default async function HomePage() {
         <p>
           Approved coaches post the age group, positions, USSSA level, county and state, weekend or
           tournament dates, how many players they need, and when the post closes. Parents and approved
-          coaches read those posts after they sign in. This page does not list teams.
+          coaches read those posts after they sign in. Need details are never public; we only show a
+          count. This page does not list teams.
         </p>
         <p>
           <Link className="btn navy" href={withRedirect("/sign-in", "/board")}>

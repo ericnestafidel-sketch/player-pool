@@ -1,8 +1,8 @@
 # Privacy Policy
 
-**Last updated November 2026**
+**Last updated November 20, 2026**
 
-**Effective November 9, 2026**
+**Effective November 20, 2026**
 
 This policy explains what Player Pool collects, why, who can see it, how long we keep it, and the choices you have. We wrote it in plain language on purpose. If anything is unclear, email us at {{SUPPORT_EMAIL}}.
 
@@ -13,7 +13,7 @@ This policy explains what Player Pool collects, why, who can see it, how long we
 ## 1. The short version
 
 - **Only adults use Player Pool.** Parents and legal guardians ("Parents") list their player. Travel coaches ("Coaches") who we approve by hand search for players. Children never create accounts or use the site.
-- **Players are anonymous.** A player appears as "Player #NNN." We never show a player's name, town, street address, school, email, or phone. Location is county and state only.
+- **We don't show names, contact info, or addresses publicly.** A player appears as "Player #NNN." We never show a player's name, town, street address, school, email, or phone. Location is county and state only. A highlight video can show your child's face and is visible to approved Coaches, and may make the player identifiable.
 - **Profiles are private.** Only signed-in, hand-approved Coaches can see player profiles. Profiles are not public and are blocked from search engines.
 - **Messages stay inside Player Pool.** Coaches and Parents message each other in the app. Neither side ever sees the other's email address or phone number.
 - **We don't sell or share your data for advertising.** We have no ads and no ad trackers.
@@ -30,6 +30,16 @@ Player Pool is a service for adults. You must be 18 or older to create an accoun
 
 Even though the information about players comes from Parents, we protect it as if it came from the child. We collect only what's needed to show a player to approved Coaches, we never sell it or use it for advertising, we let Parents review and delete it at any time, and we delete it on the schedule in Section 9.
 
+### Parental consent and children's information
+
+We collect information about a player only from that player's parent or legal guardian, never from the child. Before a profile is shown to Coaches, the Parent must confirm they are 18 or older, they are the player's parent or legal guardian, and they consent to our collecting, storing, and displaying the information listed in Section 3 (including birth year, county and state, stats, notes, and highlight-video links) to approved Coaches. Parents may:
+
+- **review or correct** that information by editing the profile, or by emailing {{SUPPORT_EMAIL}};
+- **delete** it in one click from the Parent page, or by emailing us (see Section 9 for timing);
+- **refuse further collection** by pausing or deleting the profile, closing the account, or not adding more information.
+
+We do not rely on the child for this consent. This notice is intended to follow the Children's Online Privacy Protection Act; it has not been reviewed by a lawyer.
+
 ---
 
 ## 3. What we collect
@@ -43,7 +53,7 @@ Even though the information about players comes from Parents, we protect it as i
   - how many miles you'll travel for a weekend (optional)
   - stats you choose to add
   - a short note for Coaches
-  - links to highlight videos on YouTube or Hudl, with a title
+  - links to highlight videos on YouTube or Hudl, with a title. A video can show the player's face, voice, jersey, or other identifying details. Only approved Coaches can open the links inside Player Pool, but a public YouTube or Hudl link can also be opened by anyone who has the URL. We recommend unlisted links, with no name, jersey number, or school in the title, description, or on screen.
   - weekend availability (available or busy)
 - **Messages** you send to Coaches, and any reports you file about a Coach.
 - **Agreements:** the date you accepted these policies and confirmed you're 18+ and the player's parent or legal guardian.
@@ -112,7 +122,7 @@ We don't use player information for anything else, and we don't use it to train 
 
 An approved Coach can post a Need. We store the team name, age group, positions, skill level, county, state, optional tournament or tryout name, start and end dates, how many players are needed, the close date, and an optional note. The note and event name are checked so they cannot contain an email address, a phone number, or a link. We do not ask for a school, a town, or a player's name on a Need.
 
-Who can see it: signed-in approved Coaches and signed-in Parents who have verified their email. A Need is never on a public page, never in our sitemap, and is marked so search engines should not index it. The team name stays off the board. After a Parent applies, that Parent sees the team name inside the in-app thread, and the Coach can open the Player # profile. Replies stay in the app. Email addresses and phone numbers are not shared.
+Who can see it: signed-in approved Coaches and signed-in Parents who have verified their email. Need details are never public; on our public pages we only show a count of open needs. A Need is never on a public page, never in our sitemap, and is marked so search engines should not index it. The team name stays off the board. After a Parent applies, that Parent sees the team name inside the in-app thread, and the Coach can open the Player # profile. Replies stay in the app. Email addresses and phone numbers are not shared.
 
 We delete a Need **90 days** after it leaves the board. It leaves the board when the Coach closes it, or when the close date or the end date passes, whichever comes first. A report about a Need is kept with our other safety records (see Section 9).
 
@@ -140,7 +150,7 @@ We share information only with companies that help us run Player Pool, and only 
 These providers are bound by their own privacy and security terms and may use the data only to provide their service. Our data is stored in the United States.
 
 We may also disclose information:
-- **to protect a child or anyone else**, including reporting suspected child abuse or exploitation to your state's child abuse hotline or 1-800-422-4453 Childhelp; in Indiana, DCS 1-800-800-5556, the National Center for Missing & Exploited Children, or law enforcement;
+- **to protect a child or anyone else**, including reporting suspected child abuse or exploitation to your state's child abuse hotline or 1-800-422-4453 Childhelp; in Indiana, DCS 1-800-800-5556; in Illinois, DCFS 1-800-25-ABUSE (1-800-252-2873); in Ohio, 1-855-OH-CHILD (1-855-642-4453); the National Center for Missing & Exploited Children; or law enforcement. If we have reason to believe a child is being abused, neglected, exploited, or groomed, we will report it to the appropriate authorities, whether or not we are classified as mandatory reporters;
 - when required by law, subpoena, or court order;
 - to enforce our Terms or defend legal claims; or
 - to a buyer or successor if Player Pool is sold or merged, in which case this policy (or one at least as protective) will continue to apply, and we'll notify Parents first.
@@ -173,7 +183,7 @@ We keep information only as long as we need it for the purposes above. We never 
 **Parents can, at any time:**
 - **view and edit** everything in their player's profile;
 - **pause** the profile so Coaches can't see it;
-- **delete** the profile in one click (see Section 9 for timing);
+- **delete** the profile in one click (see Section 9 for timing). If you may want a refund, ask for it first: refund eligibility depends on whether a Coach has viewed the profile, and deleting the profile also deletes the view record we use to check eligibility (see the [Terms](/terms#refunds));
 - **see which Coaches viewed** the profile, and **block or report** any Coach;
 - **ask for a copy** of their data, a correction, or **closing the whole account** by emailing {{SUPPORT_EMAIL}}. We'll respond within 30 days.
 
@@ -185,7 +195,11 @@ We may need to confirm it's really you before acting on a request (for example, 
 
 ## 11. Security
 
-We protect information with encrypted connections (HTTPS), sign-in protections, strict limits on who can access account data (only the owner of Player Pool has admin access), multi-factor authentication on our service accounts, and established providers. We keep a written security plan that we review at least once a year. No system is perfectly secure. If a security breach affects your information, we'll notify you promptly, and in any case as required by law.
+We protect information with encrypted connections (HTTPS), sign-in protections, strict limits on who can access account data (only the owner of Player Pool has admin access), multi-factor authentication on our service accounts, and established providers. We keep a written security plan that we review at least once a year. No system is perfectly secure.
+
+### State privacy and breach notice
+
+We operate in Indiana, Illinois, and Ohio. If a security breach affects your information, we will notify affected account holders by email at the address on the account, promptly and consistent with applicable state law. This section is a general description, not a determination of which statutes apply to Player Pool.
 
 ---
 
@@ -201,4 +215,4 @@ Coach Eric LLC, doing business as Player Pool
 [mailing address available on request]
 {{SUPPORT_EMAIL}}
 
-To report a safety concern about a child, use the Report button on the site or email us. **If a child is in immediate danger, call 911.** You can also call your state's child abuse hotline or 1-800-422-4453 Childhelp; in Indiana, DCS 1-800-800-5556.
+To report a safety concern about a child, use the Report button on the site or email us. **If a child is in immediate danger, call 911.** You can also call your state's child abuse hotline or 1-800-422-4453 Childhelp. In Indiana, DCS 1-800-800-5556. In Illinois, DCFS 1-800-25-ABUSE (1-800-252-2873). In Ohio, 1-855-OH-CHILD (1-855-642-4453). If we have reason to believe a child is being abused, neglected, exploited, or groomed, we will report it to the appropriate authorities.
