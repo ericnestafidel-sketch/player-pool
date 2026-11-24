@@ -6,6 +6,7 @@ import {
   boardNeedLine,
   boardNoteError,
   boardSchedule,
+  formatNeedPosition,
   needStillOpen,
   openNeedsCopy,
 } from "@/lib/board-rules";
@@ -106,6 +107,46 @@ test("the board list line has no team name", () => {
     playersNeeded: 1,
     closesOn: "2026-11-20",
   });
-  assert.equal(line, "12U · P · USSSA AA · Marion County, IN · Nov 21–22 · 1 needed · closes Nov 20");
+  assert.equal(line, "12U · P · USSSA AA · Marion Co., IN · Nov 21–22 · 1 needed · closes Nov 20");
   assert.equal(line.includes("Storm"), false);
+});
+
+test("the board list line shortens county and position labels", () => {
+  const line = boardNeedLine({
+    ageGroup: "10U",
+    positions: ["Pitcher", "Catcher", "First base", "Utility"],
+    skillLevels: ["AA", "A"],
+    county: "Montgomery County",
+    state: "IN",
+    eventName: "1-2 Open spots for Full-time player",
+    startsOn: "2026-11-19",
+    endsOn: "2027-09-01",
+    playersNeeded: 2,
+    closesOn: "2027-03-01",
+  });
+  assert.equal(
+    line,
+    "10U · P, C, 1B, UT · USSSA AA / USSSA A · Montgomery Co., IN · 1-2 Open spots for Full-time player · Nov 19, 2026–Sep 1, 2027 · 2 needed · closes Mar 1",
+  );
+});
+
+test("need positions use standard baseball abbreviations", () => {
+  const labels = [
+    ["Pitcher", "P"],
+    ["Catcher", "C"],
+    ["First base", "1B"],
+    ["Second base", "2B"],
+    ["Third base", "3B"],
+    ["Shortstop", "SS"],
+    ["Left field", "LF"],
+    ["Center field", "CF"],
+    ["Right field", "RF"],
+    ["Outfield", "OF"],
+    ["Infield", "IF"],
+    ["Utility", "UT"],
+    ["Designated hitter", "DH"],
+  ];
+  for (const [label, abbr] of labels) {
+    assert.equal(formatNeedPosition(label), abbr);
+  }
 });
