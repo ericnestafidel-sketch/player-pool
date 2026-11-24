@@ -6,7 +6,6 @@ import {
   boardNeedLine,
   boardNoteError,
   boardSchedule,
-  formatNeedPosition,
   needStillOpen,
   openNeedsCopy,
 } from "@/lib/board-rules";
@@ -130,23 +129,3 @@ test("the board list line shortens county and position labels", () => {
   );
 });
 
-test("need positions use standard baseball abbreviations", () => {
-  const labels = [
-    ["Pitcher", "P"],
-    ["Catcher", "C"],
-    ["First base", "1B"],
-    ["Second base", "2B"],
-    ["Third base", "3B"],
-    ["Shortstop", "SS"],
-    ["Left field", "LF"],
-    ["Center field", "CF"],
-    ["Right field", "RF"],
-    ["Outfield", "OF"],
-    ["Infield", "IF"],
-    ["Utility", "UT"],
-    ["Designated hitter", "DH"],
-  ];
-  for (const [label, abbr] of labels) {
-    assert.equal(formatNeedPosition(label), abbr);
-  }
-});

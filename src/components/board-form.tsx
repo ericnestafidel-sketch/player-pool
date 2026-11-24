@@ -1,5 +1,6 @@
 import { createBoardPost, updateBoardPost } from "@/app/(private)/board/actions";
 import { AGE_GROUPS, BASEBALL_LEVELS, BASEBALL_POSITIONS } from "@/lib/coach-options";
+import { formatPositionOption } from "@/lib/positions";
 import { US_STATES } from "@/lib/states";
 
 export function BoardForm({
@@ -45,7 +46,7 @@ export function BoardForm({
               value={position}
               defaultChecked={post?.positions.includes(position)}
             />
-            <span>{position}</span>
+            <span>{formatPositionOption(position)}</span>
           </label>
         ))}
       </fieldset>

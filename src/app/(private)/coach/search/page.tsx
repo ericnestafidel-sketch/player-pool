@@ -19,6 +19,7 @@ import {
 import { coaches } from "@/db/schema";
 import { getDb } from "@/db";
 import { listSavedSearches, searchPlayers } from "@/lib/player-store";
+import { formatPositionOption } from "@/lib/positions";
 import { listSports, preferredSport } from "@/lib/sport";
 import { PLAYER_STATUS_LABEL } from "@/lib/safety";
 import { isLaunchState, launchStateNames, launchStates } from "@/lib/launch";
@@ -94,6 +95,7 @@ async function Search({
                 name="position"
                 value={filters.position}
                 options={sport.positionLabels}
+                formatOption={formatPositionOption}
               />
               <FilterSelect
                 label={skillLevelLabel(sport)}
@@ -240,11 +242,13 @@ function FilterSelect({
   name,
   value,
   options,
+  formatOption = (option) => option,
 }: {
   label: string;
   name: string;
   value: string;
   options: string[];
+  formatOption?: (option: string) => string;
 }) {
   return (
     <>
@@ -253,7 +257,7 @@ function FilterSelect({
         <option value="">Any</option>
         {options.map((option) => (
           <option key={option} value={option}>
-            {option}
+            {formatOption(option)}
           </option>
         ))}
       </select>
