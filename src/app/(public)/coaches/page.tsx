@@ -48,7 +48,7 @@ export default async function CoachesPage() {
           Sign in to view the board
         </Link>
       </p>
-      <p>{openNeedsCopy(openNeeds, launchStates())}</p>
+      <p className="open-needs-count">{openNeedsCopy(openNeeds, launchStates())}</p>
       <HowApplyingWorks />
       <h2>What you can search</h2>
       <ul>

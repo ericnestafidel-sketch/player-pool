@@ -133,7 +133,7 @@ export default async function HomePage() {
             Sign in to view the board
           </Link>
         </p>
-        <p>{openNeedsCopy(openNeeds, launchStates())}</p>
+        <p className="open-needs-count">{openNeedsCopy(openNeeds, launchStates())}</p>
       </section>
       <section className="wrap faq" id="faq">
         <h2>FAQ</h2>

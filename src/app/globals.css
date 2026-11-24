@@ -66,6 +66,7 @@ a.founders:hover{text-decoration:underline}
 .hero p{font-size:1.15rem;max-width:660px;margin:0 auto 28px;text-shadow:0 1px 8px rgba(0,0,0,.6)}
 .hero .btn{margin:6px}
 .wrap{max-width:1050px;margin:0 auto;padding:50px 24px}
+.open-needs-count{font-size:1.25rem;font-weight:600}
 .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}
 .box,.card,.coach-card,.price-box{background:var(--bg-card);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow)}
 .box .num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:10px;font-family:var(--font-display)}
