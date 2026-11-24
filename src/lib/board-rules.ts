@@ -1,4 +1,5 @@
 import { privateTextError } from "@/lib/player-rules";
+import { formatPositions } from "@/lib/positions";
 import { locationError } from "@/lib/safety";
 import { indianaCalendar, indianaStart } from "@/lib/seasons";
 
@@ -136,40 +137,6 @@ export function formatNeedDay(iso: string): string {
   return `${day.month} ${day.day}`;
 }
 
-const POSITION_ABBREVIATIONS: Record<string, string> = {
-  pitcher: "P",
-  p: "P",
-  catcher: "C",
-  c: "C",
-  "first base": "1B",
-  "1b": "1B",
-  "second base": "2B",
-  "2b": "2B",
-  "third base": "3B",
-  "3b": "3B",
-  shortstop: "SS",
-  ss: "SS",
-  "left field": "LF",
-  lf: "LF",
-  "center field": "CF",
-  cf: "CF",
-  "right field": "RF",
-  rf: "RF",
-  outfield: "OF",
-  of: "OF",
-  infield: "IF",
-  if: "IF",
-  utility: "UT",
-  ut: "UT",
-  "designated hitter": "DH",
-  dh: "DH",
-};
-
-/** Display-only. Stored position values stay unchanged. */
-export function formatNeedPosition(label: string): string {
-  return POSITION_ABBREVIATIONS[label.trim().toLowerCase()] ?? label;
-}
-
 /** Display-only. Stored county values stay unchanged. */
 export function formatNeedLocation(county: string, state: string): string {
   const name = county.trim().replace(/\s+(county|co\.?)$/i, "");
@@ -193,7 +160,7 @@ export function boardNeedLine(input: {
   const event = input.eventName?.trim() ? `${input.eventName.trim()} · ` : "";
   return [
     input.ageGroup,
-    input.positions.map(formatNeedPosition).join(", "),
+    formatPositions(input.positions),
     levels,
     formatNeedLocation(input.county, input.state),
     `${event}${formatNeedRange(input.startsOn, input.endsOn)}`,

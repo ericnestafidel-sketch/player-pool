@@ -9,6 +9,7 @@ import {
   type PlayerDraft,
   type SportConfig,
 } from "@/lib/player-rules";
+import { formatPositionOption } from "@/lib/positions";
 import { PLAYER_STATUS_LABEL } from "@/lib/safety";
 import { US_STATES } from "@/lib/states";
 
@@ -124,7 +125,7 @@ export function PlayerForm({
                     );
                   }}
                 />
-                <span>{position}</span>
+                <span>{formatPositionOption(position)}</span>
               </label>
             ))}
           </div>

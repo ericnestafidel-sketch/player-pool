@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatSkillLevels, formatWeekend, type WeekendMark } from "@/lib/player-rules";
+import { formatPosition } from "@/lib/positions";
 import { PLAYER_STATUS_LABEL, type PublicPlayer } from "@/lib/safety";
 
 export function PlayerCard({
@@ -41,7 +42,7 @@ export function PlayerCard({
       <div className="tags">
         {player.positions.map((position) => (
           <span className="tag" key={position}>
-            {position}
+            {formatPosition(position)}
           </span>
         ))}
       </div>
