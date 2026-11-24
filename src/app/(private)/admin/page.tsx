@@ -14,6 +14,7 @@ import { coachReferences, coaches, contactRequests, profileViews, reports, users
 import { DAILY_CONTACT_CAP } from "@/lib/message-text";
 import { countContactRequests } from "@/lib/threads";
 import { getDb } from "@/db";
+import { formatLocation } from "@/lib/location";
 import { clerkSaysAdmin, getRequestViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
@@ -305,7 +306,7 @@ async function Queue({ searchParams }: { searchParams: Promise<{ tab?: string; n
                 {coach.yearsExperience != null ? ` · ${coach.yearsExperience} years` : ""}
               </p>
               <p className="meta">
-                {coach.state} · {coach.county} County · submitted {formatWhen(coach.createdAt)}
+                {formatLocation(coach.county, coach.state)} · submitted {formatWhen(coach.createdAt)}
               </p>
               {coach.approvedAt ? (
                 <p className="meta">

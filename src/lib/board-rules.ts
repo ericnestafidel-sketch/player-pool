@@ -1,4 +1,5 @@
 import { privateTextError } from "@/lib/player-rules";
+import { formatLocation } from "@/lib/location";
 import { formatPositions } from "@/lib/positions";
 import { locationError } from "@/lib/safety";
 import { indianaCalendar, indianaStart } from "@/lib/seasons";
@@ -137,12 +138,6 @@ export function formatNeedDay(iso: string): string {
   return `${day.month} ${day.day}`;
 }
 
-/** Display-only. Stored county values stay unchanged. */
-export function formatNeedLocation(county: string, state: string): string {
-  const name = county.trim().replace(/\s+(county|co\.?)$/i, "");
-  return `${name} Co., ${state}`;
-}
-
 /** Public list line. Team name, notes, and contact details are not included. */
 export function boardNeedLine(input: {
   ageGroup: string;
@@ -162,7 +157,7 @@ export function boardNeedLine(input: {
     input.ageGroup,
     formatPositions(input.positions),
     levels,
-    formatNeedLocation(input.county, input.state),
+    formatLocation(input.county, input.state),
     `${event}${formatNeedRange(input.startsOn, input.endsOn)}`,
     `${input.playersNeeded} needed`,
     `closes ${formatNeedDay(input.closesOn)}`,
