@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatLocation } from "@/lib/location";
 import { formatSkillLevels, formatWeekend, type WeekendMark } from "@/lib/player-rules";
 import { formatPosition } from "@/lib/positions";
 import { PLAYER_STATUS_LABEL, type PublicPlayer } from "@/lib/safety";
@@ -35,7 +36,7 @@ export function PlayerCard({
         {player.ageGroup} · {formatSkillLevels(player.skillLevels)} · {player.sport}
       </p>
       <p className="meta">
-        {player.state} · {player.county} County
+        {formatLocation(player.county, player.state)}
         {player.birthYear ? ` · born ${player.birthYear}` : ""}
       </p>
       {player.seasonLabel ? <p className="meta">Season: {player.seasonLabel}</p> : null}
