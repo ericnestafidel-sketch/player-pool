@@ -8,8 +8,17 @@ export const LAUNCH_FREE_SEASON_SPOTS = 100;
 /** Customer-facing Stripe promotion code. Stripe must have a code with this exact name. */
 export const PROMO_CODE = "FIRST100";
 
+/** How many free first-season players can sign up. Override with PLAYER_SIGNUP_CAP to reopen after the launch cap. */
+export function playerSignupCap(): number {
+  const raw = process.env["PLAYER_SIGNUP_CAP"]?.trim();
+  if (!raw) return LAUNCH_FREE_SEASON_SPOTS;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 0) return LAUNCH_FREE_SEASON_SPOTS;
+  return n;
+}
+
 /** Remaining free-season spots. Never below zero. */
-export function freeSpotsLeft(used: number, cap = LAUNCH_FREE_SEASON_SPOTS): number {
+export function freeSpotsLeft(used: number, cap = playerSignupCap()): number {
   const redeemed = Number.isFinite(used) ? Math.max(0, Math.floor(used)) : 0;
   return Math.max(0, cap - redeemed);
 }

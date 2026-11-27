@@ -1,17 +1,9 @@
 "use server";
 
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { eq, and, isNull } from "drizzle-orm";
-import { players, users } from "@/db/schema";
-import { getDb } from "@/db";
-import { isPlayerId } from "@/lib/player-access";
-import { coverageFor } from "@/lib/seasons";
-import { createCheckoutSession, refundListing, requestOrigin, stripeConfigured } from "@/lib/stripe-billing";
-import { playerSignupOpen } from "@/lib/launch";
+import { refundListing } from "@/lib/stripe-billing";
 import { requireParentActor } from "@/lib/parent-actor";
-import { getRequestViewer } from "@/lib/viewer";
 
 function text(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
@@ -21,38 +13,8 @@ async function parentId(): Promise<string> {
   return requireParentActor();
 }
 
-export async function startCheckout(formData: FormData) {
-  const viewer = await getRequestViewer();
-  if (!viewer) redirect("/sign-in");
-  if (!playerSignupOpen()) redirect("/parent/checkout");
-  const id = await parentId();
-  if (!stripeConfigured()) redirect("/parent/checkout");
-  const playerId = text(formData.get("playerId"));
-  const plan = text(formData.get("plan"));
-  const startSeason = text(formData.get("startSeason"));
-  if (!isPlayerId(playerId) || (plan !== "season" && plan !== "yearly")) redirect("/parent/checkout");
-  if (!coverageFor(startSeason, plan, new Date())) redirect("/parent/checkout");
-  const db = getDb();
-  if (!db) redirect("/parent/checkout");
-  const [player] = await db
-    .select({ id: players.id, adminTest: players.adminTest })
-    .from(players)
-    .where(and(eq(players.id, playerId), eq(players.parentId, id), isNull(players.deletedAt)))
-    .limit(1);
-  if (!player) redirect("/parent/checkout");
-  const [account] = await db.select({ email: users.email }).from(users).where(eq(users.id, id)).limit(1);
-  const origin = requestOrigin(await headers());
-  const session = await createCheckoutSession({
-    parentId: id,
-    playerId,
-    plan,
-    startSeason,
-    email: account?.email ?? null,
-    origin,
-    allowPromotionCodes: !player.adminTest,
-  });
-  if (!session.ok || !session.url) redirect("/parent/checkout?notice=soon");
-  redirect(session.url);
+export async function startCheckout(_formData?: FormData) {
+  redirect("/parent/checkout");
 }
 
 export async function requestRefund(formData: FormData) {

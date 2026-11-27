@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { PlayerSignupSoon } from "@/components/player-signup-gate";
-import { playerSignupOpen } from "@/lib/launch";
+import { PlayerSignupUnavailable } from "@/components/player-signup-gate";
+import { playerSignupStatus } from "@/lib/signup-access";
 import { safeRedirectPath, withRedirect } from "@/lib/redirects";
 import { clerkConfigured, getRequestViewer, homeFor, usesParentArea } from "@/lib/viewer";
 
@@ -43,11 +43,12 @@ async function ParentSignUp({
   await connection();
   const params = await searchParams;
   const destination = safeRedirectPath(params.redirect_url) ?? "/parent";
-  if (!playerSignupOpen()) {
+  const signupStatus = await playerSignupStatus();
+  if (signupStatus !== "open") {
     const viewer = await getRequestViewer();
     if (viewer?.role === "admin" || viewer?.role === "parent") redirect("/parent");
     if (viewer && (viewer.role === "coach" || viewer.signupIntent === "coach")) redirect(homeFor(viewer));
-    return <PlayerSignupSoon />;
+    return <PlayerSignupUnavailable status={signupStatus} />;
   }
   if (!clerkConfigured()) {
     return (

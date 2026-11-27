@@ -12,7 +12,8 @@ import {
 import { httpUrlError, locationError } from "@/lib/safety";
 import { isUsState } from "@/lib/states";
 import { planAdminClaim } from "@/lib/admin-record";
-import { isLaunchState, launchStateMessage, playerSignupOpen } from "@/lib/launch";
+import { isLaunchState, launchStateMessage } from "@/lib/launch";
+import { playerSignupStatus, SIGNUP_FULL_MESSAGE } from "@/lib/signup-access";
 import { sendPendingCoachAlert } from "@/lib/notify";
 import { adminAccess, mergePublicMetadata, type Viewer } from "@/lib/viewer";
 
@@ -22,7 +23,9 @@ function text(value: FormDataEntryValue | null): string {
 
 export async function claimParent(viewer: Viewer): Promise<{ ok: true } | { ok: false; error: string }> {
   if (viewer.role === "parent") return { ok: true };
-  if (!playerSignupOpen()) return { ok: false, error: "Player sign-up is coming soon." };
+  const signupStatus = await playerSignupStatus();
+  if (signupStatus === "full") return { ok: false, error: SIGNUP_FULL_MESSAGE };
+  if (signupStatus !== "open") return { ok: false, error: "Player sign-up is coming soon." };
   if (viewer.role) return { ok: false, error: "This account already has a role." };
   if (viewer.signupIntent === "coach") {
     return { ok: false, error: "This account was started as a coach." };
