@@ -13,6 +13,7 @@ import { httpUrlError, locationError } from "@/lib/safety";
 import { isUsState } from "@/lib/states";
 import { planAdminClaim } from "@/lib/admin-record";
 import { isLaunchState, launchStateMessage, playerSignupOpen } from "@/lib/launch";
+import { sendPendingCoachAlert } from "@/lib/notify";
 import { adminAccess, mergePublicMetadata, type Viewer } from "@/lib/viewer";
 
 function text(value: FormDataEntryValue | null): string {
@@ -395,6 +396,16 @@ export async function submitCoachApplication(
     });
   } catch (error) {
     console.error("Could not sync coach role to Clerk", error instanceof Error ? error.name : "");
+  }
+  try {
+    await sendPendingCoachAlert({
+      fullName,
+      teamName,
+      organization,
+      state,
+    });
+  } catch (error) {
+    console.error("Could not send pending coach alert", error instanceof Error ? error.name : "");
   }
   return { ok: true };
 }

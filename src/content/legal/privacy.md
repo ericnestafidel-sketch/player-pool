@@ -6,7 +6,7 @@
 
 This policy explains what Player Pool collects, why, who can see it, how long we keep it, and the choices you have. We wrote it in plain language on purpose. If anything is unclear, email us at {{SUPPORT_EMAIL}}.
 
-**Who we are.** Player Pool is operated by Coach Eric LLC, an Indiana limited liability company doing business as Player Pool ("Player Pool," "we," "us"). Mailing address: [mailing address available on request]. Email: {{SUPPORT_EMAIL}}.
+**Who we are.** Player Pool is operated by Coach Eric LLC, an Indiana limited liability company doing business as Player Pool ("Player Pool," "we," "us"). Mailing address coming soon. Email: {{SUPPORT_EMAIL}}.
 
 ---
 
@@ -212,7 +212,7 @@ If we make a material change to this policy, we'll email account holders **at le
 ## 13. Contact
 
 Coach Eric LLC, doing business as Player Pool
-[mailing address available on request]
+Mailing address coming soon.
 {{SUPPORT_EMAIL}}
 
 To report a safety concern about a child, use the Report button on the site or email us. **If a child is in immediate danger, call 911.** You can also call your state's child abuse hotline or 1-800-422-4453 Childhelp. In Indiana, DCS 1-800-800-5556. In Illinois, DCFS 1-800-25-ABUSE (1-800-252-2873). In Ohio, 1-855-OH-CHILD (1-855-642-4453). If we have reason to believe a child is being abused, neglected, exploited, or groomed, we will report it to the appropriate authorities.

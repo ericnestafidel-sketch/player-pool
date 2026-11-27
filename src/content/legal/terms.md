@@ -152,6 +152,8 @@ We may remove or hide any content that breaks these Terms or that we believe put
 
 ## 11. Copyright complaints
 
+The designated DMCA agent is Coach Eric LLC. Email {{SUPPORT_EMAIL}}. Mailing address coming soon.
+
 If you believe something on Player Pool infringes your copyright, email {{SUPPORT_EMAIL}} with:
 - your contact information;
 - a description of the work and where it appears on Player Pool;
@@ -218,4 +220,4 @@ You can stop using Player Pool at any time. Parents can delete a profile in one 
 - **Entire agreement.** These Terms, the Privacy Policy, and (for Coaches) the Coach Code of Conduct are the whole agreement between you and Player Pool about the service.
 - **Severability and waiver.** If any part of these Terms is unenforceable, the rest stays in effect. If we don't enforce a term right away, we can still enforce it later.
 - **Assignment.** You can't transfer your account or these Terms. We may transfer them as part of a sale or reorganization of the business, with notice to you.
-- **Contact.** Coach Eric LLC, doing business as Player Pool, [mailing address available on request], {{SUPPORT_EMAIL}}.
+- **Contact.** Coach Eric LLC, doing business as Player Pool, mailing address coming soon, {{SUPPORT_EMAIL}}.
