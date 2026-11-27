@@ -6,8 +6,8 @@ import { DeletePlayerButton } from "@/components/delete-player-button";
 import { PlayerCard } from "@/components/player-card";
 import { ViewerList } from "@/components/viewer-list";
 import { AdminNav } from "@/components/admin-nav";
-import { PlayerSignupClosedButton, PlayerSignupSoon } from "@/components/player-signup-gate";
-import { playerSignupOpen } from "@/lib/launch";
+import { PlayerSignupCallToAction, PlayerSignupUnavailable } from "@/components/player-signup-gate";
+import { playerSignupStatus } from "@/lib/signup-access";
 import { PROMO_CODE } from "@/lib/pricing";
 import { claimParent, ensureParentProfile } from "@/lib/accounts";
 import { ListingStatus } from "@/components/listing-status";
@@ -54,8 +54,9 @@ async function ParentHome() {
       );
     }
   }
-  if (!playerSignupOpen() && viewer.role !== "admin" && viewer.role !== "parent") {
-    return <PlayerSignupSoon />;
+  const signupStatus = await playerSignupStatus();
+  if (signupStatus !== "open" && viewer.role !== "admin" && viewer.role !== "parent") {
+    return <PlayerSignupUnavailable status={signupStatus} />;
   }
   if (viewer.role === null && viewer.signupIntent === "parent") {
     const claimed = await claimParent(viewer);
@@ -115,12 +116,14 @@ async function ParentHome() {
         </p>
       ) : null}
       <p>
-        {viewer.role === "admin" || playerSignupOpen() ? (
+        {viewer.role === "admin" ? (
           <Link className="btn gold" href="/parent/player/new">
             Add a player
           </Link>
         ) : (
-          <PlayerSignupClosedButton />
+          <PlayerSignupCallToAction href="/parent/player/new" status={signupStatus}>
+            Add a player
+          </PlayerSignupCallToAction>
         )}
       </p>
       {roster.length === 0 ? (
@@ -135,7 +138,6 @@ async function ParentHome() {
               key={entry.player.id}
               entry={entry}
               listing={listings.get(entry.player.id) ?? null}
-              canPay={playerSignupOpen()}
             />
           ))}
         </div>
@@ -153,11 +155,9 @@ async function ParentHome() {
 function RosterCard({
   entry,
   listing,
-  canPay,
 }: {
   entry: ParentPlayer;
   listing: PlayerListing | null;
-  canPay: boolean;
 }) {
   return (
     <section className="section-card">
@@ -167,7 +167,7 @@ function RosterCard({
         weekends={entry.weekends}
         href={`/parent/player/${entry.player.id}`}
       />
-      <ListingStatus playerId={entry.player.id} listing={listing} canPay={canPay} />
+      <ListingStatus listing={listing} />
       <div className="roster-actions">
         <Link className="btn navy" href={`/parent/player/${entry.player.id}`}>
           Edit

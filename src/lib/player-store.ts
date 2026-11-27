@@ -15,6 +15,7 @@ import {
 import { getDb, type Database } from "@/db";
 import { toPublicCoach, type PublicCoach } from "@/lib/coach-profile";
 import { coachVisibilityConditions, isPlayerId } from "@/lib/player-access";
+import { grantFreeFirstSeason } from "@/lib/stripe-billing";
 import {
   assertNoContactFields,
   draftStats,
@@ -139,7 +140,10 @@ export async function saveParentPlayer(
     });
     if (!id) return { ok: false, error: "That profile is not available." };
     return { ok: true, id };
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.message === "PLAYER_SIGNUP_FULL") {
+      return { ok: false, error: "Player sign-ups are full for now, check back soon." };
+    }
     return { ok: false, error: "Could not save the profile." };
   }
 }
@@ -168,7 +172,14 @@ async function insertOwnedPlayer(tx: Tx, parentId: string, input: PlayerInput): 
       updatedAt: new Date(),
     })
     .returning({ id: players.id });
-  return created?.id ?? null;
+  if (!created) return null;
+  const granted = await grantFreeFirstSeason(tx, {
+    parentId,
+    playerId: created.id,
+    adminTest: owner?.role === "admin",
+  });
+  if (granted === "full") throw new Error("PLAYER_SIGNUP_FULL");
+  return created.id;
 }
 
 async function updateOwnedPlayer(

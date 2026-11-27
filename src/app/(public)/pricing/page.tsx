@@ -1,24 +1,18 @@
 import { connection } from "next/server";
 import Link from "next/link";
 import type { Metadata } from "next";
-import {
-  formatUsd,
-  LAUNCH_FREE_SEASON_SPOTS,
-  PLAN_FEATURES,
-  SEASONS,
-  PROMO_CODE,
-  seasonPlan,
-  yearlyPlan,
-} from "@/lib/pricing";
-import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
-import { launchStateNames, playerSignupOpen } from "@/lib/launch";
+import { LAUNCH_FREE_SEASON_SPOTS, PLAN_FEATURES } from "@/lib/pricing";
+import { PlayerSignupCallToAction } from "@/components/player-signup-gate";
+import { launchStateNames } from "@/lib/launch";
 import { withRedirect } from "@/lib/redirects";
+import { playerSignupStatus } from "@/lib/signup-access";
 import { freeSeasonSpotsRemaining } from "@/lib/stripe-billing";
 import { publicMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
-  title: "Travel baseball listing prices",
-  description: `One-time prices to list a player for travel baseball tryouts. A season is ${formatUsd(seasonPlan.amountCents)} and three seasons are ${formatUsd(yearlyPlan.amountCents)}, with no auto-renew. Coaches search USSSA profiles free.`,
+  title: "Free first-season listings",
+  description:
+    "The first 100 players in Indiana, Illinois, and Ohio get their first season free. No payment is required. Coaches search free after approval.",
   path: "/pricing",
 });
 
@@ -27,70 +21,38 @@ export const instant = false;
 
 export default async function PricingPage() {
   await connection();
-  const spotsLeft = await freeSeasonSpotsRemaining();
+  const [spotsLeft, signupStatus] = await Promise.all([freeSeasonSpotsRemaining(), playerSignupStatus()]);
   return (
     <main>
       <section className="pricing-hero">
-        <h1>
-          Simple, one-time pricing.
-          <br />
-          No auto-renew.
-        </h1>
+        <h1>First season free for the first {LAUNCH_FREE_SEASON_SPOTS} players.</h1>
       </section>
       <div className="launch-banner">
-        <p className="launch-lead">
-          Launching in {launchStateNames()}: players in those states can list now.
-        </p>
+        <p className="launch-lead">Launching in {launchStateNames()}.</p>
         <div className="spot-callout">
-          <p className="code">{PROMO_CODE}</p>
           <p className="spot-count">
-            {spotsLeft} of {LAUNCH_FREE_SEASON_SPOTS} free spots left
+            {signupStatus === "full"
+              ? "Player sign-ups are full for now, check back soon."
+              : `${spotsLeft} of ${LAUNCH_FREE_SEASON_SPOTS} free spots left`}
           </p>
           <p className="launch-sub">
-            First {LAUNCH_FREE_SEASON_SPOTS} season listings only. Then {formatUsd(seasonPlan.amountCents)}
-            /season or {formatUsd(yearlyPlan.amountCents)}/year. Yearly is not included.
+            {signupStatus === "full"
+              ? "Coach sign-up stays open. We are not taking paid listings right now."
+              : "No payment is required. Paid listings are not open yet. Coaches use Player Pool free after approval."}
           </p>
         </div>
       </div>
       <section className="wrap">
         <div className="price-grid pricing-plans">
-          <article className="price-card">
-            <h2>Season</h2>
-            <p className="amt">{formatUsd(seasonPlan.amountCents)}</p>
-            <p className="price-cadence">
-              <b>per season</b>, one-time payment
-            </p>
-            <p className="meta">
-              One season you choose: {SEASONS.map((season) => `${season.name} (${season.months})`).join(", ")}.
-              It ends on that season&apos;s last day.
-            </p>
-            <ul>
-              {PLAN_FEATURES.map((feature) => (
-                <li key={feature}>{feature}</li>
-              ))}
-            </ul>
-            <div className="price-cta">
-              {playerSignupOpen() ? (
-                <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
-                  Create parent account
-                </Link>
-              ) : (
-                <PlayerSignupClosedButton />
-              )}
-              <p className="meta">You choose the season at checkout.</p>
-            </div>
-          </article>
           <article className="price-card featured">
-            <p className="best-value">Best value</p>
-            <h2>Yearly</h2>
-            <p className="amt">{formatUsd(yearlyPlan.amountCents)}</p>
+            <h2>Free first season</h2>
+            <p className="amt">$0</p>
             <p className="price-cadence">
-              <b>12 months, three seasons in a row</b>, one-time payment.
+              <b>for the first {LAUNCH_FREE_SEASON_SPOTS} players</b>
             </p>
             <p className="meta">
-              Starts with the season you choose and ends on the last day of the third season. Save{" "}
-              {formatUsd(yearlyPlan.savingsCents)} versus three season payments. Spring 2027 is Nov 1,
-              2026 to May 31, 2027. Summer is Jun 1–Aug 31. Fall is Sep 1–Oct 31.
+              Your first season starts when you add a player and lasts through the end of the current
+              season.
             </p>
             <ul>
               {PLAN_FEATURES.map((feature) => (
@@ -98,25 +60,14 @@ export default async function PricingPage() {
               ))}
             </ul>
             <div className="price-cta">
-              {playerSignupOpen() ? (
-                <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
-                  Create parent account
-                </Link>
-              ) : (
-                <PlayerSignupClosedButton />
-              )}
-              <p className="meta">You choose the season at checkout.</p>
+              <PlayerSignupCallToAction href={withRedirect("/sign-up", "/parent")} status={signupStatus}>
+                Create parent account
+              </PlayerSignupCallToAction>
             </div>
           </article>
         </div>
         <p className="pricing-foot">
-          Full refund within 15 days if no coach has viewed your player&apos;s profile.
-        </p>
-        <p className="pricing-foot">
           <Link href="/coaches">Coaches use Player Pool free after approval.</Link>
-        </p>
-        <p className="note pricing-foot">
-          Payments are processed securely by Stripe. Player Pool never sees your card number.
         </p>
       </section>
     </main>

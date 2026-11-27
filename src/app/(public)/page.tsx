@@ -3,11 +3,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { countOpenNeeds } from "@/lib/board";
 import { openNeedsCopy } from "@/lib/board-rules";
-import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
-import { launchStateNames, launchStates, playerSignupOpen } from "@/lib/launch";
-import { formatUsd, LAUNCH_FREE_SEASON_SPOTS, PROMO_CODE, seasonPlan, yearlyPlan } from "@/lib/pricing";
+import { PlayerSignupCallToAction } from "@/components/player-signup-gate";
+import { launchStateNames, launchStates } from "@/lib/launch";
+import { LAUNCH_FREE_SEASON_SPOTS } from "@/lib/pricing";
 import { withRedirect } from "@/lib/redirects";
 import { publicMetadata } from "@/lib/seo";
+import { playerSignupStatus } from "@/lib/signup-access";
 import { freeSeasonSpotsRemaining } from "@/lib/stripe-billing";
 
 export const metadata: Metadata = publicMetadata({
@@ -22,13 +23,17 @@ export const instant = false;
 
 export default async function HomePage() {
   await connection();
-  const [spotsLeft, openNeeds] = await Promise.all([freeSeasonSpotsRemaining(), countOpenNeeds()]);
+  const [spotsLeft, openNeeds, signupStatus] = await Promise.all([
+    freeSeasonSpotsRemaining(),
+    countOpenNeeds(),
+    playerSignupStatus(),
+  ]);
   return (
     <>
       <Link className="founders" href="/pricing">
-        Launch offer: the first {LAUNCH_FREE_SEASON_SPOTS} players in {launchStates().join("/")} get
-        their first season free with code {PROMO_CODE} — {spotsLeft} of {LAUNCH_FREE_SEASON_SPOTS} spots
-        left. Then {formatUsd(seasonPlan.amountCents)}/season or {formatUsd(yearlyPlan.amountCents)}/year.
+        {signupStatus === "full"
+          ? "Player sign-ups are full for now, check back soon."
+          : `Launch offer: the first ${LAUNCH_FREE_SEASON_SPOTS} players in ${launchStates().join("/")} get their first season free, no payment needed — ${spotsLeft} of ${LAUNCH_FREE_SEASON_SPOTS} spots left.`}
       </Link>
       <section className="hero">
         <h1>Get your player seen by travel coaches</h1>
@@ -37,13 +42,9 @@ export default async function HomePage() {
           USSSA level, state, and county. Player Pool is launching in Indiana, Illinois, and Ohio
           first. No names, no addresses, no phone numbers shown.
         </p>
-        {playerSignupOpen() ? (
-          <Link className="btn gold" href={withRedirect("/sign-up", "/parent")}>
-            List my player
-          </Link>
-        ) : (
-          <PlayerSignupClosedButton />
-        )}{" "}
+        <PlayerSignupCallToAction href={withRedirect("/sign-up", "/parent")} status={signupStatus}>
+          List my player
+        </PlayerSignupCallToAction>{" "}
         <Link className="btn ghost" href="/coaches">
           I&apos;m a coach — request access
         </Link>
@@ -153,38 +154,23 @@ export default async function HomePage() {
           and a coach who is still waiting on approval cannot open the profile.{" "}
           <Link href="/coaches/how-approval-works">How coach approval works</Link>.
         </p>
-        <h3>What does it cost coaches?</h3>
-        <p>Coach search is free. Parents pay a one-time season or yearly listing when sign-up is open.</p>
+        <h3>What does it cost?</h3>
+        <p>
+          Coach search is free. The first {LAUNCH_FREE_SEASON_SPOTS} players get their first season free,
+          with no payment needed.
+        </p>
       </section>
       <section className="wrap" id="price">
-        <h2>Simple pricing</h2>
-        <div className="price-grid">
-          <div className="price-card">
-            <div className="amt">{formatUsd(seasonPlan.amountCents)}</div>
-            <p>
-              <b>per season</b>
-            </p>
-            <p className="meta">One-time payment.</p>
-          </div>
-          <div className="price-card featured">
-            <div className="status-badge status-pickup">Best value</div>
-            <div className="amt">{formatUsd(yearlyPlan.amountCents)}</div>
-            <p>
-              <b>three seasons in a row</b>
-            </p>
-            <p className="meta">One-time payment.</p>
-          </div>
-        </div>
+        <h2>First season free</h2>
         <p className="note" style={{ textAlign: "center", maxWidth: 560, margin: "0 auto 20px" }}>
-          One-time payments, no auto-renewal. Spring is Nov 1–May 31 (Spring 2027 is Nov 1, 2026 to May
-          31, 2027). Summer is Jun 1–Aug 31. Fall is Sep 1–Oct 31. A yearly listing is those three
-          seasons in a row, 12 months. Full refund within 15 days if no coach has viewed the profile.
-          Coaches use Player Pool free.
+          {signupStatus === "full"
+            ? "Player sign-ups are full for now, check back soon."
+            : `The first ${LAUNCH_FREE_SEASON_SPOTS} players in Indiana, Illinois, and Ohio get their first season free. ${spotsLeft} of ${LAUNCH_FREE_SEASON_SPOTS} spots are left. No payment is required. Coaches use Player Pool free after approval.`}
         </p>
         <p style={{ textAlign: "center" }}>
-          <Link className="btn gold" href="/pricing">
-            See pricing
-          </Link>
+          <PlayerSignupCallToAction href={withRedirect("/sign-up", "/parent")} status={signupStatus}>
+            List my player
+          </PlayerSignupCallToAction>
         </p>
       </section>
     </>

@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { requestRefund } from "@/app/(private)/parent/checkout/actions";
-import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
 import { paidListingEnforced } from "@/lib/player-access";
 import { formatViewedDate } from "@/lib/player-rules";
 import type { PlayerListing } from "@/lib/stripe-billing";
@@ -10,23 +8,14 @@ function endLabel(expiresAt: Date): string {
 }
 
 export function ListingStatus({
-  playerId,
   listing,
-  canPay = true,
 }: {
-  playerId: string;
+  playerId?: string;
   listing: PlayerListing | null;
   canPay?: boolean;
 }) {
   const enforced = paidListingEnforced();
   const active = Boolean(listing?.active);
-  const renew = canPay ? (
-    <Link className="btn navy btn-sm" href={`/parent/checkout?player=${playerId}`}>
-      {active ? "Renew" : "Pay to list"}
-    </Link>
-  ) : (
-    <PlayerSignupClosedButton />
-  );
   return (
     <div className="roster-actions">
       {active && listing?.expiresAt ? (
@@ -44,11 +33,10 @@ export function ListingStatus({
       ) : (
         <p className="meta">
           {enforced
-            ? "Hidden from coach search until this listing is paid."
-            : "No payment yet. Coach search is not requiring payment until launch."}
+            ? "This listing is not active."
+            : "This profile does not have an active listing yet."}
         </p>
       )}
-      {renew}
       {listing?.refundable && listing.subscriptionId ? (
         <form action={requestRefund}>
           <input type="hidden" name="subscriptionId" value={listing.subscriptionId} />

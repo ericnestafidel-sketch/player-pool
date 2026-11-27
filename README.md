@@ -42,7 +42,7 @@ Setting that metadata by hand in the Clerk dashboard still works. The first visi
 
 Parents can only sign up at `/sign-up`. Coaches use `/coach/signup`, land in `pending`, and cannot open player pages until you approve them.
 
-The coaches-first launch leaves `PLAYER_SIGNUP_OPEN` unset. Parent sign-up buttons say coming soon, `/sign-up` does not create a parent account, and a non-admin cannot add a player or start checkout. Set `PLAYER_SIGNUP_OPEN=true` when parents should list players. Admins can still create test players. Set `APP_URL=https://player-pool.net` so checkout return URLs and message links use that origin.
+Set `PLAYER_SIGNUP_OPEN=true` so a verified parent can create an account and a player profile. The first 100 non-test players get the current season free, with no payment and no checkout. When those spots are used, parent sign-up shows "Player sign-ups are full for now, check back soon" and does not fall back to paid plans. Raise `PLAYER_SIGNUP_CAP` (default 100) and keep `PLAYER_SIGNUP_OPEN=true` to reopen more free spots, or unset `PLAYER_SIGNUP_OPEN` to pause sign-ups. Coach sign-up stays open. Admins can still create test players, which do not use a free spot. Paid checkout stays off until `PAID_CHECKOUT_OPEN` is set after legal and LLC billing review. Set `APP_URL=https://player-pool.net` so message links use that origin.
 
 ## Local setup
 

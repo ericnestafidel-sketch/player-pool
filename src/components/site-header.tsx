@@ -3,8 +3,8 @@ import { connection } from "next/server";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AdminNav } from "@/components/admin-nav";
-import { PlayerSignupClosedButton } from "@/components/player-signup-gate";
-import { playerSignupOpen } from "@/lib/launch";
+import { PlayerSignupCallToAction } from "@/components/player-signup-gate";
+import { playerSignupStatus } from "@/lib/signup-access";
 import { withRedirect } from "@/lib/redirects";
 import { unfinishedSetupNav } from "@/lib/setup-nav";
 import { clerkConfigured, getRequestViewer } from "@/lib/viewer";
@@ -51,17 +51,15 @@ async function HeaderSession() {
       </>
     );
   }
-  const viewer = await getRequestViewer();
+  const [viewer, signupStatus] = await Promise.all([getRequestViewer(), playerSignupStatus()]);
   if (!viewer) {
     return (
       <>
         <BoardNavLink signedIn={false} />
         <Link href="/sign-in">Sign in</Link>
-        {playerSignupOpen() ? (
-          <Link href={withRedirect("/sign-up", "/parent")}>List a player</Link>
-        ) : (
-          <PlayerSignupClosedButton tone="nav" />
-        )}
+        <PlayerSignupCallToAction href={withRedirect("/sign-up", "/parent")} status={signupStatus} tone="nav">
+          List a player
+        </PlayerSignupCallToAction>
       </>
     );
   }

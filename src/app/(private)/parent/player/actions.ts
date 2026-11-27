@@ -9,7 +9,7 @@ import { LEGAL_VERSION } from "@/lib/legal";
 import { parsePlayerForm } from "@/lib/player-rules";
 import { saveParentPlayer, setPlayerPaused, softDeletePlayer } from "@/lib/player-store";
 import { listSports } from "@/lib/sport";
-import { playerSignupOpen } from "@/lib/launch";
+import { playerSignupStatus, SIGNUP_FULL_MESSAGE } from "@/lib/signup-access";
 import { requireParentActor } from "@/lib/parent-actor";
 import { getRequestViewer } from "@/lib/viewer";
 
@@ -41,7 +41,13 @@ export async function savePlayer(
   const viewer = await getRequestViewer();
   if (!viewer) redirect("/sign-in");
   const existingId = text(formData.get("playerId"));
-  if (!existingId && !playerSignupOpen() && viewer.role !== "admin") redirect("/parent/player/new");
+  if (!existingId && viewer.role !== "admin") {
+    const signupStatus = await playerSignupStatus();
+    if (signupStatus !== "open") {
+      if (signupStatus === "full") return { error: SIGNUP_FULL_MESSAGE, fieldErrors: {} };
+      redirect("/parent/player/new");
+    }
+  }
   const id = await parentId();
   const sports = await listSports();
   const parsed = parsePlayerForm(formData, sports, new Date());

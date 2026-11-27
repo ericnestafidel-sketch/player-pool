@@ -4,14 +4,20 @@ import { players, profileViews, subscriptions } from "@/db/schema";
 import { getDb } from "@/db";
 import { isPlayerId } from "@/lib/player-access";
 import { appOriginFromEnv } from "@/lib/launch";
-import { freeSpotsLeft } from "@/lib/pricing";
-import { coverageFor, labelForStoredSeason, promoFreeSeasonForPlayer, refundEligible } from "@/lib/seasons";
+import { freeSpotsLeft, playerSignupCap } from "@/lib/pricing";
+import { coverageFor, currentSeason, labelForStoredSeason, promoFreeSeasonForPlayer, refundEligible } from "@/lib/seasons";
 
 export const SEASON_PRICE_LOOKUP = "player_pool_season";
 export const YEARLY_PRICE_LOOKUP = "player_pool_yearly";
 
 export function stripeConfigured(): boolean {
   return Boolean(process.env["STRIPE_SECRET_KEY"]);
+}
+
+/** Paid Stripe checkout stays off until this is explicitly enabled after legal and billing review. */
+export function paidCheckoutOpen(): boolean {
+  const value = process.env["PAID_CHECKOUT_OPEN"]?.trim().toLowerCase();
+  return value === "1" || value === "true" || value === "yes";
 }
 
 export function getStripe(): Stripe | null {
@@ -46,6 +52,7 @@ export async function createCheckoutSession(input: {
   origin: string;
   allowPromotionCodes?: boolean;
 }): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  if (!paidCheckoutOpen()) return { ok: false, error: "Paid listings are not open yet." };
   const stripe = getStripe();
   if (!stripe) return { ok: false, error: "Payments coming soon." };
   if (!input.origin) return { ok: false, error: "Payments coming soon." };
@@ -157,17 +164,13 @@ export type PlayerListing = {
 /** Distinct non-test players who redeemed the free first season. */
 export async function freeSeasonSpotsRemaining(): Promise<number> {
   const db = getDb();
-  if (!db) return freeSpotsLeft(0);
+  if (!db) return freeSpotsLeft(0, playerSignupCap());
   try {
-    const [row] = await db
-      .select({ total: sql<number>`count(distinct ${subscriptions.playerId})::int` })
-      .from(subscriptions)
-      .innerJoin(players, eq(players.id, subscriptions.playerId))
-      .where(and(eq(subscriptions.promoFreeSeason, true), eq(players.adminTest, false)));
-    return freeSpotsLeft(Number(row?.total ?? 0));
+    const used = await countFreeSeasonPlayers(db);
+    return freeSpotsLeft(used, playerSignupCap());
   } catch (error) {
     console.error("Could not count free spots", error instanceof Error ? error.name : "");
-    return freeSpotsLeft(0);
+    return freeSpotsLeft(0, playerSignupCap());
   }
 }
 
@@ -288,4 +291,47 @@ export async function refundListing(
     .set({ expiresAt: new Date() })
     .where(eq(subscriptions.id, row.id));
   return { ok: true };
+}
+
+type ListingDb = Pick<NonNullable<ReturnType<typeof getDb>>, "select" | "insert" | "update">;
+
+/** Grant the current season at $0 and consume a FIRST100 spot. Admin test players are skipped. */
+export async function grantFreeFirstSeason(
+  db: ListingDb,
+  input: { parentId: string; playerId: string; adminTest: boolean; now?: Date },
+): Promise<"ok" | "full"> {
+  if (input.adminTest) return "ok";
+  const now = input.now ?? new Date();
+  const cap = playerSignupCap();
+  const used = await countFreeSeasonPlayers(db);
+  if (used >= cap) return "full";
+  const current = currentSeason(now);
+  await db.insert(subscriptions).values({
+    parentId: input.parentId,
+    playerId: input.playerId,
+    plan: "season",
+    seasonCode: current.seasonCode,
+    year: current.year,
+    amountCents: 0,
+    promoFreeSeason: true,
+    stripeSessionId: `first100:${input.playerId}`,
+    paidAt: now,
+    expiresAt: current.expiresAt,
+  });
+  await db
+    .update(players)
+    .set({ season: current.seasonCode, updatedAt: now })
+    .where(eq(players.id, input.playerId));
+  const usedAfter = await countFreeSeasonPlayers(db);
+  if (usedAfter > cap) return "full";
+  return "ok";
+}
+
+export async function countFreeSeasonPlayers(db: ListingDb): Promise<number> {
+  const [row] = await db
+    .select({ total: sql<number>`count(distinct ${subscriptions.playerId})::int` })
+    .from(subscriptions)
+    .innerJoin(players, eq(players.id, subscriptions.playerId))
+    .where(and(eq(subscriptions.promoFreeSeason, true), eq(players.adminTest, false)));
+  return Number(row?.total ?? 0);
 }
