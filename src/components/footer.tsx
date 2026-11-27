@@ -16,11 +16,9 @@ export function SiteFooter() {
         <Link href="/conduct">Coach Code of Conduct</Link>
       </p>
       <p>
-        {email ? (
-          <a href={`mailto:${email}`}>{email}</a>
-        ) : (
-          <Link href="/contact">Contact</Link>
-        )}
+        <a href={`mailto:${email}`}>{email}</a>
+        {" · "}
+        <Link href="/contact">Contact</Link>
       </p>
       <p>© 2026 {BUSINESS_COPYRIGHT}</p>
     </footer>

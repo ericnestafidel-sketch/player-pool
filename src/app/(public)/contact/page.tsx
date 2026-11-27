@@ -1,12 +1,13 @@
 import { connection } from "next/server";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { supportEmail } from "@/lib/legal";
 import { publicMetadata } from "@/lib/seo";
 import { sendContact } from "./actions";
 
 export const metadata: Metadata = publicMetadata({
   title: "Contact",
-  description: "Send a note to Player Pool. This form does not show an email address.",
+  description: "Email Coach Eric LLC dba Player Pool, or send a note with the contact form.",
   path: "/contact",
 });
 
@@ -29,10 +30,13 @@ async function Contact({
 }) {
   await connection();
   const params = await searchParams;
+  const email = supportEmail();
   return (
     <main className="form-wrap">
       <h1>Contact</h1>
-      <p className="lead">Send a note. This page does not show an email address.</p>
+      <p className="lead">
+        Email us at <a href={`mailto:${email}`}>{email}</a>, or send a note with this form.
+      </p>
       {params.sent === "1" ? <p className="meta">Thanks. We received your note.</p> : null}
       {params.error === "1" ? (
         <p className="field-error">We could not deliver that note yet. A mailbox is not connected.</p>

@@ -12,7 +12,7 @@ export function LegalDocument({ source, versionLabel }: { source: string; versio
   );
 }
 
-function renderBlocks(source: string, email: string | null): ReactNode[] {
+function renderBlocks(source: string, email: string): ReactNode[] {
   const lines = source.replace(/\r\n/g, "\n").split("\n");
   const blocks: ReactNode[] = [];
   let index = 0;
@@ -90,7 +90,7 @@ function renderBlocks(source: string, email: string | null): ReactNode[] {
   return blocks;
 }
 
-function LegalTable({ rows, email }: { rows: string[]; email: string | null }) {
+function LegalTable({ rows, email }: { rows: string[]; email: string }) {
   const parsed = rows
     .map((row) => row.split("|").slice(1, -1).map((cell) => cell.trim()))
     .filter((cells) => cells.length && !cells.every((cell) => /^:?-+:?$/.test(cell)));
@@ -118,12 +118,11 @@ function LegalTable({ rows, email }: { rows: string[]; email: string | null }) {
   );
 }
 
-function inline(text: string, email: string | null): ReactNode[] {
+function inline(text: string, email: string): ReactNode[] {
   const pattern = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\)|\{\{SUPPORT_EMAIL\}\})/g;
   const parts = text.split(pattern).filter((part) => part.length > 0);
   return parts.map((part, index) => {
     if (part === "{{SUPPORT_EMAIL}}") {
-      if (!email) return <Link key={index} href="/contact">contact us</Link>;
       return (
         <a key={index} href={`mailto:${email}`}>
           {email}
