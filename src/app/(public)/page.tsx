@@ -33,7 +33,7 @@ export default async function HomePage() {
       <Link className="founders" href="/pricing">
         {signupStatus === "full"
           ? "Player sign-ups are full for now, check back soon."
-          : `Launch offer: the first ${LAUNCH_FREE_SEASON_SPOTS} players in ${launchStates().join("/")} get their first season free, no payment needed — ${spotsLeft} of ${LAUNCH_FREE_SEASON_SPOTS} spots left.`}
+          : `Launch offer: the first ${LAUNCH_FREE_SEASON_SPOTS} players in ${launchStates().join("/")} get their first season, Spring 2027, free through May 31, 2027, no payment needed — ${spotsLeft} of ${LAUNCH_FREE_SEASON_SPOTS} spots left.`}
       </Link>
       <section className="hero">
         <h1>Get your player seen by travel coaches</h1>
@@ -156,8 +156,8 @@ export default async function HomePage() {
         </p>
         <h3>What does it cost?</h3>
         <p>
-          Coach search is free. The first {LAUNCH_FREE_SEASON_SPOTS} players get their first season free,
-          with no payment needed.
+          Coach search is free. The first {LAUNCH_FREE_SEASON_SPOTS} players get their first season, Spring
+          2027, free through May 31, 2027, with no payment needed.
         </p>
       </section>
       <section className="wrap" id="price">
@@ -165,7 +165,7 @@ export default async function HomePage() {
         <p className="note" style={{ textAlign: "center", maxWidth: 560, margin: "0 auto 20px" }}>
           {signupStatus === "full"
             ? "Player sign-ups are full for now, check back soon."
-            : `The first ${LAUNCH_FREE_SEASON_SPOTS} players in Indiana, Illinois, and Ohio get their first season free. ${spotsLeft} of ${LAUNCH_FREE_SEASON_SPOTS} spots are left. No payment is required. Coaches use Player Pool free after approval.`}
+            : `The first ${LAUNCH_FREE_SEASON_SPOTS} players in Indiana, Illinois, and Ohio get their first season, Spring 2027, free through May 31, 2027. ${spotsLeft} of ${LAUNCH_FREE_SEASON_SPOTS} spots are left. No payment is required. Coaches use Player Pool free after approval.`}
         </p>
         <p style={{ textAlign: "center" }}>
           <PlayerSignupCallToAction href={withRedirect("/sign-up", "/parent")} status={signupStatus}>

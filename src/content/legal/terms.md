@@ -1,6 +1,6 @@
 # Terms of Use
 
-**Last updated November 20, 2026**
+**Last updated November 28, 2026**
 
 **Effective November 20, 2026**
 
@@ -101,25 +101,21 @@ You may not:
 
 ## 8. Fees and plans (Parents)
 
-Coaches use Player Pool free. Parents pay to list a player. All prices are in U.S. dollars.
+Coaches use Player Pool free.
 
-- **Season listing: $25**, one-time payment, per player.
-- **Yearly listing: $60**, one-time payment, per player.
-- **Seasons:** Spring 2027 is November 1, 2026 through May 31, 2027. Summer is June 1 through August 31. Fall is September 1 through October 31. Checkout shows the exact dates for the season you choose.
-- **What you get:** your player's profile is shown to approved Coaches during the period you paid for.
-  - A **Season listing** covers the one season you choose at checkout (the current season or the next one) and ends on that season's last day, **no matter what day you buy it.** A season bought near its end is short.
-  - A **Yearly listing** covers 12 months: the season you choose and the two seasons after it. It ends on the last day of that third season.
-  - **The plan, the seasons it covers, and the exact end date are shown at checkout before you pay.**
-- **No automatic renewal.** We never charge you again unless you choose to buy another listing. When a listing ends, the profile is hidden from Coaches until you relist. Nothing else happens.
-- **Payments** are processed by Stripe under Stripe's terms. We never see or store your card number.
-- **Price changes** apply only to future purchases, never to a listing you've already paid for.
+- **Current launch:** The first 100 players automatically get the current season free, with no promo code and no payment. The current season is **Spring 2027**, November 1, 2026 through May 31, 2027.
+- **What you get:** your player's profile is shown to approved Coaches through the last day of that free season, May 31, 2027.
+- **Seasons:** Spring 2027 is November 1, 2026 through May 31, 2027. Summer is June 1 through August 31. Fall is September 1 through October 31.
+- **Paid plans are not offered yet.** If we offer paid listings later, the prices and terms will be posted on the site, and you will be asked to agree to them before anyone is charged.
+- **No automatic renewal.** We never charge you unless you agree to a paid listing. When the free season ends, the profile is hidden from Coaches until a later listing option is available and you choose it. Nothing else happens.
+- **Payments**, if and when paid listings are offered, will be processed by Stripe under Stripe's terms. We never see or store your card number.
 - **Taxes** will be added if the law requires it and shown before you pay.
 
 ### Launch offer: FIRST100
-- The first 100 players whose Parents redeem code **FIRST100** at checkout get **one Season listing free**. After that, a season is $25 and a year is $60.
-- Limit one per player. It applies to the Season plan only (not Yearly), has no cash value, can't be combined with other offers, and can't be transferred.
-- The offer ends when 100 codes are redeemed (or earlier if we announce an end date on the pricing page).
-- After the free season, regular prices apply. Nothing renews automatically.
+- The first 100 players listed by a Parent automatically get **one Spring 2027 season listing free**. No payment is required and no promo code is needed.
+- Limit one per player. It has no cash value, can't be combined with other offers, and can't be transferred.
+- The offer ends when 100 players have received the free season (or earlier if we announce an end date on the pricing page).
+- After the free season, the profile is hidden from Coaches until a later listing option is available and you choose it. Nothing renews automatically.
 
 ---
 

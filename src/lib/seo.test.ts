@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
-import { PUBLIC_PATHS, siteJsonLd } from "@/lib/seo";
+import { PUBLIC_PATHS, publicMetadata, siteJsonLd } from "@/lib/seo";
 
 test("public SEO routes stay off private player and account paths", () => {
   const previous = process.env.APP_URL;
@@ -12,9 +12,11 @@ test("public SEO routes stay off private player and account paths", () => {
   assert.deepEqual(rule?.allow, [...PUBLIC_PATHS]);
   const blocked = rule?.disallow;
   assert.ok(Array.isArray(blocked));
-  for (const path of ["/admin", "/parent", "/coach", "/api", "/sign-in", "/players", "/board"]) {
+  for (const path of ["/admin", "/parent", "/coach/", "/api", "/sign-in", "/players", "/board"]) {
     assert.ok(blocked.includes(path));
   }
+  assert.equal(blocked.includes("/coach"), false);
+  assert.ok(rule?.allow?.includes("/coaches"));
   assert.equal(rules.sitemap, "https://player-pool.net/sitemap.xml");
 
   const urls = sitemap().map((entry) => entry.url);
@@ -31,6 +33,22 @@ test("public SEO routes stay off private player and account paths", () => {
   assert.equal(urls.some((url) => url.includes("/players") || url.includes("/parent") || url.includes("/board")), false);
   if (previous === undefined) delete process.env.APP_URL;
   else process.env.APP_URL = previous;
+});
+
+test("publicMetadata includes default Open Graph and Twitter images", () => {
+  const meta = publicMetadata({
+    title: "Contact",
+    description: "Email Coach Eric LLC dba Player Pool, or send a note with the contact form.",
+    path: "/contact",
+  });
+  const ogImages = meta.openGraph?.images;
+  const list = Array.isArray(ogImages) ? ogImages : ogImages ? [ogImages] : [];
+  const urls = list.map((image) => (typeof image === "string" ? image : "url" in image ? String(image.url) : ""));
+  assert.ok(urls.some((url) => url.includes("opengraph-image")));
+  const twitterImages = meta.twitter && "images" in meta.twitter ? meta.twitter.images : undefined;
+  const twitterList = Array.isArray(twitterImages) ? twitterImages : twitterImages ? [twitterImages] : [];
+  const twitterUrls = twitterList.map((image) => (typeof image === "string" ? image : String(image)));
+  assert.ok(twitterUrls.some((url) => url.includes("twitter-image")));
 });
 
 test("organization JSON-LD has no address or phone", () => {

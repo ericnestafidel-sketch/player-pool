@@ -12,7 +12,7 @@ import { publicMetadata } from "@/lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Free first-season listings",
   description:
-    "The first 100 players in Indiana, Illinois, and Ohio get their first season free. No payment is required. Coaches search free after approval.",
+    "The first 100 players in Indiana, Illinois, and Ohio get their first season, Spring 2027, free through May 31, 2027. No payment is required. Coaches search free after approval.",
   path: "/pricing",
 });
 
@@ -25,7 +25,7 @@ export default async function PricingPage() {
   return (
     <main>
       <section className="pricing-hero">
-        <h1>First season free for the first {LAUNCH_FREE_SEASON_SPOTS} players.</h1>
+        <h1>Spring 2027 is free through May 31, 2027, for the first {LAUNCH_FREE_SEASON_SPOTS} players.</h1>
       </section>
       <div className="launch-banner">
         <p className="launch-lead">Launching in {launchStateNames()}.</p>
@@ -51,8 +51,8 @@ export default async function PricingPage() {
               <b>for the first {LAUNCH_FREE_SEASON_SPOTS} players</b>
             </p>
             <p className="meta">
-              Your first season starts when you add a player and lasts through the end of the current
-              season.
+              The first season is Spring 2027, free through May 31, 2027, limited to the first{" "}
+              {LAUNCH_FREE_SEASON_SPOTS} players.
             </p>
             <ul>
               {PLAN_FEATURES.map((feature) => (
