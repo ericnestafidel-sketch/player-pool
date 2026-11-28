@@ -36,11 +36,20 @@ export function publicMetadata(input: {
       siteName: "Player Pool",
       type: "website",
       locale: "en_US",
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: "Player Pool is launching in Indiana, Illinois, and Ohio",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: branded,
       description: input.description,
+      images: ["/twitter-image"],
     },
     robots: { index: true, follow: true },
   };

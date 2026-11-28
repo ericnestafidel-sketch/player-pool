@@ -10,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
       disallow: [
         "/admin",
         "/parent",
-        "/coach",
+        "/coach/",
         "/api",
         "/sign-in",
         "/sign-up",
